@@ -1,0 +1,94 @@
+/* TradeBlade static site v1.9.3 — headline mid blue, hero size per request */
+:root{
+  --tb-blue:#178BCA;
+  --tb-blue-light:#39BDF8;
+  --tb-blue-mid:#259FDC;
+  --tb-teal:#0EA5BC;
+  --bg-0:#0b0c10;
+  --bg-1:#0d0f16;
+  --text:#ffffff;
+  --muted: rgba(255,255,255,0.75);
+  --soft: rgba(255,255,255,0.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg-0),var(--bg-1),var(--bg-0));color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.container{max-width:1120px;margin:0 auto;padding:0 16px}
+.row{display:flex;gap:10px}
+.space-between{justify-content:space-between}
+.align-center{align-items:center}
+.gap{gap:12px}
+.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}
+.wfull{width:100%}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:40;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);border-bottom:1px solid var(--soft)}
+.nav-inner{height:90px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-logo{width:75px;height:75px;border-radius:0;image-rendering:auto;object-fit:contain;display:block}
+.brand-wordmark{font-weight:800;letter-spacing:2px;font-size:22px;color:var(--tb-blue-mid)}
+.nav-links{display:none;gap:20px}
+@media(min-width:1000px){.nav-links{display:flex}}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border-radius:12px;border:1px solid var(--soft);font-weight:600}
+.btn-primary{background:linear-gradient(90deg,var(--tb-blue),var(--tb-teal));border-color:transparent;box-shadow:0 6px 18px rgba(14,165,188,0.2)}
+.btn-ghost{background:rgba(255,255,255,0.05)}
+
+/* HERO */
+.hero{padding:72px 0 48px}
+.hero-inner{text-align:center;max-width:1000px;margin:0 auto}
+.eyebrow{display:inline-block;padding:8px 14px;border-radius:16px;background:rgba(255,255,255,0.06);border:1px solid var(--soft);font-size:16px;color:rgba(255,255,255,0.9)}
+.headline{margin:12px 0 8px;font-size:72px;line-height:1.05;font-weight:900;letter-spacing:2px;word-spacing:2px;color:var(--tb-blue-mid);background:none}
+.subhead{color:var(--muted);max-width:860px;margin:0 auto}
+.cta-row{margin-top:20px;display:flex;justify-content:center;flex-wrap:wrap;gap:12px}
+.hero-logo-wrap{display:flex;justify-content:center}
+.hero-logo{margin-top:24px;width:min(140px,14vw);border-radius:0;image-rendering:auto;object-fit:contain;display:block}
+
+/* HUD Demo */
+.hud-demo{padding:24px 0 12px}
+.card{background:rgba(255,255,255,0.06);border:1px solid var(--soft);border-radius:18px;padding:18px}
+.badge{padding:6px 10px;border-radius:999px;border:1px solid var(--soft);font-size:12px;background:rgba(255,255,255,0.04)}
+.live-pill{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:#20e0a0}
+.live-pill .dot{width:10px;height:10px;border-radius:50%;background:#20e0a0;box-shadow:0 0 0 4px rgba(32,224,160,0.2);animation:pulse 1.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(32,224,160,0.4)}70%{box-shadow:0 0 0 10px rgba(32,224,160,0)}100%{box-shadow:0 0 0 0 rgba(32,224,160,0)}}
+.grid3{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:720px){.grid3{grid-template-columns:repeat(3,1fr)}}
+.kv{background:rgba(255,255,255,0.05);border:1px solid var(--soft);border-radius:12px;padding:12px}
+.kv .k{color:var(--muted);font-size:13px}
+.kv .v{margin-top:4px;font-size:20px;font-weight:700}
+.sparkline{height:120px;background:rgba(255,255,255,0.05);border:1px solid var(--soft);border-radius:12px;padding:8px}
+.sparkline svg{width:100%;height:100%}
+.sparkline .grid{stroke:rgba(255,255,255,0.08)}
+.sparkline .line{stroke:var(--tb-blue)}
+.sparkline .pt{fill:var(--tb-blue)}
+.note{margin-top:10px;color:rgba(255,255,255,0.55);font-size:12px}
+
+/* Sections */
+.features,.arch,.faq,.pricing,.cta{padding:54px 0}
+.section-title{text-align:center;font-size:34px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.section-sub{text-align:center;color:var(--muted);max-width:860px;margin:8px auto 0}
+.grid4{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:900px){.grid4{grid-template-columns:repeat(4,1fr)}}
+.feature h3{margin:0 0 6px;font-size:18px}
+.feature p{color:var(--muted)}
+
+/* CTA */
+.cta-inner{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:900px){.cta-inner{grid-template-columns:1.2fr 0.8fr}}
+.form input{width:100%;padding:12px;margin:6px 0;border-radius:12px;border:1px solid var(--soft);background:rgba(255,255,255,0.05);color:var(--text)}
+.fine{margin-top:6px;color:rgba(255,255,255,0.55);font-size:12px}
+.mini-logo{width:64px;height:64px;image-rendering:auto;object-fit:contain}
+.mini-logo-footer{width:48px;height:48px;image-rendering:auto;object-fit:contain}
+
+/* Footer */
+.footer{border-top:1px solid var(--soft);padding:22px 0}
+
+
+/* v1.9.6: Color TradeBlade name in CTA card to brand blue */
+.cta-card .row.align-center.gap .muted{ color: var(--tb-blue-mid); }
+
+/* v1.9.8: Brighten 'Ninjatrader 8' inside eyebrow */
+.eyebrow-nt8{color:#fff;font-weight:700}

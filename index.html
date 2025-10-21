@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TradeBlade — Session‑True NT8 Robot</title>
+  <meta name="description" content="TradeBlade: Prop‑style guardrails, session‑true timing, and a crisp HUD for NinjaTrader 8." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#">
+        <img src="assets/tb-logo.png" alt="TradeBlade logo" class="brand-logo" />
+        <span class="brand-wordmark">TRADEBLADE</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#hud">HUD</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a href="#cta" class="btn btn-primary">Get Access</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="eyebrow"><span class="eyebrow-nt8">Ninjatrader 8</span> session-true trading.</div>
+        <h1 class="headline">TRADEBLADE</h1>
+        <p class="subhead">Prop‑style guardrails, session‑aware entry windows, and a zero‑flicker HUD. Built to ship real sessions, not just backtests.</p>
+        <div class="cta-row">
+          <a href="#cta" class="btn btn-primary">Request Early Access</a>
+          <a href="#features" class="btn btn-ghost">See Features</a>
+        </div>
+        <div class="hero-logo-wrap">
+          <img src="assets/tb-logo.png" alt="TradeBlade" class="hero-logo" />
+        </div>
+      </div>
+    </section>
+
+    <section id="hud" class="hud-demo">
+      <div class="container">
+        <div class="card">
+          <div class="row space-between align-center">
+            <div class="live-pill"><span class="dot"></span>LIVE</div>
+            <div class="badge">TB HUD</div>
+          </div>
+          <div class="grid3 mt-16">
+            <div class="kv"><div class="k">Distance to Max Loss</div><div class="v">$ 250</div></div>
+            <div class="kv"><div class="k">HWM (Today)</div><div class="v">$ 423</div></div>
+            <div class="kv"><div class="k">Entries</div><div class="v">3 / side</div></div>
+          </div>
+          <div class="mt-16">
+            <div class="k small">Session PnL</div>
+            <div class="sparkline">
+              <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+                <path d="M0 50 H300" class="grid" />
+                <path d="M0 25 H300" class="grid" />
+                <path d="M0 75 H300" class="grid" />
+                <polyline class="line" fill="none" stroke-width="2"
+                  points="0,70 50,55 100,40 150,45 200,30 250,38 300,20" />
+                <circle cx="0" cy="70" r="3" class="pt" />
+                <circle cx="50" cy="55" r="3" class="pt" />
+                <circle cx="100" cy="40" r="3" class="pt" />
+                <circle cx="150" cy="45" r="3" class="pt" />
+                <circle cx="200" cy="30" r="3" class="pt" />
+                <circle cx="250" cy="38" r="3" class="pt" />
+                <circle cx="300" cy="20" r="3" class="pt" />
+              </svg>
+            </div>
+          </div>
+          <p class="note">Demo HUD with sample data. Replace with a real screenshot from your Visualizer.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="features">
+      <div class="container">
+        <h2 class="section-title">Fast where it matters. Safe where it counts.</h2>
+        <p class="section-sub">A clean robot that respects your risk, publishes on 1‑second cadence, and keeps the HUD honest—no auto‑tune at launch.</p>
+        <div class="grid3 mt-24">
+          <div class="card feature"><h3>Breakout & Mean‑Reversion Lanes</h3><p>Two clear lanes. You choose the mode per session; entries and targets are deterministic.</p></div>
+          <div class="card feature"><h3>Prop‑Style Risk Guardrails</h3><p>Daily halt and trailing/flat loss modes with hard lockouts that surface clearly on the HUD.</p></div>
+          <div class="card feature"><h3>Session‑True Timing</h3><p>Entry window and rollover align to the first bar of the trading day—time‑zone agnostic.</p></div>
+          <div class="card feature"><h3>Plug‑and‑Run on NT8</h3><p>Drop the Strategy + Visualizer into NinjaTrader 8 and pair via a simple tag.</p></div>
+          <div class="card feature"><h3>Low‑Latency HUD</h3><p>1s heartbeats and a zero‑flicker LIVE pill with explicit reasons when entries are denied.</p></div>
+          <div class="card feature"><h3>Per‑Session HWM Tracking</h3><p>Account‑day high‑water‑mark is upserted on the in‑process bus and echoed to the HUD.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture" class="arch">
+      <div class="container">
+        <h2 class="section-title">Launch architecture</h2>
+        <p class="section-sub">No tuner at launch. Clear, inspectable flow from the Strategy to the HUD.</p>
+        <div class="grid4 mt-24">
+          <div class="card feature"><h3>Strategy</h3><p>Entries/exits with session‑aware window, loss‑limit lockouts, and 1‑second publishing.</p></div>
+          <div class="card feature"><h3>Bus / DTO</h3><p>In‑process store with TTL that holds the latest snapshot and per‑session HWM.</p></div>
+          <div class="card feature"><h3>Publish Shim</h3><p>Lightweight identity shim that normalizes keys and forwards DTOs into the bus.</p></div>
+          <div class="card feature"><h3>HUD</h3><p>Visualizer reads the bus and renders a crisp, zero‑flicker dashboard on your chart.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+      <div class="container">
+        <h2 class="section-title">Start simple. Upgrade when you scale.</h2>
+        <div class="grid3 mt-24">
+          <div class="card price">
+            <div class="tag">Starter</div>
+            <div class="price-amt">$0</div>
+            <p class="muted">Sandbox & backtests</p>
+            <ul class="plist"><li>Strategy + HUD</li><li>1s publishing</li><li>Email support</li></ul>
+            <a href="#cta" class="btn btn-ghost wfull">Choose Starter</a>
+          </div>
+          <div class="card price featured">
+            <div class="ribbon">Most Popular</div>
+            <div class="tag">Pro</div>
+            <div class="price-amt">$49/mo</div>
+            <p class="muted">Live trading essentials</p>
+            <ul class="plist"><li>Risk guardrails</li><li>Per‑session HWM</li><li>Priority support</li></ul>
+            <a href="#cta" class="btn btn-primary wfull">Choose Pro</a>
+          </div>
+          <div class="card price">
+            <div class="tag">Desk</div>
+            <div class="price-amt">$99/mo</div>
+            <p class="muted">For funded & teams</p>
+            <ul class="plist"><li>All Pro features</li><li>Multi‑account Viz</li><li>License manager</li></ul>
+            <a href="#cta" class="btn btn-ghost wfull">Choose Desk</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="faq">
+      <div class="container">
+        <h2 class="section-title">Quick answers</h2>
+        <details class="card faq-item"><summary>Does TradeBlade require NinjaTrader 8?</summary>
+          <p>Yes. The current build targets NinjaTrader 8.</p></details>
+        <details class="card faq-item"><summary>Is the HUD real‑time?</summary>
+          <p>Yes. The strategy publishes 1s heartbeats; the visualizer polls every second with a zero‑flicker LIVE pill.</p></details>
+        <details class="card faq-item"><summary>How are risk limits enforced?</summary>
+          <p>Daily halt, trailing/flat loss, and session HWM gates are enforced in‑strategy and surfaced on the HUD.</p></details>
+        <details class="card faq-item"><summary>Do you offer trials?</summary>
+          <p>We’ll announce early‑access invites soon. Join the list below.</p></details>
+      </div>
+    </section>
+
+    <section id="cta" class="cta">
+      <div class="container cta-inner">
+        <div class="cta-copy">
+          <h3>Get early access</h3>
+          <p>Tell us about your setup and we’ll send a download and onboarding steps.</p>
+          <form class="form">
+            <input placeholder="Your email" />
+            <input placeholder="Your broker (optional)" />
+            <button type="button" class="btn btn-primary">Join the list</button>
+            <div class="fine">By submitting, you agree to receive product emails. No spam, unsubscribe anytime.</div>
+          </form>
+        </div>
+        <div class="cta-card card">
+          <div class="row align-center gap">
+            <img src="assets/tb-logo.png" class="mini-logo" alt="TB" />
+            <div>
+              <div class="muted">TradeBlade Technologies</div>
+              <div class="k">Launch Playbook</div>
+            </div>
+          </div>
+          <ul class="plist mt-12">
+            <li>Vendor packaging for NT8</li>
+            <li>Visualizer & HUD polish</li>
+            <li>Prop‑style guardrail presets</li>
+            <li>Docs & quickstart videos</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container row space-between align-center">
+      <div class="row align-center gap">
+        <img src="assets/tb-logo.png" alt="TradeBlade" class="mini-logo-footer" />
+        <span class="muted">© <span id="y"></span> TradeBlade Technologies LLC</span>
+      </div>
+      <div class="row gap">
+        <a href="#" class="muted">Terms</a>
+        <a href="#" class="muted">Privacy</a>
+        <a href="#" class="muted">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>
