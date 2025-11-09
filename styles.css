@@ -1,4 +1,3 @@
-
 :root{
   --tb-blue:#178BCA;
   --tb-blue-light:#39BDF8;
@@ -88,19 +87,6 @@ a{color:inherit;text-decoration:none}
 /* Footer */
 .footer{border-top:1px solid var(--soft);padding:22px 0}
 
-/* Mobile header: stacked brand + CTA */
-@media (max-width: 600px) {
-  .site-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px 8px;
-  }
-  .site-header .brand { font-size: 22px; line-height: 1.1; }
-  .site-header .cta { width: 100%; max-width: 360px; }
-}
-
 /* Mobile polish */
 @media (max-width: 480px){
   .container{ padding: 0 14px; }
@@ -119,4 +105,165 @@ a{color:inherit;text-decoration:none}
   .grid3, .grid4{ gap: 10px; }
   .mini-logo{ width: 48px; height: 48px; }
   .mini-logo-footer{ width: 40px; height: 40px; }
+}
+/* === Ecosystem / Compliance blocks === */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+.section { padding: 48px 0; }
+.h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 16px; }
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  align-items: center;
+}
+.resource-card {
+  display: block;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+  text-align: center;
+}
+.resource-logo { display: inline-block; max-width: 240px; width: 100%; height: auto; }
+
+.site-footer { border-top: 1px solid #e5e7eb; margin-top: 48px; background: #ffffff; }
+.footer-inner { padding: 24px 0 36px; color: #4b5563; line-height: 1.6; font-size: .95rem; }
+.footer-inner .mb { margin-bottom: 14px; }
+.footer-inner .fineprint { margin-top: 8px; font-size: .8rem; color: #6b7280; }
+
+/* Mobile tweaks */
+@media (max-width: 640px) {
+  .section { padding: 32px 0; }
+  .h2 { font-size: 1.4rem; }
+  .footer-inner { font-size: .9rem; }
+}
+
+
+/* Transparent card for logos on dark backgrounds */
+.logo-card {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Ecosystem top-left badge */
+.section-tight { padding: 18px 0 0; }
+.ecosystem-top { display: flex; align-items: center; }
+.ecosystem-top-logo { max-width: 320px; width: 100%; height: auto; }
+/* Partners row shows 2 items side-by-side, stacks on mobile */
+.resources-grid { grid-auto-rows: minmax(40px, auto); }
+@media (max-width: 640px) {
+  .ecosystem-top-logo { max-width: 260px; }
+}
+
+
+/* Partners centered column */
+.partners-col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  width:100%;
+}
+.partner-nt{ 
+  max-width: 520px; 
+  width: 100%; 
+  height: auto; 
+}
+.partner-kinetick{
+  width: 100%;
+  height: auto;
+  max-width: 1100px; /* keep within container */
+  display:block;
+}
+.resources-grid{
+  display:flex;
+  justify-content:center;
+}
+
+
+/* === Size tweaks: make logos smaller for a crisper look === */
+.partners-center{ gap:12px; }
+.partners-center .partner-nt{ max-width:360px; }
+.partners-center .partner-kinetick{ max-width:728px; }
+@media (max-width: 640px){
+  .partners-center .partner-nt{ max-width:240px; }
+  .partners-center .partner-kinetick{ max-width:360px; }
+}
+
+
+/* === Size tweak #2: make both elements smaller for scale === */
+.partners-center{ gap:10px; }
+.partners-center .partner-nt{ max-width:220px; }
+.partners-center .partner-kinetick{ max-width:600px; }
+@media (max-width: 640px){
+  .partners-center .partner-nt{ max-width:180px; }
+  .partners-center .partner-kinetick{ max-width:320px; }
+}
+
+
+/* backstop sizing */
+.partners-center img.partner-nt{ max-width:220px !important; width:100% !important; height:auto !important; }
+.partners-center img.partner-kinetick{ max-width:600px !important; width:100% !important; height:auto !important; }
+.ecosystem-top img.ecosystem-top-logo{ max-width:220px !important; width:100% !important; height:auto !important; }
+
+/* === v2-11 Mobile fixes (center ecosystem logo; reduce header CTA padding ~30%) === */
+@media (max-width: 640px){
+  .ecosystem-top{ display:flex !important; justify-content:center !important; }
+  .ecosystem-top-logo{ display:block !important; margin:0 auto !important; }
+
+  header.nav a.btn.btn-primary.get-access-btn{
+    padding: 8px 16px !important;   /* ~30% less than typical 12px 24px */
+    font-size: inherit !important;  /* keep text size */
+    border-radius: 12px !important;
+  }
+  /* Fallbacks in case class injection missed */
+  header.nav a.btn.btn-primary{ padding: 8px 16px !important; font-size: inherit !important; }
+}
+
+/* === v2-12 Mobile polish === */
+@media (max-width: 640px){
+  /* Tighten space below the Ecosystem badge */
+  section[aria-label="NinjaTrader Ecosystem Top"]{
+    margin-bottom: 8px !important;
+    padding-bottom: 0 !important;
+  }
+  .ecosystem-top{ margin-bottom: 0 !important; }
+
+  /* Header CTA: remove blue box, keep text clickable */
+  header.nav a.btn.btn-primary.get-access-btn,
+  header.nav a.btn.btn-primary,
+  .get-access-btn{
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;            /* remove the box feel */
+    font-size: inherit !important;    /* keep text size */
+    line-height: 1.2 !important;
+  }
+  /* Link color to keep visibility */
+  header.nav a.get-access-btn{ color: var(--tb-blue-light, #39BDF8) !important; }
+  header.nav a.get-access-btn:hover{ text-decoration: underline !important; }
+}
+
+/* === v2-13 mobile polish: white header CTA text; tighter gap under ecosystem logo === */
+@media (max-width: 640px){
+  /* keep header CTA text white */
+  header.nav a.get-access-btn{ color:#ffffff !important; }
+
+  /* shave a bit more space under the Ecosystem badge */
+  section[aria-label="NinjaTrader Ecosystem Top"]{
+    margin-bottom: 4px !important;
+  }
+}
+
+/* === v2-14 mobile spacing fine-tune === */
+@media (max-width: 640px){
+  section[aria-label="NinjaTrader Ecosystem Top"]{
+    margin-bottom: 2px !important;
+  }
 }
