@@ -16,7 +16,7 @@
 <img alt="TradeBlade logo" class="brand-logo" src="assets/tb-logo.png"/>
 <span class="brand-wordmark">TRADEBLADE</span>
 </a>
-<nav class="nav-links"><a href="#hedge">Hedge</a><a href="#math">Math</a><a href="#book">Free Book</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+<nav class="nav-links"><a href="#hedge">Hedge</a><a href="math.html">Math</a><a href="#book">Free Book</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
 <a class="btn btn-primary get-access-btn" href="#cta">Get Access</a>
 </div>
 </header>
@@ -39,7 +39,7 @@
 <h1 class="headline">FAIL THE EVAL.<br/>GET PAID ANYWAY.</h1>
 <p class="subhead">Most prop traders fail evaluations. TradeBlade puts a small live hedge behind your eval so every blow‑up feeds your real account. The math works because failure is the most common outcome — and you're on the right side of it.</p>
 <div class="cta-row">
-<a class="btn btn-primary get-access-btn" href="#math">See the Math</a>
+<a class="btn btn-primary get-access-btn" href="math.html">See the Math</a>
 <a class="btn btn-ghost" href="#cta">Get Access</a>
 </div>
 <div class="hero-logo-wrap">
@@ -56,14 +56,14 @@
 <div class="engine-badge-large">
 <div class="badge-icon">🧮</div>
 <div class="badge-content">
-<div class="badge-label">Real math</div>
+<div class="badge-label">Prove it with math</div>
 <h2 class="badge-title">What happens across eval cycles</h2>
 </div>
 </div>
-<p class="engine-tagline">No vague promises. Plug in your costs, payouts, and hedge size. See the results.</p>
+<p class="engine-tagline">No vague promises. Real expected value. Real numbers. Real math.</p>
 </div>
 <!-- How it works -->
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:24px;margin-bottom:24px;">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:24px;margin-bottom:28px;">
 <div class="card" style="text-align:center;padding:20px 16px;">
 <div style="font-size:28px;margin-bottom:8px;">📉</div>
 <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Prop blows up</div>
@@ -80,8 +80,10 @@
 <div class="muted" style="font-size:12px;">Failures are common &amp; profitable. Payouts are rare but still net positive.</div>
 </div>
 </div>
-<div class="card" style="margin-top:0;">
-<div id="hedge-analysis-root"></div>
+<!-- CTA to calculator page -->
+<div style="text-align:center;">
+<a class="btn btn-primary" href="math.html" style="font-size:20px;padding:18px 40px;border-radius:16px;">How Much Does Failure Pay? →</a>
+<p class="muted small" style="margin-top:12px;">Interactive hedge profit calculator — preloaded for an Apex 50k eval with 1 MES counter-entry hedge.</p>
 </div>
 </div>
 </section>
@@ -369,10 +371,5 @@ document.getElementById('earlyAccessForm').addEventListener('submit', async func
   }
 });
 </script>
-
-<script crossorigin="" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
-<script src="hedge-analysis.js"></script>
 </body>
 </html>

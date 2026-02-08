@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>How Much Does Failure Pay? — TradeBlade Hedge Profit Calculator</title>
+<meta content="TradeBlade Hedge Profit Calculator: plug in your prop firm costs, payouts, and hedge size. See exactly what eval failure pays you." name="description"/>
+<link href="assets/favicon.png" rel="icon" type="image/png"/>
+<style>
+  :root {
+    --tb-blue: #178BCA;
+    --tb-blue-light: #39BDF8;
+    --tb-blue-mid: #259FDC;
+    --tb-teal: #0EA5BC;
+    --bg-0: #0b0c10;
+    --bg-1: #0d0f16;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.75);
+    --soft: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    margin: 0; padding: 0;
+    background: linear-gradient(180deg, var(--bg-0), var(--bg-1), var(--bg-0));
+    color: var(--text);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* Nav bar */
+  .nav {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(4px);
+    border-bottom: 1px solid var(--soft);
+  }
+  .nav-inner {
+    max-width: 1120px; margin: 0 auto; padding: 0 16px;
+    height: 60px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-logo { width: 40px; height: 40px; border-radius: 0; object-fit: contain; }
+  .brand-wordmark { font-weight: 800; letter-spacing: 2px; font-size: 16px; color: var(--tb-blue-mid); }
+  .nav-links { display: flex; gap: 20px; }
+  .nav-links a { font-size: 14px; color: var(--muted); transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--soft); font-weight: 600; font-size: 14px; }
+  .btn-primary { background: linear-gradient(90deg, var(--tb-blue), var(--tb-teal)); border-color: transparent; }
+
+  /* Page header */
+  .page-header {
+    max-width: 860px; margin: 0 auto; padding: 40px 20px 0;
+    text-align: center;
+  }
+  .page-header h1 {
+    font-size: 38px; font-weight: 900; margin: 0 0 8px;
+    color: var(--tb-blue-mid);
+  }
+  .page-header .subtitle {
+    font-size: 18px; color: var(--muted); margin: 0 0 6px; line-height: 1.5;
+  }
+  .page-header .defaults-note {
+    font-size: 13px; color: rgba(240,185,64,0.9); margin: 12px 0 0;
+    padding: 10px 16px; display: inline-block;
+    border: 1px solid rgba(240,185,64,0.25); border-radius: 10px;
+    background: rgba(240,185,64,0.06);
+  }
+
+  /* Calculator container */
+  #hedge-analysis-root {
+    max-width: 860px; margin: 0 auto; padding: 0 8px;
+  }
+
+  /* Footer */
+  .calc-footer {
+    max-width: 860px; margin: 40px auto 0; padding: 20px;
+    text-align: center; border-top: 1px solid var(--soft);
+  }
+  .calc-footer a { color: var(--tb-blue-light); }
+  .calc-footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .page-header h1 { font-size: 26px; }
+    .page-header .subtitle { font-size: 15px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Slim nav -->
+<header class="nav">
+<div class="nav-inner">
+  <a class="brand" href="index.html">
+    <img alt="TradeBlade logo" class="brand-logo" src="assets/tb-logo.png"/>
+    <span class="brand-wordmark">TRADEBLADE</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#features">Features</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="index.html#faq">FAQ</a>
+  </div>
+  <a class="btn btn-primary" href="index.html#cta">Get Access</a>
+</div>
+</header>
+
+<!-- Page header -->
+<div class="page-header">
+  <h1>How Much Does Failure Pay?</h1>
+  <p class="subtitle">Plug in your numbers. See what eval failure actually pays you.</p>
+  <div class="defaults-note">
+    ⚡ Preloaded for an <strong>Apex Trader Funding 50k</strong> account — 1 ES prop position, 1 MES opposite-direction hedge on your live account. Adjust everything.
+  </div>
+</div>
+
+<!-- Calculator mounts here -->
+<div id="hedge-analysis-root"></div>
+
+<!-- Footer -->
+<div class="calc-footer">
+  <p style="color:var(--muted);font-size:13px;margin:0 0 8px;">
+    <a href="index.html">← Back to TradeBlade</a> · <a href="index.html#pricing">See Plans</a> · <a href="index.html#faq">FAQ</a>
+  </p>
+  <p style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;">
+    TradeBlade Technologies LLC · NinjaTrader® is a registered trademark of NinjaTrader Group, LLC.
+  </p>
+</div>
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="hedge-analysis.js"></script>
+</body>
+</html>
