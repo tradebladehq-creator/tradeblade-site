@@ -1,332 +1,79 @@
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>TradeBlade — Session‑True NT8 Robot</title>
-<meta content="TradeBlade: Prop‑style guardrails, session‑true timing, and a crisp HUD for NinjaTrader 8." name="description"/>
-<link href="assets/favicon.png" rel="icon" type="image/png"/>
-<link href="styles.css" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeBlade | Hedge System</title>
+<style>
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    background: #0c0e14;
+    color: #ffffff;
+}
+.hero {
+    text-align: center;
+    padding: 80px 20px 40px 20px;
+}
+.hero h1 {
+    font-size: 48px;
+    margin: 0;
+    font-weight: 800;
+}
+.hero p {
+    font-size: 20px;
+    opacity: 0.8;
+    margin-top: 20px;
+}
+.section {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+iframe {
+    width: 100%;
+    height: 2600px;
+    border: none;
+    background: #0c0e14;
+}
+.footer {
+    text-align: center;
+    padding: 40px 20px;
+    opacity: 0.6;
+    font-size: 14px;
+}
+.button {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 14px 28px;
+    background: #1e90ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+}
+.button:hover {
+    background: #187bdb;
+}
+</style>
 </head>
 <body>
-<header class="nav">
-<div class="container nav-inner">
-<a class="brand" href="#">
-<img alt="TradeBlade logo" class="brand-logo" src="assets/tb-logo.png"/>
-<span class="brand-wordmark">TRADEBLADE</span>
-</a>
-<nav class="nav-links">
-<a href="#engine">Engine</a>
-<a href="#features">Features</a>
-<a href="#architecture">Architecture</a>
-<a href="#hud">HUD</a>
-<a href="#pricing">Pricing</a>
-<a href="#faq">FAQ</a>
-</nav>
-<a class="btn btn-primary get-access-btn" href="#cta">Get Access</a>
-</div>
-</header>
-<!-- Top-left NinjaTrader Ecosystem badge -->
-<section aria-label="NinjaTrader Ecosystem Top" class="container section section-tight">
-<div class="ecosystem-top">
-<div class="ecosystem-wrap" style="text-align:center;">
-<img alt="NinjaTrader® Ecosystem" class="ecosystem-top-logo" src="assets/NinjaTrader_NTE_OW_RGB-600x100.png" style="max-width:220px;width:100%;height:auto;"/>
-</div>
-</div>
-</section>
-<main>
-<section class="hero">
-<div class="container hero-inner">
-<div class="eyebrow"><span class="eyebrow-nt8">Ninjatrader 8</span> session-true trading.</div>
-<h1 class="headline">TRADEBLADE</h1>
-<div class="hero-engine-badge">
-<div class="engine-icon">⚡</div>
-<div class="engine-text">
-<div class="engine-label">Powered by</div>
-<div class="engine-name">Breakthrough Interactive Levels Engine™</div>
-</div>
-</div>
-<p class="subhead">Most traders don't lose because their strategy is wrong — they lose because they can't execute it consistently. TradeBlade eliminates the emotional impulses, hesitation, and decision fatigue that sabotage real traders.</p>
-<div class="cta-row">
-<a class="btn btn-primary get-access-btn" href="#cta">Request Early Access</a>
-<a class="btn btn-ghost" href="#engine">See the Engine</a>
-</div>
-<div class="hero-logo-wrap">
-<img alt="TradeBlade" class="hero-logo" src="assets/tb-logo.png"/>
-</div>
-</div>
-</section>
-<section class="hud-demo" id="hud"><div class="container"><div class="card"><img src="https://tb-upload-chart.tradebladehq.workers.dev/" style="width:100%; border-radius:12px;"/></div></div></section>
-<section class="engine-showcase" id="engine">
-<div class="container">
-<div class="engine-header">
-<div class="engine-badge-large">
-<div class="badge-icon">⚡</div>
-<div class="badge-content">
-<div class="badge-label">Introducing</div>
-<h2 class="badge-title">Breakthrough Interactive Levels Engine™</h2>
-</div>
-</div>
-<p class="engine-tagline"> Most traders don't struggle because they lack a plan — they struggle because they second-guess it after they're already committed. TradeBlade's real-time HUD and rule-based structure keep your original decisions visible and grounded as price moves. Instead of reacting emotionally or changing course mid-trade, you can see your plan, your levels, and your risk clearly laid out, making it easier to stick with disciplined execution.</p>
+
+<div class="hero">
+    <h1>FAIL THE EVAL.<br>GET PAID ANYWAY.</h1>
+    <p>1 ES on the eval. 1 MES live in the opposite direction.<br>
+    When the eval account loses, the hedge account pays.</p>
+    <a href="#math" class="button">See The Math</a>
 </div>
 
-<div class="engine-pillars mt-24">
-<div class="pillar-card pillar-featured">
-<div class="pillar-icon">🎯</div>
-<h3>Breakthrough Interactive Levels Engine™</h3>
-<p>Your levels become a decision scaffold, not a debate. The engine publishes deterministic breakout and mean-reversion levels on every 1-second heartbeat, removing the psychological ambiguity that destroys consistency. You see exactly where entries are allowed, where they're blocked, and why — eliminating hesitation, second-guessing, and emotional bias.</p>
-<div class="pillar-benefits">
-<div class="benefit-item">
-<span class="benefit-check">✓</span>
-<span>Removes discretionary hesitation</span>
-</div>
-<div class="benefit-item">
-<span class="benefit-check">✓</span>
-<span>Eliminates redrawing and self-doubt</span>
-</div>
-<div class="benefit-item">
-<span class="benefit-check">✓</span>
-<span>Anchors decisions with objective structure</span>
-</div>
-</div>
+<div id="math" class="section">
+    <iframe src="hedge-analysis.html"></iframe>
 </div>
 
-<div class="pillar-card reveal">
-<div class="pillar-icon">⚡</div>
-<h3>Decision Fatigue Immunity™</h3>
-<p>TradeBlade includes a real-time visual HUD that shows exactly what the strategy is doing as the market unfolds. You can see active levels, trade intent, and risk states at a glance—instead of guessing or trusting a hidden algorithm. Most automated strategies operate blindly in the background. TradeBlade makes its decisions visible, so you stay informed, confident, and in control.</p>
+<div class="footer">
+    © TradeBlade Hedge Execution System
 </div>
 
-<div class="pillar-card reveal">
-<div class="pillar-icon">🛡️</div>
-<h3>Session-True Risk Enforcement</h3>
-<p>TradeBlade enforces the rules you set — even when emotions run hot. Daily halts, trailing loss limits, and safety locks trigger automatically and show instantly on the HUD. It's your discipline engine, keeping a bad moment from turning into a blown account.</p>
-</div>
-</div>
-
-<div class="engine-differentiator mt-24">
-<div class="diff-content">
-<h3 class="diff-title">What Makes It Breakthrough?</h3>
-<div class="diff-grid">
-<div class="diff-item">
-<div class="diff-label">Traditional NT8 Robots</div>
-<div class="diff-desc">Trade in isolation with no visibility, no feedback, no emotional guardrails. You stare at charts, get tired, lose focus, and make mistakes. Human emotions sabotage mechanical systems.</div>
-</div>
-<div class="diff-vs">VS</div>
-<div class="diff-item diff-highlight">
-<div class="diff-label">TradeBlade Engine</div>
-<div class="diff-desc">A unified system that synchronizes decisions, state, and discipline across your HUD and robot — enforcing stable behavior, neutral execution, and psychological consistency. The result isn't "smarter trading." It's cleaner trading, the only kind that works long term.</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="features" id="features">
-<div class="container">
-<h2 class="section-title">Powered By the Engine. Built For Real Trading.</h2>
-<p class="section-sub">Every feature is designed for transparency and control—know exactly what the robot is doing, when, and why.</p>
-<div class="grid3 mt-24">
-<div class="card feature reveal"><h3>🎯 Session Key Levels &amp; Interactive Anchors</h3><p>TradeBlade combines automatic and manual key price levels into a single interactive system. You can adjust levels in real time, and TradeBlade instantly updates entries, targets, and risk boundaries. This gives you direct control over how trades are planned and executed without guessing or recalculating by hand.</p></div>
-<div class="card feature reveal"><h3>🛡️ Entry Mode (Breakout or Mean Reversion)</h3><p>TradeBlade offers two entry modes: Breakout and Mean Reversion. Breakout trades look for price to move through a key level and continue in that direction, while Mean Reversion trades look for price to reject a level and move back toward balance. Each mode follows clear, rule-based logic with hard risk limits enforced at all times.</p></div>
-<div class="card feature reveal"><h3>⏰ Long/Short Permissions &amp; Time Windows</h3><p>TradeBlade lets you control when and how it trades. You can define trading hours, long or short permissions, and session boundaries so trades only occur during the times that fit your plan. This helps prevent trades outside your intended window and keeps execution consistent, even when the market slows down or becomes unpredictable.</p></div>
-<div class="card feature reveal"><h3>🔌 1-Second Heartbeat Publishing</h3><p>TradeBlade updates its internal view of the market every second, so decisions are always based on current information. This helps ensure trades react to real-time price behavior rather than delayed signals, keeping execution aligned with what's actually happening in the market.</p></div>
-<div class="card feature reveal"><h3>🎯 Rule-Based Trade Management</h3><p>TradeBlade manages every trade using clear, predefined rules. Once a trade is active, decisions follow your plan instead of emotions. This creates consistent behavior across every trade and helps remove hesitation, second-guessing, and impulse decisions during fast markets.</p></div>
-<div class="card feature reveal"><h3>📈 Risk Controls Are Emotional Controls</h3><p>Risk controls help limit losses and prevent overtrading during difficult market conditions. TradeBlade enforces daily loss limits, cooldown periods, and session resets so trading stops when conditions no longer match your plan. These safeguards help protect your account and keep decision-making disciplined under pressure.</p></div>
-</div>
-</div>
-</section>
-<section class="arch" id="architecture">
-<div class="container">
-<h2 class="section-title">Launch architecture</h2>
-<p class="section-sub">No tuner at launch. Clear, inspectable flow from the Strategy to the HUD.</p>
-<div class="grid4 mt-24">
-<div class="card feature reveal"><h3>Strategy</h3><p>Entries/exits with session‑aware window, loss‑limit lockouts, and 1‑second publishing.</p></div>
-<div class="card feature reveal"><h3>Bus / DTO</h3><p>In‑process store with TTL that holds the latest snapshot and per‑session HWM.</p></div>
-<div class="card feature reveal"><h3>Publish Shim</h3><p>Lightweight identity shim that normalizes keys and forwards DTOs into the bus.</p></div>
-<div class="card feature reveal"><h3>HUD</h3><p>Visualizer reads the bus and renders a crisp, zero‑flicker dashboard on your chart.</p></div>
-</div>
-</div>
-</section>
-<section class="pricing" id="pricing">
-<div class="container">
-<h2 class="section-title">Choose your plan</h2>
-<div class="grid3 mt-24">
-
-<div class="card price featured">
-<div class='most-popular-badge'>Most Popular</div>
-<div class="tag">Pro</div>
-<div class="price-amt">$69/mo</div>
-<p class="muted">For traders who want automated discipline and psychological guardrails, and are comfortable managing their emotional development independently</p>
-<ul class="plist">
-<li>Full TradeBlade Engine + HUD</li>
-<li>Live trading enabled</li>
-<li>Risk guardrails</li>
-<li>Per-session HWM</li>
-<li>AI-only support (no direct messaging)</li>
-<li>Email support (72-hour response)</li>
-<li>No onboarding calls or human walkthroughs</li>
-<li>Tutorial onboarding only</li>
-<li>Updates included</li>
-</ul>
-<a class="btn btn-primary wfull" href="https://buy.stripe.com/5kQ5kCb7e5n4ef72wJgbm00">Choose Pro</a>
-</div>
-
-<div class="card price reveal">
-<div class="tag">Desk</div>
-<div class="price-amt">$199/mo</div>
-<p class="muted">For traders who want stronger enforcement, deeper psychological consistency features, and tools that prevent both tilt and overconfidence</p>
-<ul class="plist">
-<li>Everything in Pro</li>
-<li>Email support within 24 hours</li>
-<li>Priority AI + human-assisted troubleshooting</li>
-<li>Onboarding help</li>
-<li>Multi-account viz</li>
-<li>Enhanced analytics</li>
-</ul>
-<a class="btn btn-ghost wfull" href="https://buy.stripe.com/5kQaEW8Z63eW5IBfjvgbm01">Choose Desk</a>
-</div>
-
-<div class="card price reveal">
-<div class="tag">Elite</div>
-<div class="price-amt">$399/mo</div>
-<p class="muted">For teams or professionals who require institutional-grade emotional controls, advanced consistency layers, and the highest stability under variance</p>
-<ul class="plist">
-<li>Everything in Desk</li>
-<li>Direct founder access (limited slots)</li>
-<li>Scheduled calls &amp; strategy tune-ups</li>
-<li>White-glove support</li>
-<li>Custom template development</li>
-</ul>
-<a class="btn btn-ghost wfull" href="https://buy.stripe.com/eVq3cu6QYaHofjb8V7gbm02">Choose Elite</a>
-</div>
-
-</div>
-</div>
-</section>
-<section class="faq" id="faq">
-<div class="container">
-<h2 class="section-title">Quick answers</h2>
-<details class="card faq-item"><summary>Does TradeBlade require NinjaTrader 8?</summary>
-<p>Yes. The current build targets NinjaTrader 8.</p></details>
-<details class="card faq-item"><summary>Is the HUD real‑time?</summary>
-<p>Yes. The strategy publishes 1s heartbeats; the visualizer polls every second with a zero‑flicker LIVE pill.</p></details>
-<details class="card faq-item"><summary>How are risk limits enforced?</summary>
-<p>Daily halt, trailing/flat loss, and session HWM gates are enforced in‑strategy and surfaced on the HUD.</p></details>
-<details class="card faq-item"><summary>Do you offer trials?</summary>
-<p>We'll announce early‑access invites soon. Join the list below.</p></details>
-</div>
-</section>
-<section class="cta" id="cta">
-<div class="container cta-inner">
-<div class="cta-copy">
-<h3>Get early access</h3>
-<p>Tell us about your setup and we'll send a download and onboarding steps.</p>
-<form class="form" id="earlyAccessForm">
-<input id="formEmail" name="email" placeholder="Your email" required type="email"/>
-<input id="formBroker" name="broker" placeholder="Your broker (optional)" type="text"/>
-<button class="btn btn-primary" id="formSubmitBtn" type="submit">Join the list</button>
-<div id="formMessage" style="display:none; margin-top:8px; font-size:14px;"></div>
-<div class="fine">By submitting, you agree to receive product emails. No spam, unsubscribe anytime.</div>
-</form>
-</div>
-<div class="cta-card card">
-<div class="row align-center gap">
-<img alt="TB" class="mini-logo" src="assets/tb-logo.png"/>
-<div>
-<div class="muted company">TradeBlade Technologies</div>
-<div class="k">Launch Playbook</div>
-</div>
-</div>
-<ul class="plist mt-12">
-<li>Vendor packaging for NT8</li>
-<li>Visualizer &amp; HUD polish</li>
-<li>Prop‑style guardrail presets</li>
-<li>Docs &amp; quickstart videos</li>
-</ul>
-</div>
-</div>
-</section>
-</main>
-<footer class="footer">
-<div class="container row space-between align-center">
-<div class="row align-center gap">
-<img alt="TradeBlade" class="mini-logo-footer" src="assets/tb-logo.png"/>
-<span class="muted">© <span id="y"></span> TradeBlade Technologies LLC</span>
-</div>
-<div class="row gap">
-<a class="muted" href="#">Terms</a>
-<a class="muted" href="#">Privacy</a>
-<a class="muted" href="#">Contact</a>
-</div>
-</div>
-<!-- Partners / Ecosystem -->
-<section aria-labelledby="partners-title" class="container section">
-<div class="resources-grid">
-<div class="partners-col">
-<div class="ecosystem-wrap" style="text-align:center;">
-<img alt="NinjaTrader® Ecosystem" class="partner-nt" src="assets/NinjaTrader_NTE_OW_RGB-600x100.png" style="max-width:220px;width:100%;height:auto;"/>
-</div>
-<div class="partners-center" style="text-align:center;">
-<img alt="Kinetick® Data Feed" class="partner-kinetick" src="assets/kinetick-banner.gif" style="max-width:600px;width:100%;height:auto;"/>
-</div>
-</div>
-</div></section>
-<div class="footer-tag">TradeBlade is powered by the Breakthrough Interactive Levels Engine™.</div></footer>
-<script>document.getElementById("y").textContent = new Date().getFullYear();</script>
-<section aria-label="Legal" class="container section disclaimer">
-<div class="disclaimer-content">
-<p>Risk Disclosure: Futures and forex trading contains substantial risk and is not for every investor. An investor could potentially lose all or more than the initial investment. Risk capital is money that can be lost without jeopardizing ones' financial security or lifestyle. Only risk capital should be used for trading and only those with sufficient risk capital should consider trading. Past performance is not necessarily indicative of future results.</p>
-<p>Hypothetical Performance Disclosure: Hypothetical performance results have many inherent limitations, some of which are described below. No representation is being made that any account will or is likely to achieve profits or losses similar to those shown; in fact, there are frequently sharp differences between hypothetical performance results and the actual results subsequently achieved by any particular trading program. One of the limitations of hypothetical performance results is that they are generally prepared with the benefit of hindsight. In addition, hypothetical trading does not involve financial risk, and no hypothetical trading record can completely account for the impact of financial risk of actual trading. for example, the ability to withstand losses or to adhere to a particular trading program in spite of trading losses are material points which can also adversely affect actual trading results. There are numerous other factors related to the markets in general or to the implementation of any specific trading program which cannot be fully accounted for in the preparation of hypothetical performance results and all which can adversely affect trading results.</p>
-<p>Live Trade Room Disclosure:  This presentation is for educational purposes only and the opinions expressed are those of the presenter only. All trades presented should be considered hypothetical and should not be expected to be replicated in a live trading account.</p>
-<p>Testimonial Disclosure: Testimonials appearing on this website may not be representative of other clients or customers and is not a guarantee of future performance or success.</p>
-</div>
-</section>
-<script src='reveal.js'></script>
-<script>
-// ─── Early Access Form → Worker → Kit.com ───
-document.getElementById('earlyAccessForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  const email = document.getElementById('formEmail').value.trim();
-  const broker = document.getElementById('formBroker').value.trim();
-  const btn = document.getElementById('formSubmitBtn');
-  const msg = document.getElementById('formMessage');
-
-  if (!email) return;
-
-  btn.disabled = true;
-  btn.textContent = 'Joining...';
-  msg.style.display = 'none';
-
-  try {
-    const resp = await fetch('https://tradeblade-license.tradebladehq.workers.dev/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, broker: broker })
-    });
-
-    const data = await resp.json();
-
-    if (resp.ok && data.subscribed) {
-      msg.style.display = 'block';
-      msg.style.color = '#22c55e';
-      msg.textContent = "You're on the list! Check your email for next steps.";
-      document.getElementById('formEmail').value = '';
-      document.getElementById('formBroker').value = '';
-      btn.textContent = 'Joined ✓';
-    } else {
-      throw new Error(data.error || 'Subscribe failed');
-    }
-  } catch (err) {
-    msg.style.display = 'block';
-    msg.style.color = '#ef4444';
-    msg.textContent = 'Something went wrong. Try again or email support@tradebladehq.com';
-    btn.disabled = false;
-    btn.textContent = 'Join the list';
-  }
-});
-</script>
 </body>
 </html>
