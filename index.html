@@ -49,7 +49,70 @@
 </div>
 </section>
 
-<section class="hud-demo" id="hud"><div class="container"><div class="card"><img src="https://tb-upload-chart.tradebladehq.workers.dev/" style="width:100%; border-radius:12px;"/></div></div></section>
+<section class="hud-demo" id="hud">
+<div class="container">
+<div class="card" style="position:relative; overflow:hidden;">
+  <!-- Status pill -->
+  <div id="tb-status-pill" style="
+    position:absolute; top:12px; right:12px; z-index:10;
+    display:flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:999px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    font-size:13px; font-weight:600; letter-spacing:0.5px; color:#fff;
+    background:rgba(20,20,20,0.85); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,0.1); transition:all 0.3s ease;
+  ">
+    <span id="tb-dot" style="width:8px;height:8px;border-radius:50%;background:#666;transition:all 0.3s ease;"></span>
+    <span id="tb-text">Checking...</span>
+  </div>
+  <!-- Chart image -->
+  <img id="tb-chart" src="assets/tb-chart-static.png" style="width:100%; border-radius:12px; display:block;" alt="TradeBlade Live Chart"/>
+</div>
+</div>
+</section>
+<script>
+(function(){
+  var BASE="https://tb-upload-chart.tradebladehq.workers.dev";
+  var img=document.getElementById("tb-chart");
+  var dot=document.getElementById("tb-dot");
+  var txt=document.getElementById("tb-text");
+  var pill=document.getElementById("tb-status-pill");
+  var isLive=false, timer=null;
+
+  function check(){
+    fetch(BASE+"/status",{cache:"no-store"})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d.live){goLive();}else{goOffline(d.lastUpdate);}
+    })
+    .catch(function(){goOffline(null);});
+  }
+
+  function goLive(){
+    if(!isLive){isLive=true;refreshImg();if(timer)clearInterval(timer);timer=setInterval(refreshImg,60000);}
+    dot.style.background="#22c55e";dot.style.boxShadow="0 0 8px #22c55e";
+    txt.textContent="LIVE";pill.style.border="1px solid rgba(34,197,94,0.3)";
+  }
+
+  function goOffline(ts){
+    isLive=false;if(timer){clearInterval(timer);timer=null;}
+    img.src="assets/tb-chart-static.png";
+    dot.style.background="#666";dot.style.boxShadow="none";
+    pill.style.border="1px solid rgba(255,255,255,0.1)";
+    txt.textContent=ts?"Offline \u00B7 "+ago(new Date(ts)):"Offline";
+  }
+
+  function refreshImg(){img.src=BASE+"/chart?t="+Date.now();}
+
+  function ago(d){
+    var s=Math.floor((Date.now()-d.getTime())/1000);
+    if(s<60)return s+"s ago";if(s<3600)return Math.floor(s/60)+"m ago";
+    if(s<86400)return Math.floor(s/3600)+"h ago";return Math.floor(s/86400)+"d ago";
+  }
+
+  check();setInterval(check,30000);
+})();
+</script>
 <section class="engine-showcase" id="math">
 <div class="container">
 <div class="engine-header">
