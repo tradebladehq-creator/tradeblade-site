@@ -433,5 +433,17 @@ document.getElementById('earlyAccessForm').addEventListener('submit', async func
   }
 });
 </script>
+<script>
+window.addEventListener('load', function() {
+  if (window.location.hash) {
+    var target = document.querySelector(window.location.hash);
+    if (target) {
+      setTimeout(function() {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }
+});
+</script>
 </body>
 </html>
