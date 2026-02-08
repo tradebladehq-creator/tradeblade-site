@@ -4,8 +4,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>TradeBlade — Eval Hedge System</title>
-<meta content="TradeBlade Hedge System: a simple way to hedge prop firm evaluations with a small live account and real math." name="description"/>
+<title>TradeBlade — Session‑True NT8 Robot</title>
+<meta content="TradeBlade: Prop‑style guardrails, session‑true timing, and a crisp HUD for NinjaTrader 8." name="description"/>
 <link href="assets/favicon.png" rel="icon" type="image/png"/>
 <link href="styles.css" rel="stylesheet"/>
 </head>
@@ -16,7 +16,14 @@
 <img alt="TradeBlade logo" class="brand-logo" src="assets/tb-logo.png"/>
 <span class="brand-wordmark">TRADEBLADE</span>
 </a>
-<nav class="nav-links"><a href="#hedge">Hedge</a><a href="#math">Math</a><a href="#book">Free Book</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+<nav class="nav-links">
+<a href="#engine">Engine</a>
+<a href="#features">Features</a>
+<a href="#architecture">Architecture</a>
+<a href="#hud">HUD</a>
+<a href="#pricing">Pricing</a>
+<a href="#faq">FAQ</a>
+</nav>
 <a class="btn btn-primary get-access-btn" href="#cta">Get Access</a>
 </div>
 </header>
@@ -29,38 +36,90 @@
 </div>
 </section>
 <main>
-
-<section class="hero" id="hedge">
+<section class="hero">
 <div class="container hero-inner">
-<div class="eyebrow"><span class="eyebrow-nt8">NinjaTrader 8</span> eval hedge system.</div>
-<h1 class="headline">FAIL THE EVAL.<br/>GET PAID ANYWAY.</h1>
-<p class="subhead">Most prop traders fail evaluations. TradeBlade puts a small live hedge behind your eval so a blow‑up isn't a total loss.</p>
+<div class="eyebrow"><span class="eyebrow-nt8">Ninjatrader 8</span> session-true trading.</div>
+<h1 class="headline">TRADEBLADE</h1>
+<div class="hero-engine-badge">
+<div class="engine-icon">⚡</div>
+<div class="engine-text">
+<div class="engine-label">Powered by</div>
+<div class="engine-name">Breakthrough Interactive Levels Engine™</div>
+</div>
+</div>
+<p class="subhead">Most traders don't lose because their strategy is wrong — they lose because they can't execute it consistently. TradeBlade eliminates the emotional impulses, hesitation, and decision fatigue that sabotage real traders.</p>
 <div class="cta-row">
-<a class="btn btn-primary get-access-btn" href="#math">See the Math</a>
-<a class="btn btn-ghost" href="#cta">Get Access</a>
+<a class="btn btn-primary get-access-btn" href="#cta">Request Early Access</a>
+<a class="btn btn-ghost" href="#engine">See the Engine</a>
 </div>
 <div class="hero-logo-wrap">
 <img alt="TradeBlade" class="hero-logo" src="assets/tb-logo.png"/>
 </div>
-<p class="muted small" style="margin-top:14px;">Simple setup: 1 ES on the eval · 1 MES live in the opposite direction · built for a ~$1k live account.</p>
 </div>
 </section>
-
 <section class="hud-demo" id="hud"><div class="container"><div class="card"><img src="https://tb-upload-chart.tradebladehq.workers.dev/" style="width:100%; border-radius:12px;"/></div></div></section>
-<section class="engine-showcase" id="math">
+<section class="engine-showcase" id="engine">
 <div class="container">
 <div class="engine-header">
 <div class="engine-badge-large">
-<div class="badge-icon">🧮</div>
+<div class="badge-icon">⚡</div>
 <div class="badge-content">
-<div class="badge-label">Real math</div>
-<h2 class="badge-title">What happens across eval cycles</h2>
+<div class="badge-label">Introducing</div>
+<h2 class="badge-title">Breakthrough Interactive Levels Engine™</h2>
 </div>
 </div>
-<p class="engine-tagline">No vague promises. Plug in your costs, payouts, and hedge size. See the results.</p>
+<p class="engine-tagline"> Most traders don't struggle because they lack a plan — they struggle because they second-guess it after they're already committed. TradeBlade's real-time HUD and rule-based structure keep your original decisions visible and grounded as price moves. Instead of reacting emotionally or changing course mid-trade, you can see your plan, your levels, and your risk clearly laid out, making it easier to stick with disciplined execution.</p>
 </div>
-<div class="card" style="margin-top:18px;">
-<div id="hedge-analysis-root"></div>
+
+<div class="engine-pillars mt-24">
+<div class="pillar-card pillar-featured">
+<div class="pillar-icon">🎯</div>
+<h3>Breakthrough Interactive Levels Engine™</h3>
+<p>Your levels become a decision scaffold, not a debate. The engine publishes deterministic breakout and mean-reversion levels on every 1-second heartbeat, removing the psychological ambiguity that destroys consistency. You see exactly where entries are allowed, where they're blocked, and why — eliminating hesitation, second-guessing, and emotional bias.</p>
+<div class="pillar-benefits">
+<div class="benefit-item">
+<span class="benefit-check">✓</span>
+<span>Removes discretionary hesitation</span>
+</div>
+<div class="benefit-item">
+<span class="benefit-check">✓</span>
+<span>Eliminates redrawing and self-doubt</span>
+</div>
+<div class="benefit-item">
+<span class="benefit-check">✓</span>
+<span>Anchors decisions with objective structure</span>
+</div>
+</div>
+</div>
+
+<div class="pillar-card reveal">
+<div class="pillar-icon">⚡</div>
+<h3>Decision Fatigue Immunity™</h3>
+<p>TradeBlade includes a real-time visual HUD that shows exactly what the strategy is doing as the market unfolds. You can see active levels, trade intent, and risk states at a glance—instead of guessing or trusting a hidden algorithm. Most automated strategies operate blindly in the background. TradeBlade makes its decisions visible, so you stay informed, confident, and in control.</p>
+</div>
+
+<div class="pillar-card reveal">
+<div class="pillar-icon">🛡️</div>
+<h3>Session-True Risk Enforcement</h3>
+<p>TradeBlade enforces the rules you set — even when emotions run hot. Daily halts, trailing loss limits, and safety locks trigger automatically and show instantly on the HUD. It's your discipline engine, keeping a bad moment from turning into a blown account.</p>
+</div>
+</div>
+
+<div class="engine-differentiator mt-24">
+<div class="diff-content">
+<h3 class="diff-title">What Makes It Breakthrough?</h3>
+<div class="diff-grid">
+<div class="diff-item">
+<div class="diff-label">Traditional NT8 Robots</div>
+<div class="diff-desc">Trade in isolation with no visibility, no feedback, no emotional guardrails. You stare at charts, get tired, lose focus, and make mistakes. Human emotions sabotage mechanical systems.</div>
+</div>
+<div class="diff-vs">VS</div>
+<div class="diff-item diff-highlight">
+<div class="diff-label">TradeBlade Engine</div>
+<div class="diff-desc">A unified system that synchronizes decisions, state, and discipline across your HUD and robot — enforcing stable behavior, neutral execution, and psychological consistency. The result isn't "smarter trading." It's cleaner trading, the only kind that works long term.</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </section>
@@ -90,47 +149,13 @@
 </div>
 </div>
 </section>
-
-<section class="section" id="book">
-<div class="container">
-<div class="engine-header">
-<div class="engine-badge-large">
-<div class="badge-icon">📘</div>
-<div class="badge-content">
-<div class="badge-label">Free e‑book</div>
-<h2 class="badge-title">The Mathematics of Survival</h2>
-</div>
-</div>
-<p class="engine-tagline">A short, blunt guide on why most traders fail — and what it takes to survive long enough to find out if you actually have an edge. Includes the Jesse Livermore story and the lesson most people miss.</p>
-</div>
-<div class="row" style="gap:18px; flex-wrap:wrap; margin-top:18px;">
-<div style="flex:0 0 260px; max-width:260px;">
-<img alt="The Mathematics of Survival cover" src="assets/ebook-cover.png" style="width:100%; border-radius:14px; border:1px solid var(--soft);"/>
-<a class="btn btn-primary wfull" download="" href="assets/TheMathematicsOfSurvival.pdf" style="margin-top:12px;">Download the free PDF</a>
-</div>
-<div style="flex:1; min-width:260px;">
-<div class="card" style="padding:18px;">
-<h3 style="margin-top:0;">What’s inside</h3>
-<ul class="muted" style="margin:10px 0 0 18px; line-height:1.6;">
-<li>Why “knowing” isn’t enough — the math proves it.</li>
-<li>The real enemy is inside the trader: impulse, fear, revenge, and drift.</li>
-<li>Jesse Livermore: the man who knew everything… and still lost the war.</li>
-<li>How to “build the dam”: hard rules that stop you from bleeding out.</li>
-<li>TradeBlade: mechanical execution for humans.</li>
-<li>The appendix: the math behind survival.</li>
-</ul>
-<p class="muted small" style="margin-top:12px;">If you’ve ever said “my strategy works in backtests but not live,” start here.</p>
-</div>
-</div>
-</div>
-</div>
-</section>
 <section class="pricing" id="pricing">
 <div class="container">
 <h2 class="section-title">Choose your plan</h2>
 <div class="grid3 mt-24">
+
 <div class="card price featured">
-<div class="most-popular-badge">Most Popular</div>
+<div class='most-popular-badge'>Most Popular</div>
 <div class="tag">Pro</div>
 <div class="price-amt">$69/mo</div>
 <p class="muted">For traders who want automated discipline and psychological guardrails, and are comfortable managing their emotional development independently</p>
@@ -147,6 +172,7 @@
 </ul>
 <a class="btn btn-primary wfull" href="https://buy.stripe.com/5kQ5kCb7e5n4ef72wJgbm00">Choose Pro</a>
 </div>
+
 <div class="card price reveal">
 <div class="tag">Desk</div>
 <div class="price-amt">$199/mo</div>
@@ -161,6 +187,7 @@
 </ul>
 <a class="btn btn-ghost wfull" href="https://buy.stripe.com/5kQaEW8Z63eW5IBfjvgbm01">Choose Desk</a>
 </div>
+
 <div class="card price reveal">
 <div class="tag">Elite</div>
 <div class="price-amt">$399/mo</div>
@@ -174,6 +201,7 @@
 </ul>
 <a class="btn btn-ghost wfull" href="https://buy.stripe.com/eVq3cu6QYaHofjb8V7gbm02">Choose Elite</a>
 </div>
+
 </div>
 </div>
 </section>
@@ -196,7 +224,7 @@
 <h3>Get early access</h3>
 <p>Tell us about your setup and we'll send a download and onboarding steps.</p>
 <form class="form" id="earlyAccessForm">
-<input id="formEmail" name="email" placeholder="Your email" required="" type="email"/>
+<input id="formEmail" name="email" placeholder="Your email" required type="email"/>
 <input id="formBroker" name="broker" placeholder="Your broker (optional)" type="text"/>
 <button class="btn btn-primary" id="formSubmitBtn" type="submit">Join the list</button>
 <div id="formMessage" style="display:none; margin-top:8px; font-size:14px;"></div>
@@ -255,7 +283,7 @@
 <p>Testimonial Disclosure: Testimonials appearing on this website may not be representative of other clients or customers and is not a guarantee of future performance or success.</p>
 </div>
 </section>
-<script src="reveal.js"></script>
+<script src='reveal.js'></script>
 <script>
 // ─── Early Access Form → Worker → Kit.com ───
 document.getElementById('earlyAccessForm').addEventListener('submit', async function(e) {
@@ -299,500 +327,6 @@ document.getElementById('earlyAccessForm').addEventListener('submit', async func
     btn.textContent = 'Join the list';
   }
 });
-</script>
-
-<script crossorigin="" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-<script type="text/babel">
-import { useState, useMemo } from "react";
-
-const C = {
-  bg: "#0c0e14", surface: "#131620", card: "#1a1e2e", cardHi: "#1f2438",
-  border: "#272d42", borderHi: "#3a4160",
-  text: "#dfe2ec", dim: "#7e8499", faint: "#4e5368",
-  blue: "#5b8af5", green: "#34d399", red: "#ef6b6b", amber: "#f0b940",
-  purple: "#9f8cf7", cyan: "#38bdf8", orange: "#f59e42",
-};
-
-const font = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
-const sansFont = "system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif";
-
-function Section({ title, icon, children, accent = C.blue }) {
-  return (
-    <div style={{ marginBottom: 28 }}>
-      <div style={{
-        display: "flex", alignItems: "center", gap: 8, marginBottom: 14,
-        borderBottom: `1px solid ${C.border}`, paddingBottom: 8,
-      }}>
-        <span style={{ fontSize: 16 }}>{icon}</span>
-        <span style={{
-          fontFamily: sansFont, fontSize: 13, fontWeight: 700,
-          color: accent, textTransform: "uppercase", letterSpacing: 1.5,
-        }}>{title}</span>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-function Param({ label, value, onChange, min, max, step = 1, fmt, sub }) {
-  const display = fmt ? fmt(value) : value;
-  return (
-    <div style={{ marginBottom: 14 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <span style={{ fontFamily: sansFont, fontSize: 12, color: C.dim }}>{label}</span>
-        <span style={{ fontFamily: font, fontSize: 13, color: C.text, fontWeight: 600 }}>{display}</span>
-      </div>
-      {sub && <div style={{ fontFamily: sansFont, fontSize: 10, color: C.faint, marginTop: 1 }}>{sub}</div>}
-      <input type="range" min={min} max={max} step={step} value={value}
-        onChange={e => onChange(Number(e.target.value))}
-        style={{ width: "100%", accentColor: C.blue, marginTop: 4, height: 4 }} />
-    </div>
-  );
-}
-
-function ScenarioCard({ title, prob, items, net, color, icon }) {
-  const positive = net >= 0;
-  return (
-    <div style={{
-      background: C.card, border: `1px solid ${C.border}`, borderRadius: 10,
-      borderLeft: `3px solid ${color}`, padding: "16px 18px", marginBottom: 12,
-    }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 15 }}>{icon}</span>
-          <span style={{ fontFamily: sansFont, fontSize: 13, fontWeight: 700, color: C.text }}>{title}</span>
-        </div>
-        <span style={{
-          fontFamily: font, fontSize: 11, color: C.dim,
-          background: C.cardHi, padding: "2px 8px", borderRadius: 4,
-        }}>P = {(prob * 100).toFixed(0)}%</span>
-      </div>
-      <div style={{ display: "grid", gap: 3, marginBottom: 10 }}>
-        {items.map((item, i) => (
-          <div key={i} style={{
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-            padding: "3px 0", borderBottom: i < items.length - 1 ? `1px solid ${C.border}22` : "none",
-          }}>
-            <span style={{ fontFamily: sansFont, fontSize: 11, color: C.dim }}>{item.label}</span>
-            <span style={{
-              fontFamily: font, fontSize: 11, fontWeight: 500,
-              color: item.skip ? C.faint : (item.val >= 0 ? C.green : C.red),
-            }}>{item.skip ? item.fmt : ((item.val >= 0 ? "+" : "") + (item.fmt || `$${item.val.toFixed(0)}`))}</span>
-          </div>
-        ))}
-      </div>
-      <div style={{
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        borderTop: `1px solid ${C.border}`, paddingTop: 8,
-      }}>
-        <span style={{ fontFamily: sansFont, fontSize: 11, fontWeight: 700, color: C.text }}>Scenario Net</span>
-        <span style={{
-          fontFamily: font, fontSize: 15, fontWeight: 800,
-          color: positive ? C.green : C.red,
-        }}>{positive ? "+" : ""}${net.toFixed(0)}</span>
-      </div>
-      <div style={{ marginTop: 6, display: "flex", justifyContent: "space-between" }}>
-        <span style={{ fontFamily: sansFont, fontSize: 10, color: C.faint }}>Weighted EV contribution</span>
-        <span style={{
-          fontFamily: font, fontSize: 11, fontWeight: 600,
-          color: (prob * net) >= 0 ? C.green : C.red,
-        }}>{(prob * net) >= 0 ? "+" : ""}${(prob * net).toFixed(2)}</span>
-      </div>
-    </div>
-  );
-}
-
-function MetricBox({ label, value, sub, color = C.text }) {
-  return (
-    <div style={{
-      background: C.card, border: `1px solid ${C.border}`, borderRadius: 8,
-      padding: "12px 14px", textAlign: "center", flex: 1, minWidth: 120,
-    }}>
-      <div style={{ fontFamily: font, fontSize: 18, fontWeight: 800, color }}>{value}</div>
-      <div style={{ fontFamily: sansFont, fontSize: 10, color: C.dim, marginTop: 2 }}>{label}</div>
-      {sub && <div style={{ fontFamily: sansFont, fontSize: 9, color: C.faint, marginTop: 2 }}>{sub}</div>}
-    </div>
-  );
-}
-
-export default function HedgeAnalysis() {
-  const [passRate, setPassRate] = useState(20);
-  const [payoutRate, setPayoutRate] = useState(45);
-  const [avgPeakFail, setAvgPeakFail] = useState(500);
-  const [friction, setFriction] = useState(35);
-  const [evalHedgeContracts, setEvalHedgeContracts] = useState(2);
-  const [paHedgeContracts, setPaHedgeContracts] = useState(4);
-
-  const evalCost = 40;
-  const paCost = 85;
-  const profitTarget = 3000;
-  const trailingDD = 2500;
-  const safetyNet = trailingDD + 100;
-  const payoutAmt = 2000;
-
-  // Each MES = 1/10 of 1 ES, so N MES contracts = N/10 hedge ratio
-  const evalHedgeRatio = evalHedgeContracts * 0.1;
-  const paHedgeRatio = paHedgeContracts * 0.1;
-
-  // Per-tick values for display
-  const evalHedgeTickVal = (evalHedgeContracts * 1.25).toFixed(2);
-  const paHedgeTickVal = (paHedgeContracts * 1.25).toFixed(2);
-
-  const r = useMemo(() => {
-    const pPass = passRate / 100;
-    const pFail = 1 - pPass;
-    const pPayGivenPass = payoutRate / 100;
-    const pFailPA = 1 - pPayGivenPass;
-
-    const p1 = pFail;
-    const p2 = pPass * pFailPA;
-    const p3 = pPass * pPayGivenPass;
-
-    // --- Hedge P/L calculations ---
-
-    // EVAL FAIL: prop sim P/L = avgPeakFail - trailingDD (negative)
-    const propPLEvalFail = avgPeakFail - trailingDD;
-    const hedgeEvalFail = -evalHedgeRatio * propPLEvalFail;
-
-    // EVAL PASS: prop sim P/L = +profitTarget
-    const hedgeEvalPass = -evalHedgeRatio * profitTarget;
-
-    // PA FAIL: similar dynamics, PA hedge contract count
-    const propPLPAFail = avgPeakFail - trailingDD;
-    const hedgePAFail = -paHedgeRatio * propPLPAFail;
-
-    // PA PAYOUT: prop accumulates safetyNet ($2,600) in funded gains
-    // The $2k payout comes FROM those gains — not additional trading P/L on top
-    const propPLPASuccess = safetyNet;
-    const hedgePASuccess = -paHedgeRatio * propPLPASuccess;
-
-    // --- Friction scales with contracts per phase ---
-    const eFric = friction * evalHedgeContracts;
-    const pFric = friction * paHedgeContracts;
-
-    // --- Scenario nets ---
-    const net1 = -evalCost + hedgeEvalFail - eFric;
-    const net2 = -evalCost - paCost + hedgeEvalPass - eFric + hedgePAFail - pFric;
-    const net3 = -evalCost - paCost + hedgeEvalPass - eFric + payoutAmt + hedgePASuccess - pFric;
-
-    // --- No-hedge baseline (unchanged) ---
-    const net1_nh = -evalCost;
-    const net2_nh = -evalCost - paCost;
-    const net3_nh = -evalCost - paCost + payoutAmt;
-
-    const ev = p1 * net1 + p2 * net2 + p3 * net3;
-    const evNH = p1 * net1_nh + p2 * net2_nh + p3 * net3_nh;
-
-    const ev2 = p1 * net1 ** 2 + p2 * net2 ** 2 + p3 * net3 ** 2;
-    const sd = Math.sqrt(Math.max(0, ev2 - ev ** 2));
-    const ev2NH = p1 * net1_nh ** 2 + p2 * net2_nh ** 2 + p3 * net3_nh ** 2;
-    const sdNH = Math.sqrt(Math.max(0, ev2NH - evNH ** 2));
-
-    const cyclesHedge = sd > 0 && ev > 0 ? Math.ceil((1.645 * sd / ev) ** 2) : ev > 0 ? 1 : Infinity;
-    const cyclesNH = sdNH > 0 && evNH > 0 ? Math.ceil((1.645 * sdNH / evNH) ** 2) : evNH > 0 ? 1 : Infinity;
-
-    return {
-      p1, p2, p3, propPLEvalFail, hedgeEvalFail, hedgeEvalPass,
-      propPLPAFail, hedgePAFail, propPLPASuccess, hedgePASuccess,
-      net1, net2, net3, net1_nh, net2_nh, net3_nh,
-      ev, evNH, sd, sdNH, cyclesHedge, cyclesNH,
-      hedgeOnlyEV: ev - evNH, safetyNet,
-      eFric, pFric,
-    };
-  }, [passRate, payoutRate, avgPeakFail, friction, evalHedgeContracts, paHedgeContracts]);
-
-  return (
-    <div style={{
-      background: C.bg, color: C.text, minHeight: "100vh",
-      fontFamily: sansFont, padding: "24px 20px", maxWidth: 820, margin: "0 auto",
-    }}>
-      <div style={{ marginBottom: 24, borderBottom: `1px solid ${C.border}`, paddingBottom: 16 }}>
-        <div style={{
-          fontFamily: font, fontSize: 11, color: C.blue, letterSpacing: 2,
-          textTransform: "uppercase", marginBottom: 4,
-        }}>R63 HEDGE EXECUTION — EXPECTED VALUE ANALYSIS</div>
-        <h1 style={{
-          fontFamily: sansFont, fontSize: 22, fontWeight: 800, color: C.text,
-          margin: "4px 0 8px",
-        }}>TradeBlade Prop/Hedge Cycle Economics</h1>
-        <p style={{ fontSize: 12, color: C.dim, margin: 0, lineHeight: 1.5 }}>
-          PropPrimary trades 1 ES on Apex 50k eval. LiveHedge mirrors opposite with{" "}
-          <span style={{ color: C.cyan, fontWeight: 600 }}>{evalHedgeContracts} MES</span> during eval and{" "}
-          <span style={{ color: C.cyan, fontWeight: 600 }}>{paHedgeContracts} MES</span> during PA on a personal account.
-          Eval losses are simulated; hedge gains are real — this asymmetry is the engine.
-        </p>
-      </div>
-
-      {/* Fixed Inputs — reactive to contract sliders */}
-      <Section title="Fixed Inputs" icon="📋" accent={C.faint}>
-        <div style={{
-          display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-          gap: 8, background: C.card, padding: 14, borderRadius: 8, border: `1px solid ${C.border}`,
-        }}>
-          {[
-            ["Eval Cost", `$${evalCost}`],
-            ["PA Cost", `$${paCost}/mo`],
-            ["Profit Target", `$${profitTarget.toLocaleString()}`],
-            ["Trailing DD", `$${trailingDD.toLocaleString()}`],
-            ["Safety Net", `$${r.safetyNet.toLocaleString()}`],
-            ["Payout Cap", `$${payoutAmt.toLocaleString()}`],
-            ["Prop", "1 ES — $12.50/tick"],
-            ["Eval Hedge", `${evalHedgeContracts} MES — $${evalHedgeTickVal}/tick`],
-            ["PA Hedge", `${paHedgeContracts} MES — $${paHedgeTickVal}/tick`],
-            ["Eval Hedge Ratio", `${(evalHedgeRatio * 100).toFixed(0)}% of ES notional`],
-            ["PA Hedge Ratio", `${(paHedgeRatio * 100).toFixed(0)}% of ES notional`],
-            ["Eval Friction", `$${r.eFric} (${evalHedgeContracts}×$${friction})`],
-            ["PA Friction", `$${r.pFric} (${paHedgeContracts}×$${friction})`],
-          ].map(([l, v], i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-              <span style={{ fontSize: 11, color: C.dim }}>{l}</span>
-              <span style={{ fontFamily: font, fontSize: 11, color: C.text, fontWeight: 500, whiteSpace: "nowrap" }}>{v}</span>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      {/* Adjustable Parameters — with contract sliders */}
-      <Section title="Model Assumptions (Adjustable)" icon="⚙️" accent={C.purple}>
-        <div style={{
-          background: C.card, padding: 16, borderRadius: 8, border: `1px solid ${C.border}`,
-          display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px",
-        }}>
-          <Param label="P(Pass Eval)" value={passRate} onChange={setPassRate}
-            min={1} max={50} fmt={v => `${v}%`}
-            sub="Apex first attempt: 15-20% (industry data)" />
-          <Param label="P(Payout | Passed Eval)" value={payoutRate} onChange={setPayoutRate}
-            min={10} max={80} fmt={v => `${v}%`}
-            sub="FPFX 300k-account study: ~45% of funded get payout" />
-          <Param label="Avg Peak Before Failure" value={avgPeakFail} onChange={setAvgPeakFail}
-            min={0} max={2500} step={50} fmt={v => `$${v.toLocaleString()}`}
-            sub="Avg highest balance before trailing DD kills account" />
-          <Param label="Base Friction / Contract / Phase" value={friction} onChange={setFriction}
-            min={0} max={100} step={5} fmt={v => `$${v}`}
-            sub="MES commissions + slippage per contract per phase" />
-
-          {/* Divider */}
-          <div style={{ gridColumn: "1 / -1", borderTop: `1px solid ${C.border}`, margin: "6px 0 10px" }} />
-
-          <Param label="Eval Hedge Contracts (MES)" value={evalHedgeContracts} onChange={setEvalHedgeContracts}
-            min={1} max={10} fmt={v => `${v} MES`}
-            sub={`= ${(evalHedgeContracts*10).toFixed(0)}% of 1 ES · $${evalHedgeTickVal}/tick · $${(evalHedgeContracts * friction).toFixed(0)} friction`} />
-          <Param label="PA Hedge Contracts (MES)" value={paHedgeContracts} onChange={setPaHedgeContracts}
-            min={1} max={10} fmt={v => `${v} MES`}
-            sub={`= ${(paHedgeContracts*10).toFixed(0)}% of 1 ES · $${paHedgeTickVal}/tick · $${(paHedgeContracts * friction).toFixed(0)} friction`} />
-        </div>
-      </Section>
-
-      <Section title="The Sim/Real Asymmetry" icon="🔑" accent={C.amber}>
-        <div style={{
-          background: C.card, padding: 16, borderRadius: 8, border: `1px solid ${C.border}`,
-          fontSize: 12, lineHeight: 1.7, color: C.dim,
-        }}>
-          <p style={{ margin: "0 0 8px" }}>
-            <strong style={{ color: C.text }}>During eval:</strong> Prop P/L is <span style={{ color: C.amber, fontWeight: 600 }}>simulated</span>. You risk only $40.
-            But the hedge captures <span style={{ color: C.green, fontWeight: 600 }}>real gains</span> from those sim losses
-            at <span style={{ color: C.cyan, fontWeight: 600 }}>{evalHedgeContracts}/10 scale ({(evalHedgeRatio * 100).toFixed(0)}%)</span>.
-          </p>
-          <p style={{ margin: "0 0 8px" }}>
-            <strong style={{ color: C.green }}>When prop fails ({(r.p1 * 100).toFixed(0)}% of cycles):</strong> Prop sim loss ~${Math.abs(r.propPLEvalFail).toLocaleString()}
-            {" → "} hedge real gain of <span style={{ color: C.green, fontWeight: 700 }}>+${r.hedgeEvalFail.toFixed(0)}</span> ({evalHedgeContracts} MES).
-            You paid $40 for the eval but recovered ${r.hedgeEvalFail.toFixed(0)}.
-          </p>
-          <p style={{ margin: 0 }}>
-            <strong style={{ color: C.red }}>When prop passes ({passRate}%):</strong> Prop sim win of $3,000
-            {" → "} hedge real loss of <span style={{ color: C.red, fontWeight: 700 }}>${r.hedgeEvalPass.toFixed(0)}</span> ({evalHedgeContracts} MES).
-            But this unlocks the PA where real payouts live.
-          </p>
-        </div>
-      </Section>
-
-      <Section title="Three Outcome Scenarios" icon="🎯" accent={C.blue}>
-        <ScenarioCard
-          title="SCENARIO 1 — FAIL EVAL" prob={r.p1} color={C.green} icon="📉"
-          items={[
-            { label: "Eval fee", val: -evalCost },
-            { label: `Prop sim P/L (not real money)`, val: r.propPLEvalFail, fmt: `$${r.propPLEvalFail.toLocaleString()} sim`, skip: true },
-            { label: `Hedge real gain (${evalHedgeContracts} MES × 1/10 of $${Math.abs(r.propPLEvalFail).toLocaleString()})`, val: r.hedgeEvalFail },
-            { label: `Hedge friction (${evalHedgeContracts}×$${friction})`, val: -r.eFric },
-          ]}
-          net={r.net1}
-        />
-        <ScenarioCard
-          title="SCENARIO 2 — PASS EVAL, FAIL PA" prob={r.p2} color={C.red} icon="💀"
-          items={[
-            { label: "Eval fee + PA activation", val: -(evalCost + paCost) },
-            { label: `Hedge loss during eval (${evalHedgeContracts} MES vs $3k sim target)`, val: r.hedgeEvalPass },
-            { label: `Hedge friction — eval (${evalHedgeContracts}×$${friction})`, val: -r.eFric },
-            { label: `Hedge gain during PA (${paHedgeContracts} MES × ~$${Math.abs(r.propPLPAFail).toLocaleString()} loss)`, val: r.hedgePAFail },
-            { label: `Hedge friction — PA (${paHedgeContracts}×$${friction})`, val: -r.pFric },
-            { label: "Prop PA payout", val: 0 },
-          ]}
-          net={r.net2}
-        />
-        <ScenarioCard
-          title={`SCENARIO 3 — PASS EVAL, $${payoutAmt.toLocaleString()} PAYOUT`} prob={r.p3} color={C.cyan} icon="💰"
-          items={[
-            { label: "Eval fee + PA activation", val: -(evalCost + paCost) },
-            { label: `Hedge loss during eval (${evalHedgeContracts} MES vs $3k sim target)`, val: r.hedgeEvalPass },
-            { label: `Hedge friction — eval (${evalHedgeContracts}×$${friction})`, val: -r.eFric },
-            { label: `Prop payout received (cash)`, val: payoutAmt },
-            { label: `Hedge loss during PA (${paHedgeContracts} MES × $${r.propPLPASuccess.toLocaleString()} funded gain)`, val: r.hedgePASuccess },
-            { label: `Hedge friction — PA (${paHedgeContracts}×$${friction})`, val: -r.pFric },
-          ]}
-          net={r.net3}
-        />
-        <div style={{
-          background: C.cardHi, border: `1px solid ${C.borderHi}`, borderRadius: 8,
-          padding: 10, marginTop: 4, fontSize: 10, color: C.dim, lineHeight: 1.5,
-        }}>
-          <strong style={{ color: C.amber }}>Scenario 3 note:</strong> Prop accumulates +${r.propPLPASuccess.toLocaleString()} funded gain to lock safety net.
-          The $2k payout comes from those accumulated gains — the hedge only runs against the ${r.propPLPASuccess.toLocaleString()} trading P/L, not payout on top of it.
-          Remaining ${(r.safetyNet - payoutAmt).toLocaleString()} stays in PA as buffer above locked floor.
-        </div>
-      </Section>
-
-      <Section title="Expected Value Per Cycle" icon="📊" accent={C.green}>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
-          <MetricBox label="EV WITH HEDGE" value={`${r.ev >= 0 ? "+" : ""}$${r.ev.toFixed(2)}`}
-            color={r.ev >= 0 ? C.green : C.red} sub={`Standard dev: $${r.sd.toFixed(0)}`} />
-          <MetricBox label="EV WITHOUT HEDGE" value={`${r.evNH >= 0 ? "+" : ""}$${r.evNH.toFixed(2)}`}
-            color={r.evNH >= 0 ? C.green : C.red} sub={`Standard dev: $${r.sdNH.toFixed(0)}`} />
-          <MetricBox label="HEDGE VALUE-ADD"
-            value={`${r.hedgeOnlyEV >= 0 ? "+" : ""}$${r.hedgeOnlyEV.toFixed(2)}`}
-            color={r.hedgeOnlyEV >= 0 ? C.green : C.red} sub="Per cycle EV difference" />
-        </div>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <MetricBox label="95% PROFIT CONFIDENCE (HEDGE)"
-            value={r.cyclesHedge === Infinity ? "N/A" : `${r.cyclesHedge} cycles`}
-            color={C.cyan} sub={r.cyclesHedge < Infinity ? `~${r.cyclesHedge} eval attempts needed` : "Negative EV"} />
-          <MetricBox label="95% PROFIT CONFIDENCE (NO HEDGE)"
-            value={r.cyclesNH === Infinity ? "N/A" : `${r.cyclesNH} cycles`}
-            color={C.orange} sub={r.cyclesNH < Infinity ? `~${r.cyclesNH} eval attempts needed` : "Negative EV"} />
-          <MetricBox label="VARIANCE REDUCTION"
-            value={r.sdNH > 0 ? `${((1 - r.sd / r.sdNH) * 100).toFixed(0)}%` : "N/A"}
-            color={C.purple} sub="Lower variance = smoother P&L" />
-        </div>
-      </Section>
-
-      <Section title="Side-by-Side Comparison" icon="⚖️" accent={C.cyan}>
-        <div style={{
-          background: C.card, border: `1px solid ${C.border}`, borderRadius: 8,
-          overflow: "hidden",
-        }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: font, fontSize: 11 }}>
-            <thead>
-              <tr style={{ background: C.cardHi }}>
-                <th style={{ textAlign: "left", padding: "8px 12px", color: C.dim, fontWeight: 500, fontFamily: sansFont }}>Scenario</th>
-                <th style={{ textAlign: "center", padding: "8px 12px", color: C.dim, fontWeight: 500, fontFamily: sansFont }}>Prob</th>
-                <th style={{ textAlign: "right", padding: "8px 12px", color: C.blue, fontWeight: 600, fontFamily: sansFont }}>With Hedge</th>
-                <th style={{ textAlign: "right", padding: "8px 12px", color: C.orange, fontWeight: 600, fontFamily: sansFont }}>No Hedge</th>
-                <th style={{ textAlign: "right", padding: "8px 12px", color: C.purple, fontWeight: 600, fontFamily: sansFont }}>Delta</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                ["Fail Eval", r.p1, r.net1, r.net1_nh],
-                ["Pass / Fail PA", r.p2, r.net2, r.net2_nh],
-                ["Pass / $2k Payout", r.p3, r.net3, r.net3_nh],
-              ].map(([name, prob, wh, nh], i) => (
-                <tr key={i} style={{ borderTop: `1px solid ${C.border}` }}>
-                  <td style={{ padding: "8px 12px", color: C.text, fontFamily: sansFont, fontSize: 12 }}>{name}</td>
-                  <td style={{ padding: "8px 12px", textAlign: "center", color: C.dim }}>{(prob * 100).toFixed(0)}%</td>
-                  <td style={{ padding: "8px 12px", textAlign: "right", color: wh >= 0 ? C.green : C.red, fontWeight: 600 }}>
-                    {wh >= 0 ? "+" : ""}${wh.toFixed(0)}
-                  </td>
-                  <td style={{ padding: "8px 12px", textAlign: "right", color: nh >= 0 ? C.green : C.red, fontWeight: 600 }}>
-                    {nh >= 0 ? "+" : ""}${nh.toFixed(0)}
-                  </td>
-                  <td style={{ padding: "8px 12px", textAlign: "right", color: (wh - nh) >= 0 ? C.green : C.red }}>
-                    {(wh - nh) >= 0 ? "+" : ""}${(wh - nh).toFixed(0)}
-                  </td>
-                </tr>
-              ))}
-              <tr style={{ borderTop: `2px solid ${C.borderHi}`, background: C.cardHi }}>
-                <td style={{ padding: "10px 12px", color: C.text, fontWeight: 700, fontFamily: sansFont, fontSize: 12 }}>Weighted EV</td>
-                <td style={{ padding: "10px 12px", textAlign: "center", color: C.dim, fontFamily: sansFont, fontSize: 11 }}>100%</td>
-                <td style={{ padding: "10px 12px", textAlign: "right", color: r.ev >= 0 ? C.green : C.red, fontWeight: 800, fontSize: 13 }}>
-                  {r.ev >= 0 ? "+" : ""}${r.ev.toFixed(2)}
-                </td>
-                <td style={{ padding: "10px 12px", textAlign: "right", color: r.evNH >= 0 ? C.green : C.red, fontWeight: 800, fontSize: 13 }}>
-                  {r.evNH >= 0 ? "+" : ""}${r.evNH.toFixed(2)}
-                </td>
-                <td style={{ padding: "10px 12px", textAlign: "right", color: r.hedgeOnlyEV >= 0 ? C.green : C.red, fontWeight: 800, fontSize: 13 }}>
-                  {r.hedgeOnlyEV >= 0 ? "+" : ""}${r.hedgeOnlyEV.toFixed(2)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </Section>
-
-      <Section title="Strategic Analysis" icon="🧠" accent={C.amber}>
-        <div style={{
-          background: C.card, border: `1px solid ${C.border}`, borderRadius: 8,
-          padding: 16, fontSize: 12, color: C.dim, lineHeight: 1.7,
-        }}>
-          <p style={{ margin: "0 0 10px" }}>
-            <strong style={{ color: C.green }}>The sim/real asymmetry is the edge.</strong> During eval, prop trades sim capital — failures cost only $40.
-            But the hedge captures real gains from those sim failures. With {evalHedgeContracts} MES during eval ({(evalHedgeRatio * 100).toFixed(0)}% ratio) and a {passRate}% pass rate,
-            <strong style={{ color: C.text }}> {(r.p1 * 100).toFixed(0)}% of cycles generate hedge profits averaging +${r.hedgeEvalFail.toFixed(0)}</strong>,
-            turning the most common outcome (eval failure) from a -$40 loss into a {r.net1 >= 0 ? `+$${r.net1.toFixed(0)} gain` : `$${r.net1.toFixed(0)} loss`}.
-          </p>
-          <p style={{ margin: "0 0 10px" }}>
-            <strong style={{ color: C.cyan }}>Scaling up in PA:</strong> Switching to {paHedgeContracts} MES during PA ({(paHedgeRatio * 100).toFixed(0)}% ratio) amplifies
-            both the recovery on PA failures and the drag on PA successes. The hedge runs against the ${r.propPLPASuccess.toLocaleString()} funded gain needed to lock the safety net —
-            the $2k payout comes from those gains, not on top of them.
-          </p>
-          <p style={{ margin: "0 0 10px" }}>
-            <strong style={{ color: C.cyan }}>Variance reduction is the real story.</strong> The hedge cuts standard deviation
-            from ${r.sdNH.toFixed(0)} to ${r.sd.toFixed(0)} per cycle ({r.sdNH > 0 ? ((1 - r.sd / r.sdNH) * 100).toFixed(0) : 0}% reduction).
-            You reach 95% confidence of profitability in <strong style={{ color: C.text }}>{r.cyclesHedge === Infinity ? "N/A" : r.cyclesHedge} cycles</strong> vs {r.cyclesNH === Infinity ? "N/A" : r.cyclesNH} without hedge.
-          </p>
-          <p style={{ margin: "0 0 10px" }}>
-            <strong style={{ color: C.amber }}>The trade-off:</strong> When the prop succeeds, the hedge costs you.
-            Scenario 3 nets +${r.net3.toFixed(0)} with hedge vs +${r.net3_nh.toFixed(0)} without — ${Math.abs(r.net3 - r.net3_nh).toFixed(0)} less upside.
-            But success is rare ({(r.p3 * 100).toFixed(0)}%) and the hedge makes the dominant failure path profitable.
-          </p>
-          <p style={{ margin: 0 }}>
-            <strong style={{ color: C.purple }}>Capital needed:</strong> Hedge account requires ~${(paHedgeContracts * 1500).toLocaleString()}-${(paHedgeContracts * 2500).toLocaleString()}
-            {" "}({paHedgeContracts} MES margin + buffer for worst-case drawdown during successful eval+PA cycle).
-          </p>
-        </div>
-      </Section>
-
-      <Section title="R63 Implementation Notes" icon="⚡" accent={C.faint}>
-        <div style={{
-          background: C.card, border: `1px solid ${C.border}`, borderRadius: 8,
-          padding: 14, fontSize: 11, color: C.faint, lineHeight: 1.7, fontFamily: font,
-        }}>
-          <div>PropPrimary publishes HedgeBreach on confirmed entry fill</div>
-          <div>LiveHedge enters opposite via limit at prop fill price</div>
-          <div>Same SL/TP tick params = hedge exits mirror prop exits inversely</div>
-          <div>R63.1 PropLiquidated = deterministic flatten on prop liquidation</div>
-          <div>_hedgeLiquidationActed latch blocks entries after prop blows</div>
-          <div>Hedge only enters when flat (no grid/scale-in mirroring)</div>
-          <div>30s staleness guard on breach signals</div>
-          <div style={{ color: C.cyan, marginTop: 6 }}>Contract scaling: {evalHedgeContracts} MES eval → {paHedgeContracts} MES PA (configured via Quantity param)</div>
-        </div>
-      </Section>
-
-      <div style={{
-        textAlign: "center", padding: "12px 0", fontSize: 10, color: C.faint,
-        borderTop: `1px solid ${C.border}`, marginTop: 8, lineHeight: 1.5,
-      }}>
-        Eval hedge: {evalHedgeContracts} MES = {(evalHedgeRatio * 100).toFixed(0)}% ratio · PA hedge: {paHedgeContracts} MES = {(paHedgeRatio * 100).toFixed(0)}% ratio
-        <br />PA hedge runs against ${r.propPLPASuccess.toLocaleString()} funded gain (safety net) — $2k payout comes from those gains
-        <br />Friction scales per-contract (${friction}/contract/phase) · Trailing DD failure P/L estimated as AvgPeak - $2,500
-      </div>
-    </div>
-  );
-}
-
-const root = ReactDOM.createRoot(document.getElementById('hedge-analysis-root'));
-root.render(<HedgeAnalysis />);
 </script>
 </body>
 </html>
