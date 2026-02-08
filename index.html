@@ -207,44 +207,72 @@
 </section>
 <section class="faq" id="faq">
 <div class="container">
-<h2 class="section-title">Quick answers</h2>
+<h2 class="section-title">Frequently Asked Questions</h2>
+
+<details class="card faq-item"><summary>What is TradeBlade?</summary>
+<p>TradeBlade is an automated trade execution engine for NinjaTrader 8. You define your strategy — your levels, your stops, your targets, your session window — and TradeBlade executes it with zero emotion. It's not a signal service or a black-box algo. It trades YOUR plan, exactly as you set it, every time.</p></details>
+
 <details class="card faq-item"><summary>Does TradeBlade require NinjaTrader 8?</summary>
-<p>Yes. The current build targets NinjaTrader 8.</p></details>
-<details class="card faq-item"><summary>Is the HUD real‑time?</summary>
-<p>Yes. The strategy publishes 1s heartbeats; the visualizer polls every second with a zero‑flicker LIVE pill.</p></details>
-<details class="card faq-item"><summary>How are risk limits enforced?</summary>
-<p>Daily halt, trailing/flat loss, and session HWM gates are enforced in‑strategy and surfaced on the HUD.</p></details>
-<details class="card faq-item"><summary>Do you offer trials?</summary>
-<p>We'll announce early‑access invites soon. Join the list below.</p></details>
+<p>Yes. TradeBlade is built exclusively for NinjaTrader 8 and runs as a NinjaScript strategy on your chart. You'll need an active NinjaTrader 8 installation with a connected data feed and brokerage account.</p></details>
+
+<details class="card faq-item"><summary>What strategies does TradeBlade support?</summary>
+<p>Any strategy that trades at a price level. EMA crossovers, RSI signals, Initial Balance, Opening Range Breakout, support/resistance, VWAP — if you can define a level where you want to enter, TradeBlade can execute it. You choose breakout or mean reversion mode, set your entry level, stop, and target, and TradeBlade handles the rest.</p></details>
+
+<details class="card faq-item"><summary>Does TradeBlade pick trades for me?</summary>
+<p>No. TradeBlade is an execution tool, not a trade picker. You decide what to trade and where. TradeBlade's job is to make sure the trade happens exactly the way you planned — with hard stops, locked targets, and daily loss limits that can't be overridden. The edge is yours. The discipline is ours.</p></details>
+
+<details class="card faq-item"><summary>What is the hedge system?</summary>
+<p>The hedge system is an optional feature that lets you place a small live account trade in the opposite direction of your prop firm evaluation. When you fail the eval (which happens to most traders most of the time), the hedge captures real profit from that failure. Over many cycles, the math turns the most common outcome — eval failure — into a net positive. Use the calculator on this page to see exactly how it works with your numbers.</p></details>
+
+<details class="card faq-item"><summary>What instruments can I trade?</summary>
+<p>TradeBlade supports ES/MES (S&amp;P 500), NQ/MNQ (Nasdaq), YM/MYM (Dow), and RTY/M2K (Russell 2000) futures. The hedge system pairs the full-size contract on the prop side with the micro contract on the live side.</p></details>
+
+<details class="card faq-item"><summary>How does TradeBlade enforce daily loss limits?</summary>
+<p>Hard. When your daily P&amp;L hits the limit you set, TradeBlade flattens all positions and stops trading for the session. There's no override button. No "one more trade." The session is done. This is the single most important feature for account survival — and the one most traders can't enforce on themselves.</p></details>
+
+<details class="card faq-item"><summary>Can I see what TradeBlade is doing in real time?</summary>
+<p>Yes. The HUD (heads-up display) renders directly on your NinjaTrader chart and updates every second. You can see key levels, pending entries, active positions, P&amp;L, daily limits remaining, and session status. Full transparency — you always know exactly what the engine is doing and why.</p></details>
+
+<details class="card faq-item"><summary>What brokers work with TradeBlade?</summary>
+<p>Any broker that connects through NinjaTrader 8. This includes NinjaTrader Brokerage, Interactive Brokers, Dorman Trading, Phillip Capital, and others. If your broker supports NinjaTrader 8, TradeBlade will work.</p></details>
+
+<details class="card faq-item"><summary>Do I need to be at my computer while TradeBlade trades?</summary>
+<p>TradeBlade runs on your NinjaTrader 8 instance, so the platform needs to be running with a live data connection. Many traders run NinjaTrader on a VPS (virtual private server) so it stays connected even when their personal computer is off. You don't need to watch it — that's the point — but the platform must be active.</p></details>
+
+<details class="card faq-item"><summary>What if I want to cancel?</summary>
+<p>Cancel anytime. There are no contracts, no lock-in periods, and no cancellation fees. If TradeBlade isn't for you, you stop paying and that's it.</p></details>
+
+<details class="card faq-item"><summary>Is my money safe?</summary>
+<p>TradeBlade never touches your funds. Your money stays in your brokerage account, controlled by your broker. TradeBlade only sends trade instructions through NinjaTrader's API — it has no access to deposits, withdrawals, or account transfers. Your broker handles all custody and regulatory compliance.</p></details>
+
 </div>
 </section>
 <section class="cta" id="cta">
 <div class="container cta-inner">
 <div class="cta-copy">
-<h3>Get early access</h3>
-<p>Tell us about your setup and we'll send a download and onboarding steps.</p>
+<h3>Get the free e-book &amp; product updates</h3>
+<p>We respect your time and will never spam you.</p>
 <form class="form" id="earlyAccessForm">
 <input id="formEmail" name="email" placeholder="Your email" required="" type="email"/>
 <input id="formBroker" name="broker" placeholder="Your broker (optional)" type="text"/>
-<button class="btn btn-primary" id="formSubmitBtn" type="submit">Join the list</button>
+<button class="btn btn-primary" id="formSubmitBtn" type="submit">Send me the book</button>
 <div id="formMessage" style="display:none; margin-top:8px; font-size:14px;"></div>
-<div class="fine">By submitting, you agree to receive product emails. No spam, unsubscribe anytime.</div>
+<div class="fine">You'll receive <em>The Mathematics of Survival</em> (PDF) and occasional product updates. Unsubscribe anytime.</div>
 </form>
 </div>
 <div class="cta-card card">
 <div class="row align-center gap">
 <img alt="TB" class="mini-logo" src="assets/tb-logo.png"/>
 <div>
-<div class="muted company">TradeBlade Technologies</div>
-<div class="k">Launch Playbook</div>
+<div class="muted company" style="font-size:11px;letter-spacing:1px;text-transform:uppercase;">Free e-book</div>
+<div class="k" style="font-size:18px;font-weight:800;">The Mathematics of Survival</div>
 </div>
 </div>
-<ul class="plist mt-12">
-<li>Vendor packaging for NT8</li>
-<li>Visualizer &amp; HUD polish</li>
-<li>Prop‑style guardrail presets</li>
-<li>Docs &amp; quickstart videos</li>
-</ul>
+<p style="color:var(--muted);font-size:14px;line-height:1.7;margin-top:14px;">Jesse Livermore made $100 million in a single trade during the 1929 crash — roughly $2 billion today. He was the greatest trader who ever lived. He read markets like no one before or since. He had every edge, every instinct, every lesson written in scar tissue.</p>
+<p style="color:var(--muted);font-size:14px;line-height:1.7;margin-top:8px;">He died broke.</p>
+<p style="color:var(--muted);font-size:14px;line-height:1.7;margin-top:8px;">Not because he lost his edge. Because he couldn't stop himself from trading without rules. The man who understood markets better than anyone alive couldn't solve the one problem that kills every trader: <strong style="color:var(--text);">himself.</strong></p>
+<p style="color:var(--tb-blue-light);font-size:14px;line-height:1.7;margin-top:12px;font-weight:600;">This book is about that problem — and what it takes to survive long enough to find out if you actually have an edge.</p>
+<a class="btn btn-primary wfull" download="" href="assets/TheMathematicsOfSurvival.pdf" style="margin-top:14px;">Download now (free PDF)</a>
 </div>
 </div>
 </section>
