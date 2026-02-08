@@ -68,7 +68,7 @@
 <h2 class="badge-title">Breakthrough Interactive Levels Engine™</h2>
 </div>
 </div>
-<p class="engine-tagline"> Most traders don’t struggle because they lack a plan — they struggle because they second-guess it after they’re already committed. TradeBlade’s real-time HUD and rule-based structure keep your original decisions visible and grounded as price moves. Instead of reacting emotionally or changing course mid-trade, you can see your plan, your levels, and your risk clearly laid out, making it easier to stick with disciplined execution.</p>
+<p class="engine-tagline"> Most traders don't struggle because they lack a plan — they struggle because they second-guess it after they're already committed. TradeBlade's real-time HUD and rule-based structure keep your original decisions visible and grounded as price moves. Instead of reacting emotionally or changing course mid-trade, you can see your plan, your levels, and your risk clearly laid out, making it easier to stick with disciplined execution.</p>
 </div>
 
 <div class="engine-pillars mt-24">
@@ -101,7 +101,7 @@
 <div class="pillar-card reveal">
 <div class="pillar-icon">🛡️</div>
 <h3>Session-True Risk Enforcement</h3>
-<p>TradeBlade enforces the rules you set — even when emotions run hot. Daily halts, trailing loss limits, and safety locks trigger automatically and show instantly on the HUD. It’s your discipline engine, keeping a bad moment from turning into a blown account.</p>
+<p>TradeBlade enforces the rules you set — even when emotions run hot. Daily halts, trailing loss limits, and safety locks trigger automatically and show instantly on the HUD. It's your discipline engine, keeping a bad moment from turning into a blown account.</p>
 </div>
 </div>
 
@@ -128,10 +128,10 @@
 <h2 class="section-title">Powered By the Engine. Built For Real Trading.</h2>
 <p class="section-sub">Every feature is designed for transparency and control—know exactly what the robot is doing, when, and why.</p>
 <div class="grid3 mt-24">
-<div class="card feature reveal"><h3>🎯 Session Key Levels & Interactive Anchors</h3><p>TradeBlade combines automatic and manual key price levels into a single interactive system. You can adjust levels in real time, and TradeBlade instantly updates entries, targets, and risk boundaries. This gives you direct control over how trades are planned and executed without guessing or recalculating by hand.</p></div>
+<div class="card feature reveal"><h3>🎯 Session Key Levels &amp; Interactive Anchors</h3><p>TradeBlade combines automatic and manual key price levels into a single interactive system. You can adjust levels in real time, and TradeBlade instantly updates entries, targets, and risk boundaries. This gives you direct control over how trades are planned and executed without guessing or recalculating by hand.</p></div>
 <div class="card feature reveal"><h3>🛡️ Entry Mode (Breakout or Mean Reversion)</h3><p>TradeBlade offers two entry modes: Breakout and Mean Reversion. Breakout trades look for price to move through a key level and continue in that direction, while Mean Reversion trades look for price to reject a level and move back toward balance. Each mode follows clear, rule-based logic with hard risk limits enforced at all times.</p></div>
-<div class="card feature reveal"><h3>⏰ Long/Short Permissions & Time Windows</h3><p>TradeBlade lets you control when and how it trades. You can define trading hours, long or short permissions, and session boundaries so trades only occur during the times that fit your plan. This helps prevent trades outside your intended window and keeps execution consistent, even when the market slows down or becomes unpredictable.</p></div>
-<div class="card feature reveal"><h3>🔌 1-Second Heartbeat Publishing</h3><p>TradeBlade updates its internal view of the market every second, so decisions are always based on current information. This helps ensure trades react to real-time price behavior rather than delayed signals, keeping execution aligned with what’s actually happening in the market.</p></div>
+<div class="card feature reveal"><h3>⏰ Long/Short Permissions &amp; Time Windows</h3><p>TradeBlade lets you control when and how it trades. You can define trading hours, long or short permissions, and session boundaries so trades only occur during the times that fit your plan. This helps prevent trades outside your intended window and keeps execution consistent, even when the market slows down or becomes unpredictable.</p></div>
+<div class="card feature reveal"><h3>🔌 1-Second Heartbeat Publishing</h3><p>TradeBlade updates its internal view of the market every second, so decisions are always based on current information. This helps ensure trades react to real-time price behavior rather than delayed signals, keeping execution aligned with what's actually happening in the market.</p></div>
 <div class="card feature reveal"><h3>🎯 Rule-Based Trade Management</h3><p>TradeBlade manages every trade using clear, predefined rules. Once a trade is active, decisions follow your plan instead of emotions. This creates consistent behavior across every trade and helps remove hesitation, second-guessing, and impulse decisions during fast markets.</p></div>
 <div class="card feature reveal"><h3>📈 Risk Controls Are Emotional Controls</h3><p>Risk controls help limit losses and prevent overtrading during difficult market conditions. TradeBlade enforces daily loss limits, cooldown periods, and session resets so trading stops when conditions no longer match your plan. These safeguards help protect your account and keep decision-making disciplined under pressure.</p></div>
 </div>
@@ -195,7 +195,7 @@
 <ul class="plist">
 <li>Everything in Desk</li>
 <li>Direct founder access (limited slots)</li>
-<li>Scheduled calls & strategy tune-ups</li>
+<li>Scheduled calls &amp; strategy tune-ups</li>
 <li>White-glove support</li>
 <li>Custom template development</li>
 </ul>
@@ -215,18 +215,19 @@
 <details class="card faq-item"><summary>How are risk limits enforced?</summary>
 <p>Daily halt, trailing/flat loss, and session HWM gates are enforced in‑strategy and surfaced on the HUD.</p></details>
 <details class="card faq-item"><summary>Do you offer trials?</summary>
-<p>We’ll announce early‑access invites soon. Join the list below.</p></details>
+<p>We'll announce early‑access invites soon. Join the list below.</p></details>
 </div>
 </section>
 <section class="cta" id="cta">
 <div class="container cta-inner">
 <div class="cta-copy">
 <h3>Get early access</h3>
-<p>Tell us about your setup and we’ll send a download and onboarding steps.</p>
-<form class="form">
-<input placeholder="Your email"/>
-<input placeholder="Your broker (optional)"/>
-<button class="btn btn-primary" type="button">Join the list</button>
+<p>Tell us about your setup and we'll send a download and onboarding steps.</p>
+<form class="form" id="earlyAccessForm">
+<input id="formEmail" name="email" placeholder="Your email" required type="email"/>
+<input id="formBroker" name="broker" placeholder="Your broker (optional)" type="text"/>
+<button class="btn btn-primary" id="formSubmitBtn" type="submit">Join the list</button>
+<div id="formMessage" style="display:none; margin-top:8px; font-size:14px;"></div>
 <div class="fine">By submitting, you agree to receive product emails. No spam, unsubscribe anytime.</div>
 </form>
 </div>
@@ -276,11 +277,56 @@
 <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
 <section aria-label="Legal" class="container section disclaimer">
 <div class="disclaimer-content">
-<p>Risk Disclosure: Futures and forex trading contains substantial risk and is not for every investor. An investor could potentially lose all or more than the initial investment. Risk capital is money that can be lost without jeopardizing ones’ financial security or lifestyle. Only risk capital should be used for trading and only those with sufficient risk capital should consider trading. Past performance is not necessarily indicative of future results.</p>
+<p>Risk Disclosure: Futures and forex trading contains substantial risk and is not for every investor. An investor could potentially lose all or more than the initial investment. Risk capital is money that can be lost without jeopardizing ones' financial security or lifestyle. Only risk capital should be used for trading and only those with sufficient risk capital should consider trading. Past performance is not necessarily indicative of future results.</p>
 <p>Hypothetical Performance Disclosure: Hypothetical performance results have many inherent limitations, some of which are described below. No representation is being made that any account will or is likely to achieve profits or losses similar to those shown; in fact, there are frequently sharp differences between hypothetical performance results and the actual results subsequently achieved by any particular trading program. One of the limitations of hypothetical performance results is that they are generally prepared with the benefit of hindsight. In addition, hypothetical trading does not involve financial risk, and no hypothetical trading record can completely account for the impact of financial risk of actual trading. for example, the ability to withstand losses or to adhere to a particular trading program in spite of trading losses are material points which can also adversely affect actual trading results. There are numerous other factors related to the markets in general or to the implementation of any specific trading program which cannot be fully accounted for in the preparation of hypothetical performance results and all which can adversely affect trading results.</p>
-<p>Live Trade Room Disclosure:  This presentation is for educational purposes only and the opinions expressed are those of the presenter only. All trades presented should be considered hypothetical and should not be expected to be replicated in a live trading account.</p>
+<p>Live Trade Room Disclosure:  This presentation is for educational purposes only and the opinions expressed are those of the presenter only. All trades presented should be considered hypothetical and should not be expected to be replicated in a live trading account.</p>
 <p>Testimonial Disclosure: Testimonials appearing on this website may not be representative of other clients or customers and is not a guarantee of future performance or success.</p>
 </div>
 </section>
-<script src='reveal.js'></script></body>
+<script src='reveal.js'></script>
+<script>
+// ─── Early Access Form → Worker → Kit.com ───
+document.getElementById('earlyAccessForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('formEmail').value.trim();
+  const broker = document.getElementById('formBroker').value.trim();
+  const btn = document.getElementById('formSubmitBtn');
+  const msg = document.getElementById('formMessage');
+
+  if (!email) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Joining...';
+  msg.style.display = 'none';
+
+  try {
+    const resp = await fetch('https://tradeblade-license.tradebladehq.workers.dev/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, broker: broker })
+    });
+
+    const data = await resp.json();
+
+    if (resp.ok && data.subscribed) {
+      msg.style.display = 'block';
+      msg.style.color = '#22c55e';
+      msg.textContent = "You're on the list! Check your email for next steps.";
+      document.getElementById('formEmail').value = '';
+      document.getElementById('formBroker').value = '';
+      btn.textContent = 'Joined ✓';
+    } else {
+      throw new Error(data.error || 'Subscribe failed');
+    }
+  } catch (err) {
+    msg.style.display = 'block';
+    msg.style.color = '#ef4444';
+    msg.textContent = 'Something went wrong. Try again or email support@tradebladehq.com';
+    btn.disabled = false;
+    btn.textContent = 'Join the list';
+  }
+});
+</script>
+</body>
 </html>
