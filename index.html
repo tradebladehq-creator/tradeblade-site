@@ -66,7 +66,7 @@
     <span id="tb-text">Checking...</span>
   </div>
   <!-- Chart image -->
-  <img id="tb-chart" src="assets/tb-chart-static.png" style="width:100%; border-radius:12px; display:block;" alt="TradeBlade Live Chart"/>
+  <img id="tb-chart" src="https://tb-upload-chart.tradebladehq.workers.dev/chart" style="width:100%; border-radius:12px; display:block;" alt="TradeBlade Live Chart"/>
 </div>
 </div>
 </section>
@@ -96,7 +96,6 @@
 
   function goOffline(ts){
     isLive=false;if(timer){clearInterval(timer);timer=null;}
-    img.src="assets/tb-chart-static.png";
     dot.style.background="#666";dot.style.boxShadow="none";
     pill.style.border="1px solid rgba(255,255,255,0.1)";
     txt.textContent=ts?"Offline \u00B7 "+ago(new Date(ts)):"Offline";
