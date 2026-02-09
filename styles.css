@@ -103,6 +103,7 @@ a{color:inherit;text-decoration:none}
 /* Sections */
 .features,.arch,.faq,.pricing,.cta{padding:54px 0}
 #pricing{scroll-margin-top:10px}
+#features{scroll-margin-top:10px}
 #faq{scroll-margin-top:10px}
 #book{scroll-margin-top:35px}
 #math{scroll-margin-top:30px}

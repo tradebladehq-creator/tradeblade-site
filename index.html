@@ -8,6 +8,22 @@
 <meta content="TradeBlade Hedge System: a simple way to hedge prop firm evaluations with a small live account and real math." name="description"/>
 <link href="assets/favicon.png" rel="icon" type="image/png"/>
 <link href="styles.css" rel="stylesheet"/>
+<script>
+// Capture hash before browser scrolls, then scroll correctly after full load
+(function() {
+  var hash = window.location.hash;
+  if (hash) {
+    history.replaceState(null, null, window.location.pathname + window.location.search);
+    window.addEventListener('load', function() {
+      var el = document.querySelector(hash);
+      if (el) {
+        var margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+        window.scrollTo({ top: el.offsetTop - margin, behavior: 'smooth' });
+      }
+    });
+  }
+})();
+</script>
 </head>
 <body>
 <header class="nav">
