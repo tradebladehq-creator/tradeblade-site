@@ -1,35 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TradeBlade Hedge Execution System</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #0c0e14;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-    }
-    #tradeblade-root {
-      width: 100%;
-      max-width: 820px;
-      padding: 0 12px;
-    }
-    .babel-error { display: none !important; }
-  </style>
-</head>
-<body>
-  <div id="tradeblade-root"></div>
-
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <script type="text/babel" data-type="module">
-const { useState, useMemo, useEffect, useRef } = React;
-
+import { useState, useMemo, useEffect, useRef } from "react";
 
 const C = {
   bg: "#0c0e14", surface: "#131620", card: "#1a1e2e", cardHi: "#1f2438",
@@ -229,7 +198,7 @@ function TB({ fs }) {
   return <span style={s}>TradeBlade</span>;
 }
 
-function HedgeAnalysis() {
+export default function HedgeAnalysis() {
   // --- Instrument & Account Type ---
   const [instrument, setInstrument] = useState("ES/MES");
   const [accountType, setAccountType] = useState("2-step");
@@ -1330,8 +1299,3 @@ function HedgeAnalysis() {
     </div>
   );
 }
-
-ReactDOM.createRoot(document.getElementById('tradeblade-root')).render(<HedgeAnalysis />);
-  </script>
-</body>
-</html>
