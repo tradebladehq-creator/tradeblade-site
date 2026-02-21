@@ -283,46 +283,48 @@ function HedgeAnalysis() {
   }, [rrRatio, trailingDD]);
 
   const [avgPeakSimulated, setAvgPeakSimulated] = useState(0);
-  const effectivePeakFail = avgPeakSimulated;
+  const [avgPeakSimulatedPA, setAvgPeakSimulatedPA] = useState(0);
 
   // ============================================================
-  // MC2: Full Cycle Simulation
+  // MC2 Worker Code (shared by eval and PA workers)
   // Simulates repeated trades (each resolving at +TP or -SL)
-  // accumulating P/L until account hits +profitTarget or -trailingDD.
+  // accumulating P/L until account hits +target or trailing DD blow.
   // Tracks: avg trades per cycle, avg account peak on prop-failing
   // cycles (system success). Peak includes winning trades that push
   // the account up before it eventually blows.
   // ============================================================
+  const MC2_WORKER_CODE = `
+    self.onmessage = function(e) {
+      const { TP, SL, tick, profitTarget, trailingDD, numSims } = e.data;
+      if (SL <= 0 || TP <= 0 || profitTarget <= 0 || trailingDD <= 0) { self.postMessage({ avgTrades: 0, avgPeakOnFail: 0 }); return; }
+      let totalTrades = 0, totalPeak = 0, failCount = 0;
+      for (let i = 0; i < numSims; i++) {
+        let acct = 0, trades = 0, peak = 0, floor = -trailingDD;
+        while (acct < profitTarget && acct > floor) {
+          let pos = 0;
+          while (true) {
+            pos += Math.random() < 0.5 ? tick : -tick;
+            if (pos >= TP) { acct += TP; break; }
+            if (pos <= -SL) { acct -= SL; break; }
+          }
+          if (acct > peak) { peak = acct; floor = peak - trailingDD; }
+          trades++;
+        }
+        totalTrades += trades;
+        if (acct <= floor) { totalPeak += peak; failCount++; }
+      }
+      self.postMessage({ avgTrades: totalTrades / numSims, avgPeakOnFail: failCount > 0 ? totalPeak / failCount : 0 });
+    };
+  `;
+
+  // --- MC2 Eval: cycles target profitTarget ---
   const [avgTradesPerCycle, setAvgTradesPerCycle] = useState(0);
   const [mc2Running, setMc2Running] = useState(false);
   const mc2Worker = useRef(null);
   const mc2Timer = useRef(null);
 
   useEffect(() => {
-    const workerCode = `
-      self.onmessage = function(e) {
-        const { TP, SL, tick, profitTarget, trailingDD, numSims } = e.data;
-        if (SL <= 0 || TP <= 0 || profitTarget <= 0 || trailingDD <= 0) { self.postMessage({ avgTrades: 0, avgPeakOnFail: 0 }); return; }
-        let totalTrades = 0, totalPeak = 0, failCount = 0;
-        for (let i = 0; i < numSims; i++) {
-          let acct = 0, trades = 0, peak = 0, floor = -trailingDD;
-          while (acct < profitTarget && acct > floor) {
-            let pos = 0;
-            while (true) {
-              pos += Math.random() < 0.5 ? tick : -tick;
-              if (pos >= TP) { acct += TP; break; }
-              if (pos <= -SL) { acct -= SL; break; }
-            }
-            if (acct > peak) { peak = acct; floor = peak - trailingDD; }
-            trades++;
-          }
-          totalTrades += trades;
-          if (acct <= floor) { totalPeak += peak; failCount++; }
-        }
-        self.postMessage({ avgTrades: totalTrades / numSims, avgPeakOnFail: failCount > 0 ? totalPeak / failCount : 0 });
-      };
-    `;
-    const blob = new Blob([workerCode], { type: "application/javascript" });
+    const blob = new Blob([MC2_WORKER_CODE], { type: "application/javascript" });
     mc2Worker.current = new Worker(URL.createObjectURL(blob));
     mc2Worker.current.onmessage = (e) => {
       setAvgTradesPerCycle(e.data.avgTrades);
@@ -349,6 +351,41 @@ function HedgeAnalysis() {
     return () => clearTimeout(mc2Timer.current);
   }, [propTP, rrRatio, inst.fullTickVal, profitTarget, trailingDD]);
 
+  // --- MC2 PA: cycles target payoutThreshold ---
+  const [avgTradesPerCyclePA, setAvgTradesPerCyclePA] = useState(0);
+  const [frictionPA, setFrictionPA] = useState(0);
+  const [mc2PARunning, setMc2PARunning] = useState(false);
+  const mc2PAWorker = useRef(null);
+  const mc2PATimer = useRef(null);
+
+  useEffect(() => {
+    const blob = new Blob([MC2_WORKER_CODE], { type: "application/javascript" });
+    mc2PAWorker.current = new Worker(URL.createObjectURL(blob));
+    mc2PAWorker.current.onmessage = (e) => {
+      setAvgTradesPerCyclePA(e.data.avgTrades);
+      setAvgPeakSimulatedPA(e.data.avgPeakOnFail);
+      setMc2PARunning(false);
+      setFrictionPA(Math.round(e.data.avgTrades * NT_MICRO_RT.free));
+    };
+    return () => mc2PAWorker.current.terminate();
+  }, []);
+
+  useEffect(() => {
+    if (mc2PATimer.current) clearTimeout(mc2PATimer.current);
+    mc2PATimer.current = setTimeout(() => {
+      setMc2PARunning(true);
+      mc2PAWorker.current.postMessage({
+        TP: propTP,
+        SL: propTP / rrRatio,
+        tick: inst.fullTickVal,
+        profitTarget: payoutThreshold,
+        trailingDD,
+        numSims: 1000,
+      });
+    }, 500);
+    return () => clearTimeout(mc2PATimer.current);
+  }, [propTP, rrRatio, inst.fullTickVal, payoutThreshold, trailingDD]);
+
   // ============================================================
   // 2-STEP MODEL (eval → PA → payout)
   // ============================================================
@@ -362,16 +399,16 @@ function HedgeAnalysis() {
     const p2 = pPass * pFailPA;
     const p3 = pPass * pPayGivenPass;
 
-    const propPLEvalFail = effectivePeakFail - trailingDD;
+    const propPLEvalFail = avgPeakSimulated - trailingDD;
     const hedgeEvalFail = -evalHedgeRatio * propPLEvalFail;
     const hedgeEvalPass = -evalHedgeRatio * profitTarget;
-    const propPLPAFail = effectivePeakFail - trailingDD;
+    const propPLPAFail = avgPeakSimulatedPA - trailingDD;
     const hedgePAFail = -paHedgeRatio * propPLPAFail;
     const propPLPASuccess = payoutThreshold;
     const hedgePASuccess = -paHedgeRatio * propPLPASuccess;
 
     const eFric = friction * evalHedgeContracts;
-    const pFric = friction * paHedgeContracts;
+    const pFric = frictionPA * paHedgeContracts;
 
     const net1 = -evalCost + hedgeEvalFail - eFric;
     const net2 = -evalCost - paCost + hedgeEvalPass - eFric + hedgePAFail - pFric;
@@ -399,7 +436,7 @@ function HedgeAnalysis() {
       ev, evNH, sd, sdNH, cyclesHedge, cyclesNH,
       hedgeOnlyEV: ev - evNH, payoutThreshold, eFric, pFric,
     };
-  }, [passRate, payoutRate, effectivePeakFail, friction, evalHedgeContracts, paHedgeContracts,
+  }, [passRate, payoutRate, avgPeakSimulated, avgPeakSimulatedPA, friction, frictionPA, evalHedgeContracts, paHedgeContracts,
       evalCost, paCost, profitTarget, trailingDD, payoutAmt, payoutThreshold, evalHedgeRatio, paHedgeRatio]);
 
   // ============================================================
@@ -410,14 +447,14 @@ function HedgeAnalysis() {
     const pFail = 1 - pPay;
 
     // Fail: prop blows the funded account
-    const propPLFail = effectivePeakFail - trailingDD;
+    const propPLFail = avgPeakSimulatedPA - trailingDD;
     const hedgeFail = -stfHedgeRatio * propPLFail;
 
     // Success: prop accumulates enough for payout
     const propPLSuccess = payoutThreshold;
     const hedgeSuccess = -stfHedgeRatio * propPLSuccess;
 
-    const hFric = friction * stfHedgeContracts;
+    const hFric = frictionPA * stfHedgeContracts;
 
     const netFail = -stfCost + hedgeFail - hFric;
     const netSuccess = -stfCost + payoutAmt + hedgeSuccess - hFric;
@@ -442,7 +479,7 @@ function HedgeAnalysis() {
       ev, evNH, sd, sdNH, cyclesHedge, cyclesNH,
       hedgeOnlyEV: ev - evNH, hFric,
     };
-  }, [stfPayoutRate, effectivePeakFail, friction, stfHedgeContracts, stfCost, payoutAmt, payoutThreshold, stfHedgeRatio, trailingDD]);
+  }, [stfPayoutRate, avgPeakSimulatedPA, frictionPA, stfHedgeContracts, stfCost, payoutAmt, payoutThreshold, stfHedgeRatio, trailingDD]);
 
   // ============================================================
   // RENDER
@@ -702,7 +739,8 @@ function HedgeAnalysis() {
             </div>
             <div style={{ fontFamily: sansFont, fontSize: 10, color: C.faint, marginTop: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {`SL: $${propSL.toFixed(0)} · Max SL (30% rule): $${maxSL.toFixed(0)} · Losses to fail: ~${Math.ceil(trailingDD / propSL)}`}
-              {` · `}<span style={{ color: mc2Running ? C.amber : C.green }}>{`Avg Peak (MC): $${avgPeakSimulated.toFixed(0)}`}</span>
+              {` · `}<span style={{ color: mc2Running ? C.amber : C.green }}>{`Eval Peak: $${avgPeakSimulated.toFixed(0)}`}</span>
+              {` · `}<span style={{ color: mc2PARunning ? C.amber : C.green }}>{`PA Peak: $${avgPeakSimulatedPA.toFixed(0)}`}</span>
             </div>
             <input type="range" min={50} max={Math.floor(maxPropTP / 50) * 50} step={50} value={propTP}
               onChange={e => setPropTP(Number(e.target.value))}
