@@ -4,6 +4,8 @@
   "page_title": "TradeBlade — Eval Hedge System",
   "page_description": "TradeBlade Hedge System: a simple way to hedge prop firm evaluations with a small live account and real math.",
 
+  "nav_home": "Home",
+  "nav_features": "Features",
   "nav_hedge": "Hedge",
   "nav_math": "Math",
   "nav_book": "Free Book",
