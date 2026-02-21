@@ -39,7 +39,7 @@
   function load(code, cb){
     if(code==='en'){ cb && cb(null); return; }
     if(cache[code]){ apply(cache[code], code); cb && cb(cache[code]); return; }
-    fetch('lang/'+code+'.json?v=2').then(function(r){
+    fetch('lang/'+code+'.json?v=3').then(function(r){
       if(!r.ok) throw new Error(r.status);
       return r.json();
     }).then(function(data){
@@ -56,14 +56,27 @@
     if(!data) return;
     current = code;
     // Swap text on [data-i18n] elements
-    document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var allEls = document.querySelectorAll('[data-i18n]');
+    var translated = 0, skipped = 0, missing = 0;
+    allEls.forEach(function(el){
       try {
         var key = el.getAttribute('data-i18n');
         var val = data[key];
-        if(!val || typeof val !== 'string') return;
+        if(!val || typeof val !== 'string'){ skipped++; return; }
         if(val.indexOf('<')>=0) el.innerHTML = val;
         else el.textContent = val;
-      } catch(e) { /* skip broken key, continue loop */ }
+        translated++;
+      } catch(e) { missing++; }
+    });
+    console.log('i18n apply:', code, '| elements:', allEls.length, '| translated:', translated, '| skipped:', skipped, '| errors:', missing);
+    // Diagnostic: check book section specifically
+    var bookKeys = ['book_inside_title','book_li_1','book_li_2','book_li_3','book_li_4','book_li_5','book_li_6','book_footer'];
+    bookKeys.forEach(function(k){
+      var el = document.querySelector('[data-i18n="'+k+'"]');
+      var inJson = typeof data[k] === 'string';
+      if(!el) console.warn('i18n DIAG: element NOT FOUND for', k, '| key in json:', inJson);
+      else if(!inJson) console.warn('i18n DIAG: element found but KEY MISSING in json for', k);
+      else console.log('i18n DIAG: OK', k, '->', data[k].substring(0,40));
     });
     // Swap placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
