@@ -2412,4 +2412,6 @@ export default function HedgeAnalysis() {
     }
   }, /*#__PURE__*/React.createElement(TB, null), " PropPrimary + LiveHedge \xB7 NinjaTrader Platform")));
 }
+  const _root = document.getElementById("hedge-analysis-root");
+  _root && ReactDOM.createRoot(_root).render(React.createElement(HedgeAnalysis));
 })();
