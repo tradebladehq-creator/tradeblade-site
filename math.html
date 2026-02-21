@@ -702,8 +702,7 @@ function HedgeAnalysis() {
             </div>
             <div style={{ fontFamily: sansFont, fontSize: 10, color: C.faint, marginTop: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {`SL: $${propSL.toFixed(0)} · Max SL (30% rule): $${maxSL.toFixed(0)} · Losses to fail: ~${Math.ceil(trailingDD / propSL)}`}
-              {` · `}<span style={{ color: C.green }}>{`Avg Peak (MC): $${avgPeakSimulated.toFixed(0)}`}</span>
-              {mc2Running && <span style={{ color: C.amber, marginLeft: 4 }}>computing...</span>}
+              {` · `}<span style={{ color: mc2Running ? C.amber : C.green }}>{`Avg Peak (MC): $${avgPeakSimulated.toFixed(0)}`}</span>
             </div>
             <input type="range" min={50} max={Math.floor(maxPropTP / 50) * 50} step={50} value={propTP}
               onChange={e => setPropTP(Number(e.target.value))}
