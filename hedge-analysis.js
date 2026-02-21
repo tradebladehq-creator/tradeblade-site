@@ -431,7 +431,7 @@ function TB({
     style: s
   }, "TradeBlade");
 }
-export default function HedgeAnalysis() {
+function HedgeAnalysis() {
   // --- Instrument & Account Type ---
   const [instrument, setInstrument] = useState("ES/MES");
   const [accountType, setAccountType] = useState("2-step");
