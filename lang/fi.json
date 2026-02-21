@@ -1,16 +1,17 @@
 {
-  "_meta": { "code": "fi", "name": "Suomi", "dir": "ltr" },
-
+  "_meta": {
+    "code": "fi",
+    "name": "Suomi",
+    "dir": "ltr"
+  },
   "page_title": "TradeBlade — Eval Hedge -järjestelmä",
   "page_description": "TradeBlade Hedge-järjestelmä: yksinkertainen tapa suojata prop-firman arvioinnit pienellä live-tilillä ja todellisella matematiikalla.",
-
   "nav_hedge": "Hedge",
   "nav_math": "Matematiikka",
   "nav_book": "Ilmainen kirja",
   "nav_pricing": "Hinnoittelu",
   "nav_faq": "UKK",
   "nav_get_access": "Hanki pääsy",
-
   "hero_eyebrow_nt8": "NinjaTrader 8",
   "hero_eyebrow_text": "eval hedge -järjestelmä",
   "hero_headline": "EPÄONNISTU EVALISSA.<br/>SAA SILTI MAKSU.",
@@ -18,11 +19,9 @@
   "hero_cta_access": "Hanki pääsy",
   "hero_cta_math": "Katso matematiikka",
   "hero_supports": "Tukee ES/MES · NQ/MNQ · YM/MYM · RTY/M2K · 2-vaiheisia &amp; Straight-to-Funded-tilejä · Rakennettu NinjaTraderille.",
-
   "status_checking": "Tarkistetaan...",
   "status_live": "LIVE",
   "status_offline": "Offline",
-
   "engine_title": "Mitä tapahtuu eval-syklien aikana",
   "engine_tagline": "<strong>Evalisi todennäköisesti epäonnistuu. Hedgesi tekee siitä kannattavaa.</strong><br/>Yksi mikrosopimus live-tilillä — alle $1 000 käyttökustannus — kompensoi jokaisen eval-kaupan vastakkaiseen suuntaan. ES/MES, NQ/MNQ, YM/MYM — mitä tahansa treidaat, hedge peilaa sen. Eval räjähtää? Hedge tuottaa. Eval menee läpi? Saat maksun. Joka tapauksessa palautat pääomaa joka syklissä.",
   "engine_blows_title": "Prop räjähtää",
@@ -33,7 +32,6 @@
   "engine_repeat_desc": "Epäonnistumiset ovat yleisiä &amp; kannattavia. Maksut ovat harvinaisia mutta silti nettopositiivisia.",
   "engine_cta": "Kuinka paljon epäonnistuminen maksaa? →",
   "engine_cta_sub": "Interaktiivinen hedge-tuottolaskuri — esitäytetty Apex 50k -evaliin 1 MES counter-entry hedgellä.",
-
   "features_title": "Sinun strategiasi. Meidän kurinalaisuutemme.",
   "features_sub": "TradeBlade ei kerro, mitä sinun pitäisi treidata. Se toteuttaa sen, mitä SINÄ määräät — ilman tunteita, ilman epäröintiä ja ilman poikkeamia suunnitelmastasi.",
   "features_hero_p1": "EMA-risteämät. RSI. Initial Balance. Opening Range Breakout.<br/>Jos strategiasi treidaa tasolla — TradeBlade toteuttaa sen.",
@@ -50,7 +48,6 @@
   "feature_5_desc": "Näe kaikki, mitä TradeBlade tekee — livenä, NinjaTrader-kaaviossasi. Keskeiset tasot, odottavat sisääntulot, aktiiviset positiot, P&amp;L, jäljellä olevat päivittäiset rajat. Päivitykset sekunnin välein. Täysi läpinäkyvyys. Nolla arvailua siitä, mitä robotti ajattelee.",
   "feature_6_title": "🧠 Ainoa kurinalaisuus, jonka tarvitset",
   "feature_6_desc": "Et tarvitse rautaista tahdonvoimaa. Sinun ei tarvitse taistella kostotreidauksen himoa vastaan. Tarvitset vain yhden säännön: <strong style=\"color:var(--tb-blue-light);\">treidaa vain TradeBladella.</strong> Se hoitaa kurinalaisuuden. Sinä hoidat strategian. Se on sopimus.",
-
   "arch_title": "Julkaisuarkkitehtuuri",
   "arch_sub": "Ei tuuneria julkaisussa. Selkeä, tarkastettava kulku Strategystä HUDiin.",
   "arch_1_title": "Strategy",
@@ -61,11 +58,9 @@
   "arch_3_desc": "Kevyt identiteettishim, joka normalisoi avaimet ja välittää DTO:t bussiin.",
   "arch_4_title": "HUD",
   "arch_4_desc": "Visualisoija lukee bussia ja renderöi terävän, välkkymättömän koontinäytön kaavioosi.",
-
   "ease_title": "Uusi automaatiossa? Et ole yksin.",
   "ease_p1": "Useimmat TradeBlade-käyttäjät eivät ole koskaan käyttäneet kaupankäyntirobottia. Se on ihan ok — NinjaTraderin käyttöliittymä on intuitiivinen, eikä sinun tarvitse kirjoittaa yhtään koodiriviä. Aseta tasosi, stoppisi ja sessioikkunasi. TradeBlade hoitaa loput.",
   "ease_p2": "Onko kysymyksiä? Tekoälyassistenttimme on koulutettu jokaiseen alustan yksityiskohtaan ja saatavilla 24/7. Ja jos tarvitset oikean ihmisen, olen täällä. Tämä on yhden henkilön toiminto, joten vasteajat vaihtelevat — mutta jokainen käyttäjä on tärkeä, ja jokainen viesti luetaan.",
-
   "book_label": "Ilmainen e-kirja",
   "book_title": "Selviytymisen matematiikka",
   "book_tagline": "Lyhyt, suorapuheinen opas siitä, miksi useimmat treidaajat epäonnistuvat — ja mitä tarvitaan selviytyäkseen tarpeeksi kauan selvittääkseen, onko sinulla oikeasti edge. Sisältää Jesse Livermoren tarinan ja opetuksen, jonka useimmat missaavat.",
@@ -79,7 +74,6 @@
   "book_li_6": "Liite: selviytymisen matematiikka.",
   "book_footer": "Jos olet koskaan sanonut \"strategiani toimii backtestissä mutta ei livenä,\" aloita tästä.",
   "book_cta": "Hanki ilmainen PDF — syötä sähköpostisi alle",
-
   "pricing_title": "Valitse suunnitelmasi",
   "pricing_sub": "Jokainen suunnitelma sisältää täyden TradeBlade Enginen, HUDin, riskisuojat ja päivitykset. Ero on siinä, kuinka monta eval-hedgeä voit ajaa — ja kuinka paljon tukea saat.",
   "pricing_popular": "Suosituin",
@@ -121,7 +115,6 @@
   "diversification_p1": "Trade copier peilaa yhtä strategiaa kaikille tileille. Se on nopea pystyttää, mutta se tarkoittaa, että jokainen eval osuu samoille tasoille, ottaa samat sisääntulot ja kohtaa samat drawdownit samaan aikaan. Kun pahin skenaario iskee, se iskee <em>kaikkiin kerralla.</em>",
   "diversification_p2": "TradeBlade ajaa jokaisen hedgen itsenäisenä strategiainstanssina NinjaTraderissa. Eri sisääntulotasot. Eri sessioikkunat. Eri riskiparametrit. Kun yksi eval räjähtää stop runissa, muut eivät ole samassa kaupassa. Pahin skenaariosi pysyy eristettynä yhdelle tilille sen sijaan, että se moninkertaistuisi koko portfoliossasi.",
   "diversification_p3": "Enemmän hedgejä itsenäisellä toteutuksella tarkoittaa tasaisempia tuottoja, pienempiä drawdowneja ja paljon nopeampaa polkua tilastolliseen kannattavuuteen. Trade copierit antavat sinulle nopeuden. Itsenäiset strategiat antavat sinulle selviytymisen.",
-
   "faq_title": "Usein kysytyt kysymykset",
   "faq_1_q": "Mikä on TradeBlade?",
   "faq_1_a": "TradeBlade on automatisoitu kaupankäynnin toteutusmoottori NinjaTrader 8:lle. Sinä määrität strategiasi — tasosi, stoppisi, tavoitteesi, sessioikkunasi — ja TradeBlade toteuttaa sen ilman tunteita. Se ei ole signaalipalvelu tai black-box-algo. Se treidaa SINUN suunnitelmaasi, juuri niin kuin sen asetit, joka kerta.",
@@ -147,7 +140,6 @@
   "faq_11_a": "Peruuta milloin tahansa. Ei sopimuksia, ei sitoutumisaikoja, eikä peruutusmaksuja. Jos TradeBlade ei ole sinua varten, lopetat maksamisen ja siinä se.",
   "faq_12_q": "Ovatko rahani turvassa?",
   "faq_12_a": "TradeBlade ei koskaan koske varoihisi. Rahasi pysyvät välitystililläsi, välittäjäsi hallinnassa. TradeBlade lähettää vain kaupankäyntiohjeita NinjaTraderin API:n kautta — sillä ei ole pääsyä talletuksiin, nostoihin tai tilisiirtoihin. Välittäjäsi hoitaa kaiken säilytyksen ja sääntelyvaatimusten noudattamisen.",
-
   "cta_title": "Hanki ilmainen e-kirja &amp; tuotepäivitykset",
   "cta_sub": "Kunnioitamme aikaasi emmekä koskaan spämmää.",
   "cta_email_placeholder": "Sähköpostisi",
@@ -161,21 +153,25 @@
   "cta_card_p3": "Ei siksi, että hän menetti edgensä. Vaan siksi, ettei hän voinut lopettaa treidaamista ilman sääntöjä. Mies, joka ymmärsi markkinoita paremmin kuin kukaan elossa oleva, ei pystynyt ratkaisemaan ainoata ongelmaa, joka tappaa jokaisen treidaajan: <strong style=\"color:var(--text);\">itsensä.</strong>",
   "cta_card_p4": "Tämä kirja käsittelee tuota ongelmaa — ja mitä tarvitaan selviytyäkseen tarpeeksi kauan selvittääkseen, onko sinulla oikeasti edge.",
   "cta_card_p5": "👈 Syötä sähköpostisi ja lähetämme sen sinulle — ilmaiseksi, heti.",
-
   "footer_copyright": "© {year} TradeBlade Technologies LLC",
   "footer_terms": "Ehdot",
   "footer_privacy": "Tietosuoja",
   "footer_contact": "Yhteystiedot",
   "footer_tag": "TradeBlade toimii Breakthrough Interactive Levels Engine™ -moottorilla.",
-
   "disclaimer_risk": "Riskivaroitus: Futuuri- ja valuuttakaupankäynti sisältää merkittävän riskin eikä sovi jokaiselle sijoittajalle. Sijoittaja voi mahdollisesti menettää kaiken tai enemmän kuin alkuperäisen sijoituksen. Riskipääoma on rahaa, joka voidaan menettää vaarantamatta taloudellista turvallisuutta tai elintasoa. Vain riskipääomaa tulisi käyttää kaupankäyntiin, ja vain ne, joilla on riittävästi riskipääomaa, tulisi harkita kaupankäyntiä. Aiempi tuotto ei välttämättä anna viitteitä tulevista tuloksista.",
   "disclaimer_hypothetical": "Hypoteettisten tulosten varoitus: Hypoteettisilla tuloksilla on monia luontaisia rajoituksia, joista joitakin kuvataan alla. Mikään väite ei takaa, että mikään tili saavuttaa tai todennäköisesti saavuttaa esitetyn kaltaisia voittoja tai tappioita; itse asiassa hypoteettisten tulosten ja minkä tahansa tietyn kaupankäyntiohjelman myöhemmin saavuttamien todellisten tulosten välillä on usein jyrkkiä eroja. Yksi hypoteettisten tulosten rajoituksista on, että ne on yleensä laadittu jälkiviisauden edulla. Lisäksi hypoteettinen kaupankäynti ei sisällä taloudellista riskiä, eikä mikään hypoteettinen kaupankäyntihistoria voi täysin selittää taloudellisen riskin vaikutusta todellisessa kaupankäynnissä. Esimerkiksi kyky kestää tappioita tai noudattaa tiettyä kaupankäyntiohjelmaa tappioista huolimatta ovat olennaisia seikkoja, jotka voivat myös vaikuttaa negatiivisesti todellisiin kaupankäyntituloksiin. On lukuisia muita markkinoihin yleisesti tai minkä tahansa tietyn kaupankäyntiohjelman toteuttamiseen liittyviä tekijöitä, joita ei voida täysin huomioida hypoteettisten tulosten laadinnassa ja jotka kaikki voivat vaikuttaa negatiivisesti kaupankäyntituloksiin.",
   "disclaimer_live": "Live Trade Room -varoitus: Tämä esitys on tarkoitettu ainoastaan koulutustarkoituksiin, ja esitetyt mielipiteet ovat esittäjän omia. Kaikkia esitettyjä kauppoja tulisi pitää hypoteettisina eikä niiden tulisi odottaa toistuvan live-kaupankäyntitilillä.",
   "disclaimer_testimonial": "Suositteluvaroitus: Tällä verkkosivustolla esiintyvät suosittelut eivät välttämättä edusta muita asiakkaita eivätkä ole takuu tulevasta suorituskyvystä tai menestyksestä.",
-
   "js_joining": "Liitytään...",
   "js_joined": "Liitytty ✓",
   "js_success": "Olet listalla! Tarkista sähköpostisi seuraavia ohjeita varten.",
   "js_error": "Jokin meni pieleen. Yritä uudelleen tai lähetä sähköpostia osoitteeseen support@tradebladehq.com",
-  "js_join_list": "Liity listalle"
+  "js_join_list": "Liity listalle",
+  "math_title": "Paljonko epäonnistuminen maksaa?",
+  "math_subtitle": "Syötä numerosi. Katso, paljonko arvioinnin epäonnistuminen todellisuudessa maksaa sinulle.",
+  "math_defaults_note": "⚡ Esiladattu <strong>Apex Trader Funding 50k</strong> -tilille — 1 ES prop-positio, 1 MES-suojaus vastakkaiseen suuntaan live-tililläsi. Säädä kaikkea.",
+  "math_get_access": "Hanki pääsy",
+  "math_footer_back": "← Takaisin TradeBladeen",
+  "math_footer_plans": "Näytä suunnitelmat",
+  "math_footer_copyright": "TradeBlade Technologies LLC · NinjaTrader® on NinjaTrader Group, LLC:n rekisteröity tavaramerkki."
 }

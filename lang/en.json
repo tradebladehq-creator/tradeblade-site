@@ -177,5 +177,13 @@
   "js_joined": "Joined \u2713",
   "js_success": "You\u2019re on the list! Check your email for next steps.",
   "js_error": "Something went wrong. Try again or email support@tradebladehq.com",
-  "js_join_list": "Join the list"
+  "js_join_list": "Join the list",
+
+  "math_title": "How Much Does Failure Pay?",
+  "math_subtitle": "Plug in your numbers. See what eval failure actually pays you.",
+  "math_defaults_note": "\u26a1 Preloaded for an <strong>Apex Trader Funding 50k</strong> account \u2014 1 ES prop position, 1 MES opposite-direction hedge on your live account. Adjust everything.",
+  "math_get_access": "Get Access",
+  "math_footer_back": "\u2190 Back to TradeBlade",
+  "math_footer_plans": "See Plans",
+  "math_footer_copyright": "TradeBlade Technologies LLC \u00b7 NinjaTrader\u00ae is a registered trademark of NinjaTrader Group, LLC."
 }
