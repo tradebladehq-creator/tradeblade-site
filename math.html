@@ -305,19 +305,19 @@ function HedgeAnalysis() {
         if (SL <= 0 || TP <= 0 || profitTarget <= 0 || trailingDD <= 0) { self.postMessage({ avgTrades: 0, avgPeakOnFail: 0 }); return; }
         let totalTrades = 0, totalPeak = 0, failCount = 0;
         for (let i = 0; i < numSims; i++) {
-          let acct = 0, trades = 0, peak = 0;
-          while (acct < profitTarget && acct > -trailingDD) {
+          let acct = 0, trades = 0, peak = 0, floor = -trailingDD;
+          while (acct < profitTarget && acct > floor) {
             let pos = 0;
             while (true) {
               pos += Math.random() < 0.5 ? tick : -tick;
               if (pos >= TP) { acct += TP; break; }
               if (pos <= -SL) { acct -= SL; break; }
             }
-            if (acct > peak) peak = acct;
+            if (acct > peak) { peak = acct; floor = peak - trailingDD; }
             trades++;
           }
           totalTrades += trades;
-          if (acct <= -trailingDD) { totalPeak += peak; failCount++; }
+          if (acct <= floor) { totalPeak += peak; failCount++; }
         }
         self.postMessage({ avgTrades: totalTrades / numSims, avgPeakOnFail: failCount > 0 ? totalPeak / failCount : 0 });
       };
