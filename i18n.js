@@ -39,7 +39,7 @@
   function load(code, cb){
     if(code==='en'){ cb && cb(null); return; }
     if(cache[code]){ apply(cache[code], code); cb && cb(cache[code]); return; }
-    fetch('lang/'+code+'.json?v=5').then(function(r){
+    fetch('lang/'+code+'.json?v=6').then(function(r){
       if(!r.ok) throw new Error(r.status);
       return r.json();
     }).then(function(data){
@@ -67,24 +67,22 @@
         translated++;
       } catch(e) { /* skip broken key */ }
     });
-    // Fallback: if browser extensions strip data-i18n attributes (e.g. ad injectors),
-    // re-locate elements by id (extensions don't strip ids) and force-translate.
-    var idMap = {
-      'tb-book-h3':      'book_inside_title',
-      'tb-book-li1':     'book_li_1',
-      'tb-book-li2':     'book_li_2',
-      'tb-book-li3':     'book_li_3',
-      'tb-book-li4':     'book_li_4',
-      'tb-book-li5':     'book_li_5',
-      'tb-book-li6':     'book_li_6',
-      'tb-book-footer':  'book_footer'
-    };
-    for(var id in idMap){
-      var fbKey = idMap[id];
-      var fbEl = document.getElementById(id);
-      if(fbEl && data[fbKey] && typeof data[fbKey]==='string'){
-        fbEl.textContent = data[fbKey];
-        if(!fbEl.getAttribute('data-i18n')) fbEl.setAttribute('data-i18n', fbKey);
+    // Nuclear fallback: translate book card by TAG NAME within #book.
+    // Some browser extensions strip all custom attributes (data-*, id, style)
+    // from card content. getElementsByTagName is immune to attribute stripping.
+    var bookSec = document.getElementById('book');
+    if(bookSec){
+      var bh3 = bookSec.getElementsByTagName('h3');
+      if(bh3[0] && data.book_inside_title) bh3[0].textContent = data.book_inside_title;
+      var bli = bookSec.getElementsByTagName('li');
+      for(var bi=0; bi<6 && bi<bli.length; bi++){
+        var bk = 'book_li_'+(bi+1);
+        if(data[bk]) bli[bi].textContent = data[bk];
+      }
+      // book_footer: first <p> after the <ul> that holds the list items
+      if(bli.length && data.book_footer){
+        var ul = bli[0].parentElement;
+        if(ul){ var ns = ul.nextElementSibling; while(ns){ if(ns.tagName==='P'){ ns.textContent = data.book_footer; break; } ns = ns.nextElementSibling; } }
       }
     }
     // Swap placeholders

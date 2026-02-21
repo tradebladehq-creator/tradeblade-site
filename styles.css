@@ -637,6 +637,10 @@ body::after {content:"";position:fixed;inset:0;background-image:linear-gradient(
 
 /* ─── RTL Overrides ─── */
 html[dir="rtl"] .nav-inner{flex-direction:row-reverse}
+/* Protect book card layout from extensions that strip inline style attributes */
+#book .row{gap:18px;flex-wrap:wrap;margin-top:18px}
+#book .row > div:last-child > div:first-child{background:rgba(255,255,255,0.06);border:1px solid var(--soft);border-radius:18px;padding:18px}
+
 html[dir="rtl"] .brand{flex-direction:row-reverse}
 html[dir="rtl"] .nav-links{direction:rtl}
 html[dir="rtl"] .row{flex-direction:row-reverse}
