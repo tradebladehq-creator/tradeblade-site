@@ -39,7 +39,7 @@
   function load(code, cb){
     if(code==='en'){ cb && cb(null); return; }
     if(cache[code]){ apply(cache[code], code); cb && cb(cache[code]); return; }
-    fetch('lang/'+code+'.json?v=4').then(function(r){
+    fetch('lang/'+code+'.json?v=5').then(function(r){
       if(!r.ok) throw new Error(r.status);
       return r.json();
     }).then(function(data){
@@ -68,24 +68,23 @@
       } catch(e) { /* skip broken key */ }
     });
     // Fallback: if browser extensions strip data-i18n attributes (e.g. ad injectors),
-    // re-locate elements by CSS structure and re-apply translations.
-    var fallbackMap = {
-      '#book .card > h3':                       'book_inside_title',
-      '#book .card > ul > li:nth-child(1)':     'book_li_1',
-      '#book .card > ul > li:nth-child(2)':     'book_li_2',
-      '#book .card > ul > li:nth-child(3)':     'book_li_3',
-      '#book .card > ul > li:nth-child(4)':     'book_li_4',
-      '#book .card > ul > li:nth-child(5)':     'book_li_5',
-      '#book .card > ul > li:nth-child(6)':     'book_li_6',
-      '#book .card > p.muted':                  'book_footer'
+    // re-locate elements by id (extensions don't strip ids) and force-translate.
+    var idMap = {
+      'tb-book-h3':      'book_inside_title',
+      'tb-book-li1':     'book_li_1',
+      'tb-book-li2':     'book_li_2',
+      'tb-book-li3':     'book_li_3',
+      'tb-book-li4':     'book_li_4',
+      'tb-book-li5':     'book_li_5',
+      'tb-book-li6':     'book_li_6',
+      'tb-book-footer':  'book_footer'
     };
-    for(var sel in fallbackMap){
-      var fbKey = fallbackMap[sel];
-      var fbEl = document.querySelector(sel);
-      if(fbEl && !fbEl.getAttribute('data-i18n') && data[fbKey] && typeof data[fbKey]==='string'){
-        fbEl.setAttribute('data-i18n', fbKey);
+    for(var id in idMap){
+      var fbKey = idMap[id];
+      var fbEl = document.getElementById(id);
+      if(fbEl && data[fbKey] && typeof data[fbKey]==='string'){
         fbEl.textContent = data[fbKey];
-        translated++;
+        if(!fbEl.getAttribute('data-i18n')) fbEl.setAttribute('data-i18n', fbKey);
       }
     }
     // Swap placeholders
@@ -137,10 +136,9 @@
     var lang = detect();
     if(lang!=='en'){
       load(lang);
-      // Safety net: re-apply after 1s in case browser extensions modify the DOM
-      setTimeout(function(){
-        if(cache[lang]) apply(cache[lang], lang);
-      }, 1000);
+      // Safety net: re-apply at 500ms and 2s in case browser extensions modify the DOM
+      setTimeout(function(){ if(cache[lang]) apply(cache[lang], lang); }, 500);
+      setTimeout(function(){ if(cache[lang]) apply(cache[lang], lang); }, 2000);
     }
   });
 })();
