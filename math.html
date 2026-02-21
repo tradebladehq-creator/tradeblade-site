@@ -41,11 +41,10 @@
     .brand { display: flex; align-items: center; gap: 14px; }
     .brand-logo { width: 75px; height: 75px; border-radius: 0; object-fit: contain; display: block; }
     .brand-wordmark { font-weight: 800; letter-spacing: 2px; font-size: 22px; color: var(--tb-blue-mid); }
-    .nav-links { display: flex; gap: 20px; }
-    .nav-links a { font-size: 14px; color: var(--muted); transition: color 0.2s; }
-    .nav-links a:hover { color: var(--text); }
-    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--soft); font-weight: 600; font-size: 14px; }
-    .btn-primary { background: linear-gradient(90deg, var(--tb-blue), var(--tb-teal)); border-color: transparent; }
+    .nav-links { display: none; gap: 20px; }
+    @media (min-width: 1000px) { .nav-links { display: flex; } }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 18px; border-radius: 12px; border: 1px solid var(--soft); font-weight: 600; }
+    .btn-primary { background: linear-gradient(90deg, var(--tb-blue), var(--tb-teal)); border-color: transparent; box-shadow: 0 6px 18px rgba(14,165,188,0.2); }
 
     /* Page header */
     .page-header {
@@ -88,7 +87,6 @@
       .brand-wordmark { font-size: 18px; letter-spacing: 1px; }
       .page-header h1 { font-size: 44px; }
       .page-header .subtitle { font-size: 15px; }
-      .nav-links { display: none; }
     }
   </style>
 </head>
