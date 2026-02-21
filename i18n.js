@@ -39,7 +39,7 @@
   function load(code, cb){
     if(code==='en'){ cb && cb(null); return; }
     if(cache[code]){ apply(cache[code], code); cb && cb(cache[code]); return; }
-    fetch('lang/'+code+'.json?v=3').then(function(r){
+    fetch('lang/'+code+'.json?v=4').then(function(r){
       if(!r.ok) throw new Error(r.status);
       return r.json();
     }).then(function(data){
@@ -56,28 +56,38 @@
     if(!data) return;
     current = code;
     // Swap text on [data-i18n] elements
-    var allEls = document.querySelectorAll('[data-i18n]');
-    var translated = 0, skipped = 0, missing = 0;
-    allEls.forEach(function(el){
+    var translated = 0;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
       try {
         var key = el.getAttribute('data-i18n');
         var val = data[key];
-        if(!val || typeof val !== 'string'){ skipped++; return; }
+        if(!val || typeof val !== 'string') return;
         if(val.indexOf('<')>=0) el.innerHTML = val;
         else el.textContent = val;
         translated++;
-      } catch(e) { missing++; }
+      } catch(e) { /* skip broken key */ }
     });
-    console.log('i18n apply:', code, '| elements:', allEls.length, '| translated:', translated, '| skipped:', skipped, '| errors:', missing);
-    // Diagnostic: check book section specifically
-    var bookKeys = ['book_inside_title','book_li_1','book_li_2','book_li_3','book_li_4','book_li_5','book_li_6','book_footer'];
-    bookKeys.forEach(function(k){
-      var el = document.querySelector('[data-i18n="'+k+'"]');
-      var inJson = typeof data[k] === 'string';
-      if(!el) console.warn('i18n DIAG: element NOT FOUND for', k, '| key in json:', inJson);
-      else if(!inJson) console.warn('i18n DIAG: element found but KEY MISSING in json for', k);
-      else console.log('i18n DIAG: OK', k, '->', data[k].substring(0,40));
-    });
+    // Fallback: if browser extensions strip data-i18n attributes (e.g. ad injectors),
+    // re-locate elements by CSS structure and re-apply translations.
+    var fallbackMap = {
+      '#book .card > h3':                       'book_inside_title',
+      '#book .card > ul > li:nth-child(1)':     'book_li_1',
+      '#book .card > ul > li:nth-child(2)':     'book_li_2',
+      '#book .card > ul > li:nth-child(3)':     'book_li_3',
+      '#book .card > ul > li:nth-child(4)':     'book_li_4',
+      '#book .card > ul > li:nth-child(5)':     'book_li_5',
+      '#book .card > ul > li:nth-child(6)':     'book_li_6',
+      '#book .card > p.muted':                  'book_footer'
+    };
+    for(var sel in fallbackMap){
+      var fbKey = fallbackMap[sel];
+      var fbEl = document.querySelector(sel);
+      if(fbEl && !fbEl.getAttribute('data-i18n') && data[fbKey] && typeof data[fbKey]==='string'){
+        fbEl.setAttribute('data-i18n', fbKey);
+        fbEl.textContent = data[fbKey];
+        translated++;
+      }
+    }
     // Swap placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
       var key = el.getAttribute('data-i18n-placeholder');
@@ -125,6 +135,12 @@
   document.addEventListener('DOMContentLoaded', function(){
     saveOriginals();
     var lang = detect();
-    if(lang!=='en') load(lang);
+    if(lang!=='en'){
+      load(lang);
+      // Safety net: re-apply after 1s in case browser extensions modify the DOM
+      setTimeout(function(){
+        if(cache[lang]) apply(cache[lang], lang);
+      }, 1000);
+    }
   });
 })();
