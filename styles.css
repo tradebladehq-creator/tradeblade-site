@@ -634,3 +634,35 @@ body::after {content:"";position:fixed;inset:0;background-image:linear-gradient(
 
 /* Section tight spacing */
 .section-tight { padding: 12px 0 0; }
+
+/* ─── Language Picker ─── */
+.lang-picker{position:relative;display:flex;align-items:center}
+.lang-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid var(--soft);border-radius:10px;padding:6px 12px;color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s ease}
+.lang-btn:hover{background:rgba(255,255,255,0.1);border-color:var(--tb-blue)}
+.lang-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:rgba(15,15,20,0.96);backdrop-filter:blur(12px);border:1px solid var(--soft);border-radius:14px;padding:6px;min-width:180px;max-height:360px;overflow-y:auto;z-index:100;box-shadow:0 12px 36px rgba(0,0,0,0.5)}
+.lang-dropdown.open{display:block}
+.lang-dropdown button{display:block;width:100%;text-align:left;padding:8px 12px;border:none;background:transparent;color:var(--muted);font-size:13px;border-radius:8px;cursor:pointer;transition:all .15s ease}
+.lang-dropdown button:hover{background:rgba(255,255,255,0.08);color:var(--text)}
+@media(max-width:640px){
+  .lang-picker{order:2}
+  .lang-btn span:last-child{display:none}
+  .lang-dropdown{right:-40px}
+}
+
+/* ─── RTL Overrides ─── */
+html[dir="rtl"] .nav-inner{flex-direction:row-reverse}
+html[dir="rtl"] .brand{flex-direction:row-reverse}
+html[dir="rtl"] .nav-links{direction:rtl}
+html[dir="rtl"] .row{flex-direction:row-reverse}
+html[dir="rtl"] .cta-inner{direction:rtl}
+html[dir="rtl"] .plist{padding-right:18px;padding-left:0}
+html[dir="rtl"] .card{text-align:right}
+html[dir="rtl"] .hero-inner{text-align:center}
+html[dir="rtl"] .section-title{text-align:center}
+html[dir="rtl"] .section-sub{text-align:center}
+html[dir="rtl"] .engine-header{text-align:center}
+html[dir="rtl"] .badge-content{text-align:right}
+html[dir="rtl"] .lang-dropdown{right:auto;left:0}
+html[dir="rtl"] .fine{text-align:right}
+html[dir="rtl"] .disclaimer-content{text-align:right}
+html[dir="rtl"] .footer .row{flex-direction:row-reverse}
