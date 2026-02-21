@@ -688,8 +688,8 @@ function HedgeAnalysis() {
 
           <div style={{ marginBottom: 14 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span style={{ fontFamily: sansFont, fontSize: 12, color: C.dim }}>Prop Profit Target</span>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "nowrap" }}>
+                <span style={{ fontFamily: sansFont, fontSize: 12, color: C.dim, whiteSpace: "nowrap" }}>Prop Profit Target</span>
                 <span style={{ fontFamily: font, fontSize: 13, color: C.text, fontWeight: 600, minWidth: 52, textAlign: "right", display: "inline-block" }}>${propTP.toLocaleString()}</span>
                 <span style={{ fontFamily: sansFont, fontSize: 10, color: C.amber, minWidth: 70, display: "inline-block" }}>max ${Math.floor(maxPropTP / 50) * 50}</span>
               </div>
