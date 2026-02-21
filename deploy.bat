@@ -26,12 +26,38 @@ if not defined newestZip (
 echo Newest ZIP found: %newestZip%
 echo Extracting...
 
-:: Extract ZIP to a folder with the same name
+:: Extract ZIP to a temp folder
 powershell -command "Expand-Archive -Path '%newestZip%' -DestinationPath '%newestZip%.dir' -Force"
 
 set extractedFolder=%newestZip%.dir
 
 echo Extraction complete: %extractedFolder%
+echo.
+
+:: ── Unwrap nested folder if zip contained a single wrapper directory ──
+:: Count items in extracted folder. If there's exactly 1 subfolder and 0 files,
+:: the zip had a wrapper (e.g. tradeblade-site/tradeblade-site/index.html).
+:: Unwrap it so we copy from the inner folder instead.
+set contentRoot=%extractedFolder%
+set subDirCount=0
+set fileCount=0
+set lastSubDir=
+
+for /d %%D in ("%extractedFolder%\*") do (
+    set /a subDirCount+=1
+    set lastSubDir=%%D
+)
+for %%F in ("%extractedFolder%\*") do (
+    set /a fileCount+=1
+)
+
+if !subDirCount!==1 if !fileCount!==0 (
+    echo DETECTED wrapper folder: !lastSubDir!
+    echo Unwrapping to avoid nested deployment...
+    set contentRoot=!lastSubDir!
+)
+
+echo Content root: %contentRoot%
 echo.
 
 echo Deleting OLD site files...
@@ -51,7 +77,7 @@ for %%F in (*) do (
 
 echo.
 echo Copying NEW site content into the repo root...
-xcopy "%extractedFolder%\*" . /E /H /C /I /Y
+xcopy "!contentRoot!\*" . /E /H /C /I /Y
 
 echo.
 echo Cleaning temporary files...
