@@ -269,67 +269,29 @@ function HedgeAnalysis() {
   const paHedgeRatio = paHedgeContracts * 0.1;
   const stfHedgeRatio = stfHedgeContracts * 0.1;
   const propSL = propTP / rrRatio;   // SL = TP / k  (1:3 → TP=$1875, SL=$625)
+  const maxSL = 0.30 * trailingDD;                // 30% rule: max per-trade loss
+  const maxPropTP = maxSL * rrRatio;               // TP cap derived from SL cap
 
   const evalHedgeTickVal = (evalHedgeContracts * inst.microTickVal).toFixed(2);
   const paHedgeTickVal = (paHedgeContracts * inst.microTickVal).toFixed(2);
   const stfHedgeTickVal = (stfHedgeContracts * inst.microTickVal).toFixed(2);
 
-  // ============================================================
-  // MC1: Avg MFE on Losing Trades (per-trade random walk)
-  // Simulates single trades tick-by-tick to TP or SL barrier.
-  // For losers (hit SL), tracks peak above entry (uncapturable).
-  // ============================================================
+  // 30% rule: clamp propTP when rrRatio or trailingDD changes
+  useEffect(() => {
+    const cap = 0.30 * trailingDD * rrRatio;
+    if (propTP > cap) setPropTP(Math.floor(cap / 50) * 50);
+  }, [rrRatio, trailingDD]);
+
   const [avgPeakSimulated, setAvgPeakSimulated] = useState(0);
-  const [mcRunning, setMcRunning] = useState(false);
-  const mcWorker = useRef(null);
-  const mcTimer = useRef(null);
-
-  useEffect(() => {
-    const workerCode = `
-      self.onmessage = function(e) {
-        const { TP, SL, tick, numSims } = e.data;
-        if (SL <= 0 || TP <= 0) { self.postMessage(0); return; }
-        let totalMFE = 0, loserCount = 0;
-        for (let i = 0; i < numSims; i++) {
-          let pos = 0, mfe = 0;
-          while (true) {
-            pos += Math.random() < 0.5 ? tick : -tick;
-            if (pos > mfe) mfe = pos;
-            if (pos >= TP) break;
-            if (pos <= -SL) { totalMFE += mfe; loserCount++; break; }
-          }
-        }
-        self.postMessage(loserCount > 0 ? totalMFE / loserCount : 0);
-      };
-    `;
-    const blob = new Blob([workerCode], { type: "application/javascript" });
-    mcWorker.current = new Worker(URL.createObjectURL(blob));
-    mcWorker.current.onmessage = (e) => { setAvgPeakSimulated(e.data); setMcRunning(false); };
-    return () => mcWorker.current.terminate();
-  }, []);
-
-  useEffect(() => {
-    if (mcTimer.current) clearTimeout(mcTimer.current);
-    mcTimer.current = setTimeout(() => {
-      setMcRunning(true);
-      mcWorker.current.postMessage({
-        TP: propTP,
-        SL: propTP / rrRatio,
-        tick: inst.fullTickVal,
-        numSims: 1000,
-      });
-    }, 100);
-    return () => clearTimeout(mcTimer.current);
-  }, [propTP, rrRatio, inst.fullTickVal]);
-
   const effectivePeakFail = avgPeakSimulated;
 
   // ============================================================
-  // MC2: Avg Trades Per Cycle (full cycle simulation)
+  // MC2: Full Cycle Simulation
   // Simulates repeated trades (each resolving at +TP or -SL)
   // accumulating P/L until account hits +profitTarget or -trailingDD.
-  // Captures trade count per cycle, averages across runs.
-  // Auto-sets commission slider: avgTrades × RT commission.
+  // Tracks: avg trades per cycle, avg account peak on prop-failing
+  // cycles (system success). Peak includes winning trades that push
+  // the account up before it eventually blows.
   // ============================================================
   const [avgTradesPerCycle, setAvgTradesPerCycle] = useState(0);
   const [mc2Running, setMc2Running] = useState(false);
@@ -340,11 +302,10 @@ function HedgeAnalysis() {
     const workerCode = `
       self.onmessage = function(e) {
         const { TP, SL, tick, profitTarget, trailingDD, numSims } = e.data;
-        if (SL <= 0 || TP <= 0 || profitTarget <= 0 || trailingDD <= 0) { self.postMessage(0); return; }
-        let totalTrades = 0;
+        if (SL <= 0 || TP <= 0 || profitTarget <= 0 || trailingDD <= 0) { self.postMessage({ avgTrades: 0, avgPeakOnFail: 0 }); return; }
+        let totalTrades = 0, totalPeak = 0, failCount = 0;
         for (let i = 0; i < numSims; i++) {
-          let acct = 0;
-          let trades = 0;
+          let acct = 0, trades = 0, peak = 0;
           while (acct < profitTarget && acct > -trailingDD) {
             let pos = 0;
             while (true) {
@@ -352,19 +313,22 @@ function HedgeAnalysis() {
               if (pos >= TP) { acct += TP; break; }
               if (pos <= -SL) { acct -= SL; break; }
             }
+            if (acct > peak) peak = acct;
             trades++;
           }
           totalTrades += trades;
+          if (acct <= -trailingDD) { totalPeak += peak; failCount++; }
         }
-        self.postMessage(totalTrades / numSims);
+        self.postMessage({ avgTrades: totalTrades / numSims, avgPeakOnFail: failCount > 0 ? totalPeak / failCount : 0 });
       };
     `;
     const blob = new Blob([workerCode], { type: "application/javascript" });
     mc2Worker.current = new Worker(URL.createObjectURL(blob));
     mc2Worker.current.onmessage = (e) => {
-      setAvgTradesPerCycle(e.data);
+      setAvgTradesPerCycle(e.data.avgTrades);
+      setAvgPeakSimulated(e.data.avgPeakOnFail);
       setMc2Running(false);
-      setFriction(Math.round(e.data * NT_MICRO_RT.free));
+      setFriction(Math.round(e.data.avgTrades * NT_MICRO_RT.free));
     };
     return () => mc2Worker.current.terminate();
   }, []);
@@ -727,6 +691,7 @@ function HedgeAnalysis() {
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
                 <span style={{ fontFamily: sansFont, fontSize: 12, color: C.dim }}>Prop Profit Target</span>
                 <span style={{ fontFamily: font, fontSize: 13, color: C.text, fontWeight: 600 }}>${propTP.toLocaleString()}</span>
+                <span style={{ fontFamily: sansFont, fontSize: 10, color: C.amber }}>max ${Math.floor(maxPropTP / 50) * 50}</span>
               </div>
               <Toggle value={rrRatio} onChange={setRrRatio} accent={C.purple}
                 options={[
@@ -736,11 +701,11 @@ function HedgeAnalysis() {
                 ]} />
             </div>
             <div style={{ fontFamily: sansFont, fontSize: 10, color: C.faint, marginTop: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {`SL: $${propSL.toFixed(0)} · Losses to fail: ~${Math.ceil(trailingDD / propSL)}`}
+              {`SL: $${propSL.toFixed(0)} · Max SL (30% rule): $${maxSL.toFixed(0)} · Losses to fail: ~${Math.ceil(trailingDD / propSL)}`}
               {` · `}<span style={{ color: C.green }}>{`Avg Peak (MC): $${avgPeakSimulated.toFixed(0)}`}</span>
-              {mcRunning && <span style={{ color: C.amber, marginLeft: 4 }}>computing...</span>}
+              {mc2Running && <span style={{ color: C.amber, marginLeft: 4 }}>computing...</span>}
             </div>
-            <input type="range" min={50} max={2500} step={50} value={propTP}
+            <input type="range" min={50} max={Math.floor(maxPropTP / 50) * 50} step={50} value={propTP}
               onChange={e => setPropTP(Number(e.target.value))}
               style={{ width: "100%", accentColor: C.blue, marginTop: 4, height: 4 }} />
           </div>
