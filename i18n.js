@@ -39,7 +39,7 @@
   function load(code, cb){
     if(code==='en'){ cb && cb(null); return; }
     if(cache[code]){ apply(cache[code], code); cb && cb(cache[code]); return; }
-    fetch('lang/'+code+'.json').then(function(r){
+    fetch('lang/'+code+'.json?v=2').then(function(r){
       if(!r.ok) throw new Error(r.status);
       return r.json();
     }).then(function(data){
@@ -57,10 +57,13 @@
     current = code;
     // Swap text on [data-i18n] elements
     document.querySelectorAll('[data-i18n]').forEach(function(el){
-      var key = el.getAttribute('data-i18n');
-      if(!data[key]) return;
-      if(data[key].indexOf('<')>=0) el.innerHTML = data[key];
-      else el.textContent = data[key];
+      try {
+        var key = el.getAttribute('data-i18n');
+        var val = data[key];
+        if(!val || typeof val !== 'string') return;
+        if(val.indexOf('<')>=0) el.innerHTML = val;
+        else el.textContent = val;
+      } catch(e) { /* skip broken key, continue loop */ }
     });
     // Swap placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
