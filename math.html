@@ -598,7 +598,7 @@ function HedgeAnalysis() {
   // ============================================================
   const capital = useMemo(() => {
     if (is2Step) {
-      // Worst case: prop passes eval AND gets payout (hedge loses both phases)
+      // Max drawdown: prop passes eval AND gets payout (hedge loses both phases)
       const worstEvalLoss = Math.abs(r2.hedgeEvalPass);    // hedge loses when prop passes eval
       const worstPALoss = Math.abs(r2.hedgePASuccess);     // hedge loses when prop gets payout
       const totalFriction = r2.eFric + r2.pFric;
@@ -609,7 +609,7 @@ function HedgeAnalysis() {
       const intradayMargin = maxContracts * inst.intradayMargin;
       const overnightMargin = maxContracts * inst.initialMargin;
 
-      // Minimum = margin + worst case loss (bare minimum to not get margin called)
+      // Minimum = margin + max drawdown (bare minimum to not get margin called)
       const minIntraday = intradayMargin + worstCaseLoss;
       const minOvernight = overnightMargin + worstCaseLoss;
 
@@ -624,7 +624,7 @@ function HedgeAnalysis() {
         minIntraday, minOvernight, recIntraday, recOvernight,
       };
     } else {
-      // Worst case: prop gets payout (hedge loses)
+      // Max drawdown: prop gets payout (hedge loses)
       const worstLoss = Math.abs(r1.hedgeSuccess);
       const totalFriction = r1.hFric;
       const worstCaseLoss = worstLoss + totalFriction;
@@ -1023,7 +1023,7 @@ function HedgeAnalysis() {
 
       {/* ─── LIVE ACCOUNT CAPITAL REQUIRED ─── */}
       <Section title={<><TB /> Live Account Capital · {inst.micro}</>} icon="🏦" accent={C.green}>
-        {/* Worst-case breakdown */}
+        {/* Max drawdown breakdown */}
         <div style={{
           background: C.card, border: `1px solid ${C.border}`, borderRadius: 10,
           padding: "16px 18px", marginBottom: 12,
@@ -1032,12 +1032,12 @@ function HedgeAnalysis() {
             fontFamily: sansFont, fontSize: 12, fontWeight: 700, color: C.amber,
             marginBottom: 10, display: "flex", alignItems: "center", gap: 6,
           }}>
-            <span style={{ fontSize: 14 }}>⚠️</span>
-            Worst-Case Scenario (Prop Succeeds All Phases)
+            <span style={{ fontSize: 14 }}>📉</span>
+            Maximum Real Money Account Drawdown
           </div>
           <div style={{ fontSize: 11, color: C.dim, fontFamily: sansFont, marginBottom: 10, lineHeight: 1.5 }}>
-            The hedge account's worst case is when the prop <strong style={{ color: C.text }}>succeeds</strong> —
-            LiveHedge loses money on every phase where PropPrimary profits. This is the max drawdown your live account must survive.
+            This is the deepest your real money account can draw down in a single cycle — when the prop account <strong style={{ color: C.text }}>succeeds through all phases</strong>.
+            The hedge side loses on every phase where the prop profits. The payout at the end covers the drawdown and then some.
           </div>
           <div style={{ display: "grid", gap: 3, marginBottom: 10 }}>
             {is2Step ? (
@@ -1081,12 +1081,38 @@ function HedgeAnalysis() {
               padding: "6px 0", borderTop: `1px solid ${C.border}`,
             }}>
               <span style={{ fontFamily: sansFont, fontSize: 11, fontWeight: 700, color: C.text }}>
-                Total Worst-Case Hedge Loss
+                Maximum Hedge Drawdown
               </span>
               <span style={{ fontFamily: font, fontSize: 14, fontWeight: 800, color: C.red }}>
                 -${capital.worstCaseLoss.toFixed(0)}
               </span>
             </div>
+            <div style={{
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "6px 0", borderBottom: `1px solid ${C.border}22`,
+            }}>
+              <span style={{ fontFamily: sansFont, fontSize: 11, fontWeight: 700, color: C.green }}>
+                Prop payout received
+              </span>
+              <span style={{ fontFamily: font, fontSize: 14, fontWeight: 800, color: C.green }}>
+                +${payoutAmt.toLocaleString()}
+              </span>
+            </div>
+            <div style={{
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "8px 0", borderTop: `1px solid ${C.border}`,
+              marginTop: 2,
+            }}>
+              <span style={{ fontFamily: sansFont, fontSize: 12, fontWeight: 800, color: (payoutAmt - capital.worstCaseLoss) >= 0 ? C.green : C.red }}>
+                Net After Payout
+              </span>
+              <span style={{ fontFamily: font, fontSize: 16, fontWeight: 900, color: (payoutAmt - capital.worstCaseLoss) >= 0 ? C.green : C.red }}>
+                {(payoutAmt - capital.worstCaseLoss) >= 0 ? "+" : ""}${(payoutAmt - capital.worstCaseLoss).toFixed(0)}
+              </span>
+            </div>
+          </div>
+          <div style={{ fontSize: 10, color: C.faint, fontFamily: sansFont, lineHeight: 1.5, marginTop: 6 }}>
+            <strong style={{ color: C.dim }}>Note:</strong> Prop firms can and sometimes do deny payouts. This is a small risk, but the payout is not guaranteed. The drawdown figure above represents the capital your real money account must be able to absorb regardless of payout outcome.
           </div>
         </div>
 
@@ -1160,7 +1186,7 @@ function HedgeAnalysis() {
             <div style={{ display: "grid", gap: 2 }}>
               {[
                 { label: `Intraday margin (${capital.maxContracts} × $${inst.intradayMargin.toLocaleString()})`, val: `$${capital.intradayMargin.toLocaleString()}` },
-                { label: "Worst-case hedge loss", val: `$${capital.worstCaseLoss.toFixed(0)}` },
+                { label: "Max hedge drawdown", val: `$${capital.worstCaseLoss.toFixed(0)}` },
               ].map((item, i) => (
                 <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "2px 0" }}>
                   <span style={{ fontFamily: sansFont, fontSize: 11, color: C.dim }}>{item.label}</span>
@@ -1193,7 +1219,7 @@ function HedgeAnalysis() {
             <div style={{ display: "grid", gap: 2 }}>
               {[
                 { label: `Exchange margin (${capital.maxContracts} × $${inst.initialMargin.toLocaleString()})`, val: `$${capital.overnightMargin.toLocaleString()}` },
-                { label: "Worst-case hedge loss", val: `$${capital.worstCaseLoss.toFixed(0)}` },
+                { label: "Max hedge drawdown", val: `$${capital.worstCaseLoss.toFixed(0)}` },
               ].map((item, i) => (
                 <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "2px 0" }}>
                   <span style={{ fontFamily: sansFont, fontSize: 11, color: C.dim }}>{item.label}</span>
@@ -1217,7 +1243,7 @@ function HedgeAnalysis() {
 
           <div style={{ fontSize: 10, color: C.faint, fontFamily: sansFont, lineHeight: 1.5, marginTop: 10 }}>
             <strong style={{ color: C.dim }}>How to read this:</strong> Margin is required by NinjaTrader to hold {inst.micro} positions.
-            Worst-case loss is the max your hedge account can lose in a single cycle when the prop succeeds through {is2Step ? "both eval and PA phases" : "to payout"}.
+            Max hedge drawdown is the most your real money account can lose in a single cycle when the prop succeeds through {is2Step ? "both eval and PA phases" : "to payout"}.
             The 25% buffer protects against margin calls from intra-trade drawdowns before the prop's final outcome.
             {is2Step
               ? ` Phases are sequential (eval then PA), so margin is based on the max concurrent contracts: ${capital.maxContracts} ${inst.micro}.`
@@ -1334,7 +1360,7 @@ function HedgeAnalysis() {
                 <strong style={{ color: C.purple }}>Capital needed:</strong> LiveHedge account requires
                 {" "}<strong style={{ color: C.green }}>${capital.recIntraday.toLocaleString()}</strong> (intraday) to
                 {" "}<strong style={{ color: C.amber }}>${capital.recOvernight.toLocaleString()}</strong> (overnight)
-                {" "}with recommended 25% buffer — see the Live Account Capital breakdown above for the full worst-case math.
+                {" "}with recommended 25% buffer — see the Live Account Capital breakdown above for the full drawdown math.
               </p>
             </>
           ) : (
