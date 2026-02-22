@@ -106,6 +106,12 @@
       if(code==='en') a.href = 'assets/TheMathematicsOfSurvival.pdf';
       else a.href = 'assets/lang/TheMathematicsOfSurvival_'+code+'.pdf';
     });
+    // Update ebook cover image to localized version
+    var coverImgs = document.querySelectorAll('img[src*="ebook-cover"], img[src*="assets/covers/cover-"]');
+    coverImgs.forEach(function(img){
+      if(code==='en') img.src = 'assets/ebook-cover.png';
+      else img.src = 'assets/covers/cover-'+code+'.jpg';
+    });
   }
 
   // Save originals on first load
