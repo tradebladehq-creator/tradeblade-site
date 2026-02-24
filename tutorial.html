@@ -1542,7 +1542,7 @@ const TradeAudio = {
   _queue: [],
   _playing: false,
   _current: null,
-  _muted: false,        // single global kill-switch — nothing enqueues when true
+  _muted: (window.self !== window.top),  // mute when embedded in iframe
   _currentPath: null,
   _currentCaller: null,
   _log: [],             // [{time, clip, caller, action}] — rolling debug log
