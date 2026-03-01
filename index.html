@@ -56,27 +56,15 @@
 </section>
 
 <section class="hud-demo" id="hud">
-<div class="container">
+<div class="container" style="text-align:center;padding-top:0;margin-top:-10px;">
 <style>
-.demo-card{position:relative;overflow:hidden;border-radius:16px;background:radial-gradient(ellipse at 50% 40%,#0a1e2e 0%,#060d13 100%);height:340px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(255,255,255,0.06);}
-.demo-card:hover{border-color:rgba(23,139,202,0.3);}
-.demo-card:hover .demo-cta{transform:translateX(-50%) scale(1.04);box-shadow:0 0 30px rgba(23,139,202,0.5);}
-.demo-ambient{position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(23,139,202,0.15),transparent 65%);pointer-events:none;animation:demoAmbPulse 4s ease-in-out infinite;}
-@keyframes demoAmbPulse{0%,100%{opacity:0.6;}50%{opacity:1;}}
-.demo-logo{width:100px;height:100px;animation:demoLogoFloat 4s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(23,139,202,0.4));}
-@keyframes demoLogoFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-6px) scale(1.03);}}
-.demo-ring{position:absolute;width:0;height:0;border-radius:50%;border:2px solid rgba(23,139,202,0.4);top:50%;left:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none;animation:demoRingPulse 4s ease-out infinite;}
-@keyframes demoRingPulse{0%{width:0;height:0;opacity:0;}10%{opacity:0.7;}40%{width:300px;height:300px;opacity:0;}100%{opacity:0;}}
-.demo-cta{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#178bca,#14a8e0);color:#fff;font-size:15px;font-weight:700;padding:14px 36px;border-radius:12px;border:none;letter-spacing:0.5px;box-shadow:0 0 20px rgba(23,139,202,0.3);transition:all 0.3s ease;pointer-events:none;}
+.demo-btn{display:inline-block;background:linear-gradient(135deg,#178bca,#14a8e0);color:#fff;font-size:16px;font-weight:700;padding:16px 44px;border-radius:12px;border:none;letter-spacing:0.5px;text-decoration:none;cursor:pointer;animation:demoBtnPulse 2.5s ease-in-out infinite;position:relative;}
+.demo-btn:hover{transform:scale(1.05);filter:brightness(1.1);}
+.demo-btn::before{content:'';position:absolute;inset:-3px;border-radius:14px;background:linear-gradient(135deg,#178bca,#14a8e0);opacity:0;z-index:-1;animation:demoBtnGlow 2.5s ease-in-out infinite;filter:blur(12px);}
+@keyframes demoBtnPulse{0%,100%{box-shadow:0 0 15px rgba(23,139,202,0.3),0 0 30px rgba(23,139,202,0.1);transform:scale(1);}50%{box-shadow:0 0 25px rgba(23,139,202,0.6),0 0 50px rgba(23,139,202,0.25);transform:scale(1.03);}}
+@keyframes demoBtnGlow{0%,100%{opacity:0.3;}50%{opacity:0.7;}}
 </style>
-<a href="https://tradebladehq-creator.github.io/tradeblade-tutorial/tutorial.html" target="_blank" rel="noopener" style="text-decoration:none;display:block;">
-<div class="demo-card">
-  <div class="demo-ambient"></div>
-  <div class="demo-ring"></div>
-  <img class="demo-logo" src="https://tradebladehq-creator.github.io/tradeblade-tutorial/tb-logo.png" alt="TradeBlade"/>
-  <div class="demo-cta">▶ Try the Interactive Demo</div>
-</div>
-</a>
+<a class="demo-btn" href="https://tradebladehq-creator.github.io/tradeblade-tutorial/tutorial.html" target="_blank" rel="noopener">&#9654; Try the Interactive Demo</a>
 </div>
 </section>
 <section class="engine-showcase" id="math">
