@@ -23,10 +23,7 @@
     var params = new URLSearchParams(window.location.search);
     var urlLang = params.get('lang');
     if(urlLang && LANGS[urlLang]) return urlLang;
-    // 2. Previously saved preference
-    var saved = localStorage.getItem('tb-lang');
-    if(saved && LANGS[saved]) return saved;
-    // 3. Browser language
+    // 2. Browser language
     var nav = (navigator.language||'').toLowerCase();
     if(LANGS[nav]) return nav;
     if(nav==='zh' || nav.indexOf('zh-hans')===0 || nav.indexOf('zh-cn')===0) return 'zh-CN';
@@ -99,7 +96,7 @@
     document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
     document.documentElement.classList.toggle('rtl', isRtl);
     document.documentElement.lang = code;
-    localStorage.setItem('tb-lang', code);
+    try { localStorage.removeItem('tb-lang'); } catch(e) {} // clean up legacy saved lang
     // Update ebook PDF link if translated version exists
     var bookLinks = document.querySelectorAll('a[href*="TheMathematicsOfSurvival"]');
     bookLinks.forEach(function(a){
