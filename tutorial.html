@@ -190,11 +190,7 @@ a:hover{text-decoration:underline;}
 .tagManual{cursor:pointer;transition:all 0.15s;}
 .tagManual:hover{background:rgba(79,140,255,0.18);border-color:rgba(79,140,255,0.8);}
 .tagManual.lvlNone{border-color:rgba(255,179,0,0.7);color:var(--amber);background:rgba(255,179,0,0.12);animation:manualPillPulse 1.8s ease-in-out infinite;}
-body.guided-tour-active .tagManual.lvlNone{animation:none;}
-body.guided-tour-active .tagManual.carol-highlight.lvlNone{animation:manualPillPulse 1.8s ease-in-out infinite;}
 .tagManual.lvlPending{border-color:rgba(54,210,122,0.7);color:#36D27A;background:rgba(54,210,122,0.15);animation:manualConfirmPulse 1.6s ease-in-out infinite;}
-body.guided-tour-active .tagManual.lvlPending{animation:none;}
-body.guided-tour-active .tagManual.carol-highlight.lvlPending{animation:manualConfirmPulse 1.6s ease-in-out infinite;}
 .tagManual.lvlConfirmed{border-color:rgba(54,210,122,0.55);color:#36D27A;background:rgba(54,210,122,0.1);}
 .tagManual.lvlPositionOpen{border-color:rgba(255,80,80,0.7);color:#FF5050;background:rgba(255,80,80,0.12);animation:positionOpenPulse 1.4s ease-in-out infinite;font-size:10px;max-width:100%;white-space:normal;line-height:1.3;}
 @keyframes positionOpenPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,80,80,0);}50%{box-shadow:0 0 16px 5px rgba(255,80,80,0.3);}}
@@ -1207,8 +1203,8 @@ body.nt-bridge .webHide-inv{display:none !important;}
         <div class="q">Entry Style</div>
         <select id="wEntryStyle" onchange="Wizard.onEntryStyleChange()">
           <option value="Manual Levels">Manual Trading Levels</option>
-          <option value="Direct Entry" id="wOptDirectEntry">Direct Entry</option>
-          <option value="Fully Automatic" id="wOptFullyAuto">Fully Automatic (Elite Plan)</option>
+          <option value="Direct Entry">Direct Entry</option>
+          <option value="Fully Automatic">Fully Automatic (Elite Plan)</option>
         </select>
 
         <div id="wManualBlock" style="display:block;">
@@ -1539,28 +1535,6 @@ function showCelebBanner(msg, durationMs){
   el._hideTimer = setTimeout(() => { el.style.display = "none"; }, durationMs || 3000);
 }
 
-/* ---------- TutLog: in-memory tutorial logger ---------- */
-const TutLog = {
-  _lines: [],
-
-  log(tag, ...args){
-    const now = new Date();
-    const ts = now.toTimeString().slice(0,8) + '.' + String(now.getMilliseconds()).padStart(3,'0');
-    const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
-    const line = '[' + ts + '] [' + tag + '] ' + msg;
-    this._lines.push(line);
-    console.log('[' + tag + ']', ...args);
-  },
-
-  download(){
-    const blob = new Blob([this._lines.join('\n')], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'WebTutorialLogs.log'; a.click();
-    URL.revokeObjectURL(url);
-  }
-};
-
 /* ---------- trade audio queue ---------- */
 // File naming convention: {event}_{direction}_on_{instrument}.mp3
 // e.g. prop_long_filled_on_es.mp3, hedge_short_placed_on_nq.mp3, hedge_long_filled_on_es.mp3
@@ -1568,7 +1542,7 @@ const TradeAudio = {
   _queue: [],
   _playing: false,
   _current: null,
-  _muted: (window.self !== window.top),  // mute when embedded in iframe
+  _muted: false,
   _currentPath: null,
   _currentCaller: null,
   _log: [],             // [{time, clip, caller, action}] — rolling debug log
@@ -1608,8 +1582,8 @@ const TradeAudio = {
     if(this._log.length > this._LOG_MAX) this._log.shift();
   },
 
-  mute(){  this._muted = true;  this._addLog('MUTE','','system'); TutLog.log('TradeAudio', 'MUTED | currentClip:', this._currentPath || '(none)', 'queueLen:', this._queue.length); },
-  unmute(){ this._muted = false; this._addLog('UNMUTE','','system'); TutLog.log('TradeAudio', 'UNMUTED | currentClip:', this._currentPath || '(none)', 'queueLen:', this._queue.length, 'playing:', this._playing); },
+  mute(){  this._muted = true;  this._addLog('MUTE','','system'); console.log("[TradeAudio] MUTED"); },
+  unmute(){ this._muted = false; this._addLog('UNMUTE','','system'); console.log("[TradeAudio] UNMUTED"); },
 
   enqueue(path){
     const caller = this._caller();
@@ -1643,7 +1617,6 @@ const TradeAudio = {
   _advance(){
     // Guard: only advance once per clip
     if(!this._playing) return;
-    TutLog.log('TradeAudio', '_advance — finished clip:', this._currentPath || '(none)', 'remaining queue:', this._queue.length);
     this._playing = false;
     this._current = null;
     this._currentPath = null;
@@ -1654,7 +1627,7 @@ const TradeAudio = {
 
   _playNext(){
     if(this._playing) return;
-    if(this._queue.length === 0){ TutLog.log('TradeAudio', '_playNext — queue empty, firing drain callbacks'); try{TutorialFlow.onClipEnd();}catch(e){} try{CardTour.onQueueDrain();}catch(e){} try{GuidedTour.onQueueDrain();}catch(e){} try{EntryModeDemo._onQueueDrain();}catch(e){} return; }
+    if(this._queue.length === 0){ try{TutorialFlow.onClipEnd();}catch(e){} try{CardTour.onQueueDrain();}catch(e){} try{GuidedTour.onQueueDrain();}catch(e){} try{EntryModeDemo._onQueueDrain();}catch(e){} return; }
     this._playing = true;
     const item = this._queue.shift();
     const path = item.path;
@@ -1673,7 +1646,6 @@ const TradeAudio = {
   },
 
   stop(){
-    TutLog.log('TradeAudio', 'stop() — currentClip:', this._currentPath || '(none)', 'queueLen:', this._queue.length, 'playing:', this._playing, 'caller:', this._caller());
     if(this._currentPath) this._addLog('STOP', this._currentPath, 'stop()');
     if(this._current){ try{ this._current.pause(); this._current.currentTime = 0; }catch(e){} }
     this._queue = []; this._playing = false; this._current = null;
@@ -1683,14 +1655,12 @@ const TradeAudio = {
   },
 
   pause(){
-    TutLog.log('TradeAudio', 'pause() — currentClip:', this._currentPath || '(none)', 'alreadyPaused:', this._paused);
     if(!this._current || this._paused) return;
     this._current.pause();
     this._paused = true;
   },
 
   resume(){
-    TutLog.log('TradeAudio', 'resume() — currentClip:', this._currentPath || '(none)', 'wasPaused:', this._paused);
     if(!this._current || !this._paused) return;
     this._current.play();
     this._paused = false;
@@ -1892,8 +1862,7 @@ const GuidedTour = {
   start(){
     this._active = true;
     this._phase = this.P.INTRO;
-    document.body.classList.add('guided-tour-active');
-    TutLog.log('GuidedTour', 'Started — phase INTRO | voiceTips:', TutorialMode.isOn(), '| muted:', TradeAudio._muted);
+    console.log("[GuidedTour] Started — phase INTRO");
     const skip = document.getElementById('tourSkipLink');
     if(skip) skip.style.display = 'block';
     const killBtn = document.getElementById('killTutorialBtn');
@@ -1903,12 +1872,10 @@ const GuidedTour = {
   },
 
   stop(){
-    TutLog.log('GuidedTour', 'stop() called — was phase:', this._phase, 'active:', this._active);
     this._active = false;
     this._phase = this.P.DONE;
-    document.body.classList.remove('guided-tour-active');
     localStorage.setItem(this._KEY, '1');
-    TutLog.log('GuidedTour', 'Complete — phase set to DONE');
+    console.log("[GuidedTour] Complete");
     const skip = document.getElementById('tourSkipLink');
     if(skip) skip.style.display = 'none';
     const killBtn = document.getElementById('killTutorialBtn');
@@ -1917,7 +1884,6 @@ const GuidedTour = {
   },
 
   skip(){
-    TutLog.log('GuidedTour', 'skip() called — phase:', this._phase, 'active:', this._active);
     TradeAudio.stop();
     this.stop();
     console.log("[GuidedTour] Skipped by user");
@@ -1938,11 +1904,10 @@ const GuidedTour = {
 
   // Called from TradeAudio when the queue drains empty
   onQueueDrain(){
-    TutLog.log('GuidedTour', 'onQueueDrain — active:', this._active, 'phase:', this._phase, 'voiceTips:', TutorialMode.isOn());
     if(!this._active) return;
     if(this._phase === this.P.INTRO){
       this._phase = this.P.KERNEL;
-      TutLog.log('GuidedTour', '→ phase KERNEL (from INTRO drain)');
+      console.log("[GuidedTour] → phase KERNEL");
     } else if(this._phase === this.P.DEPLOYED){
       // CardTour handles the DEPLOYED phase walkthrough
       if(CardTour._active) return; // CardTour is managing drain callbacks
@@ -2091,54 +2056,15 @@ const TutorialMode = {
     if(this.isOn()) this.disable(); else this.enable();
   },
   enable(){
-    const gt = typeof GuidedTour !== 'undefined' ? GuidedTour : null;
-    const gtPhase = gt ? gt._phase : '?';
-    const gtActive = gt ? gt._active : '?';
-    const wizStep = typeof Wizard !== 'undefined' ? Wizard.step : '?';
-    const wizVisible = document.getElementById('wizard') ? document.getElementById('wizard').style.display : '?';
-    const curClip = TradeAudio._currentPath || '(none)';
-    const queueLen = TradeAudio._queue ? TradeAudio._queue.length : 0;
-    const muted = TradeAudio._muted;
-    const paused = TradeAudio._paused;
-    TutLog.log('VoiceTips', 'ENABLE called — GuidedTour.phase:', gtPhase, 'active:', gtActive,
-      '| Wizard.step:', wizStep, 'wizardVisible:', wizVisible,
-      '| currentClip:', curClip, 'queueLen:', queueLen,
-      '| muted:', muted, 'paused:', paused);
     localStorage.setItem(this._KEY, 'on');
     this._updateBtn();
     TradeAudio.unmute();
-
-    // Context-aware resume: pick the right clip based on where the user is
-    const wizOpen = document.getElementById('wizard') && document.getElementById('wizard').style.display !== 'none' && document.getElementById('wizard').style.display !== '';
-    if(gt && gt._active && (gtPhase === gt.P.INTRO || gtPhase === gt.P.KERNEL) && !wizOpen){
-      // Home page — resume carol intro flow
-      TutLog.log('VoiceTips', 'ENABLE — home page context, replaying carol intro chain');
-      TradeAudio.stop();
-      try { TutorialFlow.cancelChains(); } catch(e){}
-      TradeAudio.enqueue('audio/tutorial_mode_intro.mp3');
-    } else if(wizOpen){
-      // Wizard is open — replay current wizard step
-      TutLog.log('VoiceTips', 'ENABLE — wizard context, replaying wizard step', wizStep);
-      try { Wizard.replayAudio(); } catch(e){ TutLog.log('VoiceTips', 'Wizard.replayAudio() threw:', e.message); }
-    } else {
-      // Other context (deployed card, armed, etc.) — just unmute, don't replay
-      TutLog.log('VoiceTips', 'ENABLE — other context (phase:', gtPhase, '), unmuted only');
-    }
-    TutLog.log('VoiceTips', 'ENABLE done — new currentClip:', TradeAudio._currentPath || '(none)', 'queueLen:', TradeAudio._queue ? TradeAudio._queue.length : 0);
+    try { Wizard.replayAudio(); } catch(e){}
   },
   disable(){
-    const curClip = TradeAudio._currentPath || '(none)';
-    const queueLen = TradeAudio._queue ? TradeAudio._queue.length : 0;
-    const gt = typeof GuidedTour !== 'undefined' ? GuidedTour : null;
-    const gtPhase = gt ? gt._phase : '?';
-    TutLog.log('VoiceTips', 'DISABLE called — currentClip:', curClip, 'queueLen:', queueLen,
-      '| GuidedTour.phase:', gtPhase, '| muted:', TradeAudio._muted);
     localStorage.setItem(this._KEY, 'off');
     this._updateBtn();
-    try { TutorialFlow.cancelChains(); } catch(e){}
     try { TradeAudio.stop(); } catch(e){}
-    TradeAudio.mute();
-    TutLog.log('VoiceTips', 'DISABLE done — chains cancelled, audio stopped, muted');
   },
   _updateBtn(){
     const btn = document.getElementById('voiceTipsBtn');
@@ -2995,7 +2921,7 @@ const SpoofFullChart = {
         bestStart = Math.max(0, bestEnd - (vw - 1));
       }
       this._bars = allBars.slice(bestStart, bestStart + vw);
-      if(mc){ mc.bars = allBars; mc.viewStart = Math.max(0, allBars.length - mc.viewBars); mc._atLiveEdge = true; }
+      if(mc){ mc.bars = allBars; mc.viewStart = bestStart; mc._atLiveEdge = false; }
     }
     // Initial level placement: Manual High above last close, Manual Low below
     const vb = this._bars;
@@ -3733,15 +3659,14 @@ const CardTour = {
     if(this._tpslGearClickHandler){ document.removeEventListener('click', this._tpslGearClickHandler, true); this._tpslGearClickHandler = null; }
     if(this._tpslEditClickHandler){ document.removeEventListener('click', this._tpslEditClickHandler, true); this._tpslEditClickHandler = null; }
     if(this._tpslEditorPoller){ clearInterval(this._tpslEditorPoller); this._tpslEditorPoller = null; }
-    if(this._flattenClickHandler){ document.removeEventListener('click', this._flattenClickHandler, false); this._flattenClickHandler = null; }
+    if(this._flattenClickHandler){ document.removeEventListener('click', this._flattenClickHandler, true); this._flattenClickHandler = null; }
     if(this._resolvePoller){ clearInterval(this._resolvePoller); this._resolvePoller = null; }
-    if(this._evClickHandler){ document.removeEventListener('click', this._evClickHandler, false); this._evClickHandler = null; }
+    if(this._evClickHandler){ document.removeEventListener('click', this._evClickHandler, true); this._evClickHandler = null; }
     if(this._evPopupPoller){ clearInterval(this._evPopupPoller); this._evPopupPoller = null; }
     this._evPopupRef = null;
     if(this._tradeChartClickHandler){ document.removeEventListener('click', this._tradeChartClickHandler, true); this._tradeChartClickHandler = null; }
     if(this._tradeChartCloseHandler){ document.removeEventListener('click', this._tradeChartCloseHandler, true); this._tradeChartCloseHandler = null; }
-    if(this._removeClickHandler){ document.removeEventListener('click', this._removeClickHandler, false); this._removeClickHandler = null; }
-    if(this._removePoller){ clearInterval(this._removePoller); this._removePoller = null; }
+    if(this._removeClickHandler){ document.removeEventListener('click', this._removeClickHandler, true); this._removeClickHandler = null; }
   },
 
   // ── Manual button: after clip drains, wait for user to click Manual button → advance to place_levels ──
@@ -3800,20 +3725,16 @@ const CardTour = {
     const pid = this._pairId;
     const evIdx = this.STEPS.findIndex(s => s.id === 'ev');
     const removeIdx = this.STEPS.findIndex(s => s.id === 'remove');
-    // Flatten click: let audio play through the confirm dialog, advance after OK or Cancel
+    // Flatten click: stop audio, advance to ev (hedge analysis)
     this._flattenClickHandler = (e) => {
       if(!e.target.closest('.btnForceCompact') && !e.target.closest('.actionForce')) return;
       const curStep = this.STEPS[this._step]?.id;
       if(curStep !== 'sim_entry' && curStep !== 'flatten') return;
-      setTimeout(() => {
-        const nowStep = this.STEPS[this._step]?.id;
-        if(nowStep !== 'sim_entry' && nowStep !== 'flatten') return; // already advanced
-        console.log('[CardTour] Flatten dialog closed — advancing to ev');
-        this._cleanupStepHandlers();
-        if(evIdx >= 0) this._goto(evIdx);
-      }, 0);
+      console.log('[CardTour] Flatten clicked — advancing to ev');
+      this._cleanupStepHandlers();
+      if(evIdx >= 0) this._goto(evIdx);
     };
-    document.addEventListener('click', this._flattenClickHandler, false);
+    document.addEventListener('click', this._flattenClickHandler, true);
     // Trade resolve: advance to ev for hedge analysis
     const p = PAIRS.find(x => x.id === pid);
     const mockPid = (p && p.ids && p.ids.hedgePairId) || String(pid);
@@ -3882,57 +3803,55 @@ const CardTour = {
     const pid = this._pairId;
     const removeIdx = this.STEPS.findIndex(s => s.id === 'remove');
     if(removeIdx < 0) return;
+    const advanceToRemove = () => {
+      if(this.STEPS[this._step]?.id !== 'ev') return;
+      this._cleanupStepHandlers();
+      TradeAudio.stop();
+      this._goto(removeIdx);
+    };
     // Pulse the EV button — delay to let innerHTML rebuild settle
     setTimeout(() => {
       const evBtn = this._pairId ? document.querySelector(`.pair[data-pid="${this._pairId}"] .evBtn`) : document.querySelector('.evBtn');
       if(evBtn) evBtn.classList.add('evBtn-pulse');
     }, 800);
-    // Listen for EV button click — stop directive clip, then play explanation clips
+    // Listen for EV button click — popup will open via onclick, we detect and play clips
     this._evClickHandler = (e) => {
       const clickedBtn = e.target.closest('.evBtn');
       if(!clickedBtn) return;
-      if(this.STEPS[this._step]?.id !== 'ev') return;
       clickedBtn.classList.remove('evBtn-pulse');
-      document.removeEventListener('click', this._evClickHandler, false);
+      document.removeEventListener('click', this._evClickHandler, true);
       this._evClickHandler = null;
-      console.log('[CardTour] EV button clicked — stopping directive, playing explanation');
-      TradeAudio.stop();
-      TradeAudio.enqueue('audio/tour_hedge_explain.mp3');
-      TradeAudio.enqueue('audio/tour_close_hedge_analysis.mp3');
-      // Poll for popup close → advance to remove
+      console.log('[CardTour] EV button clicked — starting hedge analysis flow');
+      // Find the popup window (Pair.openEVAnalysis sets p._evWindowRef)
       setTimeout(() => {
         const p = PAIRS.find(x => x.id === pid);
         this._evPopupRef = p ? p._evWindowRef : null;
+        TradeAudio.stop();
+        TradeAudio.enqueue('audio/tour_hedge_explain.mp3');
+        TradeAudio.enqueue('audio/tour_close_hedge_analysis.mp3');
+        // Poll for popup close
         this._evPopupPoller = setInterval(() => {
           if(!this._evPopupRef || this._evPopupRef.closed){
             console.log('[CardTour] EV popup closed — advancing to remove');
-            if(this.STEPS[this._step]?.id === 'ev'){
-              this._cleanupStepHandlers();
-              TradeAudio.stop();
-              this._goto(removeIdx);
-            }
+            advanceToRemove();
           }
         }, 500);
       }, 600);
     };
-    document.addEventListener('click', this._evClickHandler, false);
+    document.addEventListener('click', this._evClickHandler, true);
   },
 
-  // ── Remove step: let audio play through the confirm dialog, advance after ──
+  // ── Remove step: stop audio on click, advance to complete ──
   _setupRemoveStep(){
     this._removeClickHandler = (e) => {
       if(!e.target.closest('.cardControls .btn-ghost')) return;
       if(this.STEPS[this._step]?.id !== 'remove') return;
-      // confirm() is synchronous — by the time this handler resumes,
-      // the user has already hit OK or Cancel. Advance either way.
-      setTimeout(() => {
-        console.log('[CardTour] Remove dialog closed — advancing to complete');
-        this._cleanupStepHandlers();
-        TradeAudio.stop();
-        this.next();
-      }, 0);
+      console.log('[CardTour] Remove button clicked — stopping audio, advancing to complete');
+      this._cleanupStepHandlers();
+      TradeAudio.stop();
+      this.next();
     };
-    document.addEventListener('click', this._removeClickHandler, false);
+    document.addEventListener('click', this._removeClickHandler, true);
   },
 
   _doAction(action){
@@ -4177,7 +4096,6 @@ const TutorialFlow = (() => {
     if(!m) return;
     _lastClip = m[1];
     const sel = H[m[1]];
-    TutLog.log('TutorialFlow', 'onClipStart — clip:', m[1], '| highlight:', sel || '(none)', '| voiceTips:', TutorialMode.isOn());
     if(sel) _apply(sel);
     // Voice Tips button glows near end of carol intro (8s in)
     if(m[1] === 'tutorial_mode_intro'){
@@ -4189,37 +4107,28 @@ const TutorialFlow = (() => {
   }
 
   function onClipEnd(){
-    TutLog.log('TutorialFlow', 'onClipEnd — lastClip:', _lastClip, '| voiceTips:', TutorialMode.isOn(), '| chainTimer active:', !!_chainTimer);
     if(_lastClip === 'tutorial_mode_intro' && TutorialMode.isOn()){
-      TutLog.log('TutorialFlow', 'CHAIN: tutorial_mode_intro → hint_add_pair (2s delay)');
-      _chainTimer = setTimeout(() => { _chainTimer = null; TutLog.log('TutorialFlow', 'CHAIN FIRED: enqueuing hint_add_pair'); try { TradeAudio.enqueue('audio/hint_add_pair.mp3'); } catch(e){} }, 2000);
+      _chainTimer = setTimeout(() => { _chainTimer = null; try { TradeAudio.enqueue('audio/hint_add_pair.mp3'); } catch(e){} }, 2000);
     }
     if(_lastClip === 'wizard_timewindow_start' && TutorialMode.isOn()){
-      TutLog.log('TutorialFlow', 'CHAIN: wizard_timewindow_start → wizard_timewindow_stop (1s delay)');
-      _chainTimer = setTimeout(() => { _chainTimer = null; TutLog.log('TutorialFlow', 'CHAIN FIRED: enqueuing wizard_timewindow_stop'); try { TradeAudio.enqueue('audio/wizard_timewindow_stop.mp3'); } catch(e){} }, 1000);
+      _chainTimer = setTimeout(() => { _chainTimer = null; try { TradeAudio.enqueue('audio/wizard_timewindow_stop.mp3'); } catch(e){} }, 1000);
     }
     if(_lastClip === 'wizard_timewindow_stop' && TutorialMode.isOn()){
-      TutLog.log('TutorialFlow', 'CHAIN: wizard_timewindow_stop → wizard_timewindow_hardexit (1s delay)');
-      _chainTimer = setTimeout(() => { _chainTimer = null; TutLog.log('TutorialFlow', 'CHAIN FIRED: enqueuing wizard_timewindow_hardexit'); try { TradeAudio.enqueue('audio/wizard_timewindow_hardexit.mp3'); } catch(e){} }, 1000);
+      _chainTimer = setTimeout(() => { _chainTimer = null; try { TradeAudio.enqueue('audio/wizard_timewindow_hardexit.mp3'); } catch(e){} }, 1000);
     }
     if(_lastClip === 'wizard_risk_gross' && TutorialMode.isOn()){
-      TutLog.log('TutorialFlow', 'CHAIN: wizard_risk_gross → wizard_risk_ratio (1s delay)');
-      _chainTimer = setTimeout(() => { _chainTimer = null; TutLog.log('TutorialFlow', 'CHAIN FIRED: enqueuing wizard_risk_ratio'); try { TradeAudio.enqueue('audio/wizard_risk_ratio.mp3'); } catch(e){} }, 1000);
+      _chainTimer = setTimeout(() => { _chainTimer = null; try { TradeAudio.enqueue('audio/wizard_risk_ratio.mp3'); } catch(e){} }, 1000);
     }
     if(_lastClip === 'wizard_risk_ratio' && TutorialMode.isOn()){
-      TutLog.log('TutorialFlow', 'CHAIN: wizard_risk_ratio → wizard_risk_propcontracts (1s delay)');
-      _chainTimer = setTimeout(() => { _chainTimer = null; TutLog.log('TutorialFlow', 'CHAIN FIRED: enqueuing wizard_risk_propcontracts'); try { TradeAudio.enqueue('audio/wizard_risk_propcontracts.mp3'); } catch(e){} }, 1000);
+      _chainTimer = setTimeout(() => { _chainTimer = null; try { TradeAudio.enqueue('audio/wizard_risk_propcontracts.mp3'); } catch(e){} }, 1000);
     }
     if(_lastClip === 'wizard_risk_propcontracts' && TutorialMode.isOn()){
-      TutLog.log('TutorialFlow', 'CHAIN: wizard_risk_propcontracts → wizard_risk_hedgeperprop (1s delay)');
-      _chainTimer = setTimeout(() => { _chainTimer = null; TutLog.log('TutorialFlow', 'CHAIN FIRED: enqueuing wizard_risk_hedgeperprop'); try { TradeAudio.enqueue('audio/wizard_risk_hedgeperprop.mp3'); } catch(e){} }, 1000);
+      _chainTimer = setTimeout(() => { _chainTimer = null; try { TradeAudio.enqueue('audio/wizard_risk_hedgeperprop.mp3'); } catch(e){} }, 1000);
     }
     if(_lastClip === 'wizard_risk_hedgeperprop' && TutorialMode.isOn()){
-      TutLog.log('TutorialFlow', 'CHAIN: wizard_risk_hedgeperprop → wizard_risk_next (1s delay)');
-      _chainTimer = setTimeout(() => { _chainTimer = null; TutLog.log('TutorialFlow', 'CHAIN FIRED: enqueuing wizard_risk_next'); try { TradeAudio.enqueue('audio/wizard_risk_next.mp3'); } catch(e){} }, 1000);
+      _chainTimer = setTimeout(() => { _chainTimer = null; try { TradeAudio.enqueue('audio/wizard_risk_next.mp3'); } catch(e){} }, 1000);
     }
     if(_lastClip === 'wizard_step_review'){
-      TutLog.log('TutorialFlow', 'onClipEnd — wizard_step_review: highlighting wNextBtn');
       _clear();
       const btn = document.getElementById('wNextBtn');
       if(btn){ btn.classList.add('carol-highlight'); _lit.push(btn); }
@@ -4231,7 +4140,6 @@ const TutorialFlow = (() => {
   }
 
   function cancelChains(){
-    TutLog.log('TutorialFlow', 'cancelChains — had active chain:', !!_chainTimer, '| lastClip:', _lastClip);
     if(_chainTimer){ clearTimeout(_chainTimer); _chainTimer = null; }
   }
 
@@ -5449,9 +5357,20 @@ const MiniChart = {
     // is closest to the window's mid-price, then set viewStart there.
     // The full bar loop stays intact so ticks continue seamlessly.
     const vw = mc.viewBars;
-    mc.viewStart = Math.max(0, mc.bars.length - vw);
+    if(mc.bars.length > vw){
+      let bestEnd = mc.bars.length - 1, bestDist = Infinity;
+      for(let end = vw - 1; end < mc.bars.length; end++){
+        let wLo = Infinity, wHi = -Infinity;
+        for(let j = end - (vw - 1); j <= end; j++){ if(mc.bars[j].l < wLo) wLo = mc.bars[j].l; if(mc.bars[j].h > wHi) wHi = mc.bars[j].h; }
+        const d = Math.abs(mc.bars[end].c - (wLo + wHi) / 2);
+        if(d < bestDist){ bestDist = d; bestEnd = end; }
+      }
+      mc.viewStart = Math.max(0, bestEnd - (vw - 1));
+    } else {
+      mc.viewStart = 0;
+    }
     console.log("[MiniChart] onBarData received", mc.bars.length, "bars, viewport at", mc.viewStart, "for", data.instrument, data.error ? "ERROR: "+data.error : "");
-    mc._atLiveEdge = true;
+    mc._atLiveEdge = false;
     // Ensure canvas is initialized before first render
     this.initCanvas(pairId);
     this._updateSlider(pairId);
@@ -5473,10 +5392,7 @@ const MiniChart = {
     } else {
       // Truly new bar
       mc.bars.push(finalBar);
-      if(this._isAtLiveEdge(mc) || mc._atLiveEdge){
-        mc.viewStart = Math.max(0, mc.bars.length - mc.viewBars);
-        mc._atLiveEdge = true;
-      }
+      if(mc._atLiveEdge) mc.viewStart = Math.max(0, mc.bars.length - mc.viewBars);
     }
     this.render(pairId);
     this._updateSlider(pairId);
@@ -5508,11 +5424,7 @@ const MiniChart = {
     } else {
       // First tick after bar close — append new forming bar
       mc.bars.push({ o:sO, h:sH, l:sL, c:px, t:data.time, _live:true });
-      // Always re-check live edge: if user hasn't scrolled away, anchor to newest bar
-      if(this._isAtLiveEdge(mc) || mc._atLiveEdge){
-        mc.viewStart = Math.max(0, mc.bars.length - mc.viewBars);
-        mc._atLiveEdge = true;
-      }
+      if(mc._atLiveEdge) mc.viewStart = Math.max(0, mc.bars.length - mc.viewBars);
       this._updateSlider(pairId);
     }
     // ── Level cross detection (visual feedback + strategy confirmation) ──
@@ -6766,7 +6678,7 @@ const Pair = {
   },
 
   closeManualMenu(id){
-    if(SpoofFullChart._tourStep && SpoofFullChart._tourStep !== 'close' && SpoofFullChart._tourStep !== 'apply') return;
+    if(SpoofFullChart._tourStep && SpoofFullChart._tourStep !== 'close') return;
     const p = PAIRS.find(x=>x.id===id);
     if(!p) return;
     p._manualExpanded = false;
@@ -6775,9 +6687,7 @@ const Pair = {
     const panel = document.getElementById("manualPanel_"+id);
     if(popover) popover.style.display = "none";
     if(panel) panel.style.display = "none";
-    // User closed without applying — skip the "close" directive, go straight to done
-    if(SpoofFullChart._tourStep === 'apply') SpoofFullChart._advanceTour('close');
-    else if(SpoofFullChart._tourStep === 'close') SpoofFullChart._advanceTour('close');
+    if(SpoofFullChart._tourStep === 'close') SpoofFullChart._advanceTour('close');
   },
 
   chooseChartLevels(id){
@@ -7327,10 +7237,6 @@ const Splash = {
           if(sfBtn) sfBtn.style.display = "none";
         }
         targetEl = document.getElementById("returningPrompt");
-      } else if(!GuidedTour.isDone()){
-        // Path C1: First-time user, tour not done → show first-time prompt
-        document.getElementById("firstTimePrompt").style.display = "flex";
-        targetEl = document.getElementById("firstTimePrompt");
       } else {
         // Path C2: Licensed + no saved config + tour done → land on topbar / home page
         landOnTopbar = true;
@@ -8177,8 +8083,6 @@ const Wizard = {
   steps:[],
   _autoChart: true,
   _chartMode: "both",  // "both" | "leader" | "none"
-  _entryStyleLocked: false,
-  _entryStyleAutoTimer: null,
   _playedSteps: new Set(),
   // Maps wizard step index → clip name to play when that step is first reached
   _STEP_CLIPS: [
@@ -8309,6 +8213,7 @@ const Wizard = {
 
   back(){
     TradeAudio.stop(); TutorialFlow.cancelChains();
+    TradeAudio.mute();
     if(this.step>0){
       this.step--;
       // Skip Manual Trading Levels Behavior (index 5) when not Manual Trading Levels
@@ -8323,13 +8228,11 @@ const Wizard = {
   },
 
   replayAudio(){
-    TutLog.log('Wizard', 'replayAudio() — step:', this.step, 'clip:', this._STEP_CLIPS[this.step] || '(none)', 'wizardVisible:', document.getElementById('wizard') ? document.getElementById('wizard').style.display : '?');
     TradeAudio.unmute();
     TradeAudio.stop(); TutorialFlow.cancelChains();
     const clip = this._STEP_CLIPS[this.step];
-    if(!clip){ TutLog.log('Wizard', 'replayAudio — no clip for step', this.step); return; }
+    if(!clip) return;
     const clips = Array.isArray(clip) ? clip : [clip];
-    TutLog.log('Wizard', 'replayAudio — enqueuing:', clips.join(', '));
     clips.forEach(c => TradeAudio.enqueue('audio/' + c + '.mp3'));
   },
 
@@ -8366,7 +8269,6 @@ const Wizard = {
       }
     }
 
-    if(this.step === 4 && document.getElementById('wEntryStyle').value !== 'Manual Levels' && (GuidedTour.isActive() || TutorialMode.isOn())) return;
     if(this.step === 8 && this._chartMode !== 'none') return;
 
     if(this.step < 9){
@@ -8408,9 +8310,7 @@ const Wizard = {
     } else {
       doneBtn.style.display = "none";
       document.getElementById("wNextBtn").style.display = "";
-      const isTut = GuidedTour.isActive() || TutorialMode.isOn();
-      const nextDisabled = (this.step === 4 && document.getElementById('wEntryStyle').value !== 'Manual Levels' && isTut) || (this.step === 8 && this._chartMode !== 'none' && isTut);
-      document.getElementById("wNextBtn").disabled = nextDisabled;
+      document.getElementById("wNextBtn").disabled = (this.step === 8 && this._chartMode !== 'none' && (GuidedTour.isActive() || TutorialMode.isOn()));
       backBtn.style.display = "";
       cancelBtn.innerText = "Cancel";
       this._returnToReview = false;
@@ -8418,40 +8318,6 @@ const Wizard = {
 
     // Clear stale overlay trigger if wizard moved past step 5
     if(this.step !== 5){ EntryModeDemo._pendingShow = false; this._playedSteps.delete(5); }
-
-    // Entry Style step (4): all options selectable, Next only enabled when Manual is chosen,
-    // auto-select Manual near end of audio (same model as Chart Launch step 8)
-    if(this.step === 4 && (GuidedTour.isActive() || TutorialMode.isOn())){
-      const sel = document.getElementById('wEntryStyle');
-      sel.disabled = false;
-      const optDirect = document.getElementById('wOptDirectEntry');
-      const optAuto = document.getElementById('wOptFullyAuto');
-      if(optDirect) optDirect.disabled = false;
-      if(optAuto) optAuto.disabled = false;
-      this._entryStyleLocked = false;
-      // Next enabled only if Manual is already selected
-      const nextBtn = document.getElementById('wNextBtn');
-      nextBtn.disabled = (sel.value !== 'Manual Levels');
-      if(this._entryStyleAutoTimer){ clearTimeout(this._entryStyleAutoTimer); }
-      this._entryStyleAutoTimer = setTimeout(() => {
-        this._entryStyleAutoTimer = null;
-        if(this.step === 4){
-          sel.value = 'Manual Levels';
-          this._entryStyleLocked = true;
-          this.onEntryStyleChange();
-          document.getElementById('wNextBtn').disabled = false;
-          TutLog.log('Wizard', 'Entry Style auto-selected Manual Levels');
-        }
-      }, 8000);
-    } else {
-      if(this._entryStyleAutoTimer){ clearTimeout(this._entryStyleAutoTimer); this._entryStyleAutoTimer = null; }
-      this._entryStyleLocked = false;
-      document.getElementById('wEntryStyle').disabled = false;
-      const optDirect = document.getElementById('wOptDirectEntry');
-      const optAuto = document.getElementById('wOptFullyAuto');
-      if(optDirect) optDirect.disabled = false;
-      if(optAuto) optAuto.disabled = false;
-    }
 
     // Chart Launch step (8): auto-select No Charts near end of audio clip, then lock
     if(this.step === 8 && (GuidedTour.isActive() || TutorialMode.isOn())){
@@ -8510,11 +8376,6 @@ const Wizard = {
     document.getElementById("wManualBlock").style.display = (v==="Manual Levels") ? "block" : "none";
     document.getElementById("wDirectNote").style.display = (v==="Direct Entry") ? "block" : "none";
     document.getElementById("wAutoNote").style.display = (v==="Fully Automatic") ? "block" : "none";
-    // Enable/disable Next on step 4 based on Manual selection (same as step 8 chart mode)
-    if(this.step === 4){
-      const nextBtn = document.getElementById('wNextBtn');
-      if(nextBtn) nextBtn.disabled = (v !== 'Manual Levels' && (GuidedTour.isActive() || TutorialMode.isOn()));
-    }
   },
 
   toggleCustomGross(){
@@ -9940,7 +9801,6 @@ const MockBridge = {
       }
       mc.bars = bars;
       mc.viewStart = Math.max(0, mc.bars.length - mc.viewBars);
-      mc._atLiveEdge = true;
       this._lastPrice = center;
       requestAnimationFrame(() => { MiniChart.initCanvas(pairId); MiniChart._updateSlider(pairId); });
     }
