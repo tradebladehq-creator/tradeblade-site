@@ -4039,6 +4039,9 @@ const TutorialFlow = (() => {
     'intro_fully_auto':            '#wEntryStyle',
     'intro_trailing_loss':         '#wLossMode',
     'intro_ev_analysis':           '.evBtn',
+    'tour_open_hedge_analysis':    '.evBtn',
+    'tour_hedge_explain':          '.evBtn',
+    'tour_close_hedge_analysis':   '.evBtn',
     'intro_mini_chart':            '.chartBtn[data-side="prop"]',
     'intro_manual_trade':          '.primaryAction.actionEntry',
     'intro_window_unlock':         '.primaryAction.windowClosed',
@@ -5160,7 +5163,8 @@ function _requestBarsForPair(p){
     _manualHigh: 0,
     _manualLow: 0,
     _pdh: (_seedStrat && (_seedStrat.kernelPdh || _seedStrat.pdh)) || 0,
-    _pdl: (_seedStrat && (_seedStrat.kernelPdl || _seedStrat.pdl)) || 0
+    _pdl: (_seedStrat && (_seedStrat.kernelPdl || _seedStrat.pdl)) || 0,
+    _crossAlertDone: false
   };
   console.log("[AUTO_BARS] Requesting bars for pair " + p.id + " inst=" + inst + " suffix=" + suffix);
   Bridge.send({ type:"TB_REQUEST_BARS", instrument:inst, busSuffix:suffix, timeframe:tf, barCount:MC_DEFAULT_BARS });
@@ -5197,7 +5201,8 @@ const MiniChart = {
       _zoomHintUsed:false,                    // show hint on every open
       _manualHigh: 0,
       _manualLow: 0,
-      _pdh: 0, _pdl: 0
+      _pdh: 0, _pdl: 0,
+      _crossAlertDone: false
     };
     const cfg = p.cfg || {};
     const inst = side==="prop" ? cfg.instrument : cfg.hedgeInstrument;
@@ -5416,7 +5421,7 @@ const MiniChart = {
     // can see when levels are touched — no full chart needed.
     const xHi = mc._manualHigh > 0 ? mc._manualHigh : (mc._pdh || 0);
     const xLo = mc._manualLow > 0  ? mc._manualLow  : (mc._pdl || 0);
-    if(xHi > 0 && xLo > 0 && !mc._orderLevels){
+    if(xHi > 0 && xLo > 0 && !mc._orderLevels && !mc._crossAlertDone){
       // Only detect actionable crosses: price crossing DOWN through low or UP through high.
       if(prevClose > xLo && px <= xLo){
         mc._lastCross = { level:"PDL", dir:"down", price:px, time:Date.now() };
@@ -5963,9 +5968,9 @@ const MiniChart = {
     }
 
     // ── Level cross flash indicator ──
-    if(mc._lastCross && (Date.now() - mc._lastCross.time) < 3000){
-      const crossAge = (Date.now() - mc._lastCross.time) / 3000;
-      const alpha = 1 - crossAge; // Fade out over 3 seconds
+    if(mc._lastCross && (Date.now() - mc._lastCross.time) < 10000){
+      const crossAge = (Date.now() - mc._lastCross.time) / 10000;
+      const alpha = 1 - crossAge; // Fade out over 10 seconds
       const crossColor = mc._lastCross.level === "PDH" ? "#FFB300" : "#FF6D00";
       const crossLabel = mc._lastCross.level === "PDH" ? "PRICE BROKE MH" : "PRICE BROKE ML";
       const crossDir = mc._lastCross.dir === "up" ? "\u25B2" : "\u25BC";
@@ -5982,6 +5987,8 @@ const MiniChart = {
       ctx.fillStyle = "#FFFFFF";
       ctx.fillText(crossDir + " " + crossLabel, chartW / 2, H / 2);
       ctx.restore();
+    } else if(mc._lastCross && (Date.now() - mc._lastCross.time) >= 10000){
+      mc._crossAlertDone = true;
     }
 
 
@@ -8294,19 +8301,46 @@ const Wizard = {
     } else {
       doneBtn.style.display = "none";
       document.getElementById("wNextBtn").style.display = "";
+      const isTut = (GuidedTour.isActive() || TutorialMode.isOn());
+      const nextDisabled = (this.step === 2 && document.getElementById('wEntryStyle').value !== 'Manual Levels' && isTut);
+      document.getElementById("wNextBtn").disabled = nextDisabled;
       backBtn.style.display = "";
       cancelBtn.innerText = "Cancel";
       this._returnToReview = false;
     }
 
-    // Entry Style step (2): lock dropdown to Manual during tutorial
+    // Entry Style step (2): all options selectable, Next only enabled when Manual is chosen,
+    // auto-select Manual near end of audio
     if(this.step === 2 && (GuidedTour.isActive() || TutorialMode.isOn())){
       const sel = document.getElementById('wEntryStyle');
-      sel.value = 'Manual Levels';
-      sel.disabled = true;
-      this.onEntryStyleChange();
-    } else if(!GuidedTour.isActive() && !TutorialMode.isOn()){
+      sel.disabled = false;
+      const optDirect = document.getElementById('wOptDirectEntry');
+      const optAuto = document.getElementById('wOptFullyAuto');
+      if(optDirect) optDirect.disabled = false;
+      if(optAuto) optAuto.disabled = false;
+      this._entryStyleLocked = false;
+      // Next enabled only if Manual is already selected
+      const nextBtn = document.getElementById('wNextBtn');
+      nextBtn.disabled = (sel.value !== 'Manual Levels');
+      if(this._entryStyleAutoTimer){ clearTimeout(this._entryStyleAutoTimer); }
+      this._entryStyleAutoTimer = setTimeout(() => {
+        this._entryStyleAutoTimer = null;
+        if(this.step === 2){
+          sel.value = 'Manual Levels';
+          this._entryStyleLocked = true;
+          this.onEntryStyleChange();
+          document.getElementById('wNextBtn').disabled = false;
+          console.log('[Wizard] Entry Style auto-selected Manual Levels');
+        }
+      }, 8000);
+    } else {
+      if(this._entryStyleAutoTimer){ clearTimeout(this._entryStyleAutoTimer); this._entryStyleAutoTimer = null; }
+      this._entryStyleLocked = false;
       document.getElementById('wEntryStyle').disabled = false;
+      const optDirect = document.getElementById('wOptDirectEntry');
+      const optAuto = document.getElementById('wOptFullyAuto');
+      if(optDirect) optDirect.disabled = false;
+      if(optAuto) optAuto.disabled = false;
     }
 
     // Clear stale overlay trigger if wizard moved past step 5
@@ -8355,6 +8389,11 @@ const Wizard = {
     document.getElementById("wManualBlock").style.display = (v==="Manual Levels") ? "block" : "none";
     document.getElementById("wDirectNote").style.display = (v==="Direct Entry") ? "block" : "none";
     document.getElementById("wAutoNote").style.display = (v==="Fully Automatic") ? "block" : "none";
+    // Enable/disable Next on step 2 based on Manual selection during guided tour
+    if(this.step === 2){
+      const nextBtn = document.getElementById('wNextBtn');
+      if(nextBtn) nextBtn.disabled = (v !== 'Manual Levels' && (GuidedTour.isActive() || TutorialMode.isOn()));
+    }
   },
 
   toggleCustomGross(){
