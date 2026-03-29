@@ -1287,8 +1287,8 @@ body.nt-bridge .webHide-inv{display:none !important;}
 
         <div class="sectionTitle">Guardrail Mode</div>
         <select id="wLossMode">
-          <option value="flat">Static</option>
-          <option value="trail">Trailing</option>
+          <option value="flat">End of Day Drawdown</option>
+          <option value="trail">Intraday Trailing Drawdown</option>
         </select>
 
         <div class="sectionTitle">Session Loss Limit ($)</div>
@@ -6256,7 +6256,7 @@ function renderPair(p){
     <div class="kv">
       <div data-kv="window"><b>Window</b><br>${cfg.startLabel || "—"} \u2192 ${cfg.stopLabel || "—"}</div>
       <div data-kv="hardexit"><b>Hard Exit</b><br>${cfg.exitLabel || "—"}</div>
-      <div data-kv="guardrail"><b>Guardrail</b><br>${cfg.lossMode === "FlatMaxLoss" ? "Static" : cfg.lossMode === "TrailingMaxLoss" ? "Trailing" : cfg.lossMode || "—"}</div>
+      <div data-kv="guardrail"><b>Guardrail</b><br>${cfg.lossMode === "FlatMaxLoss" ? "End of Day" : cfg.lossMode === "TrailingMaxLoss" ? "Intraday Trailing" : cfg.lossMode || "—"}</div>
       <div data-kv="connection"><b>Connection</b><br>${connDot}${rt.connState || "Unknown"}</div>
     </div>
     ${riskBar}
@@ -8540,7 +8540,7 @@ const Wizard = {
       <div class="revRow"><span><b>Contracts</b>: ${cfg.propContracts} prop (mini) \u00d7 ${cfg.hedgePerProp} hedge/prop (micro) = ${d.totalHedge} total hedge</span>${e(6)}</div>
       <div class="revRow"><span><b>Trade $ Per Contract</b>: Live $${d.liveTP} TP/ $${d.liveSL} SL | Prop $${d.propTP} TP/ $${d.propSL} SL</span></div>
       ${d.totalHedge > 1 ? `<div class="revRow"><span><b>Trade $ Total</b>: Live $${d.liveTP * d.totalHedge} TP/ $${d.liveSL * d.totalHedge} SL | Prop $${d.propTP * d.propContracts} TP/ $${d.propSL * d.propContracts} SL</span></div>` : ''}
-      <div class="revRow"><span><b>Session Guardrail</b> \u2014 ${cfg.lossMode === "FlatMaxLoss" ? "Static" : "Trailing"}, Limit $${cfg.maxLoss}</span>${e(7)}</div>
+      <div class="revRow"><span><b>Session Guardrail</b> \u2014 ${cfg.lossMode === "FlatMaxLoss" ? "End of Day" : "Intraday Trailing"}, Limit $${cfg.maxLoss}</span>${e(7)}</div>
       <div class="revRow"><span><b>Charts</b>: Opened per-pair from Command Center</span></div>
     `;
   },
