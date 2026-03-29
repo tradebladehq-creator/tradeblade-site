@@ -8190,7 +8190,7 @@ const Wizard = {
   returnToReview(){
     TradeAudio.stop(); TutorialFlow.cancelChains();
     this._returnToReview = false;
-    this.step = 8;
+    this.step = this.steps.length - 1;
     this.populateReview();
     this.updateUI();
   },
@@ -8255,7 +8255,7 @@ const Wizard = {
       }
     }
 
-    if(this.step < 8){
+    if(this.step < this.steps.length - 1){
       TradeAudio.stop(); TutorialFlow.cancelChains();
       this.step++;
       const entryStyle=document.getElementById("wEntryStyle").value;
@@ -8264,7 +8264,7 @@ const Wizard = {
       if(this.step===3 && entryStyle==="Fully Automatic"){ console.log('[WIZ] next() FA skip 3→4'); this.step=4; }
       // Skip Manual Trading Levels Behavior (index 5) when not Manual Trading Levels
       if(this.step===5 && entryStyle!=="Manual Levels"){ console.log('[WIZ] next() manual skip 5→6'); this.step=6; }
-      if(this.step===8) this.populateReview();
+      if(this.step===this.steps.length - 1) this.populateReview();
       this.updateUI();
       return;
     }
@@ -8287,13 +8287,13 @@ const Wizard = {
     if(!isManual && this.step > 5) displayStep--;
     document.getElementById("wProgText").innerText = `Step ${displayStep} of ${total} \u2014 ${this.titles[this.step]}`;
     document.getElementById("wProgFill").style.width = ((displayStep/total)*100) + "%";
-    document.getElementById("wNextBtn").innerText = (this.step===8) ? "Confirm & Deploy" : "Next";
+    document.getElementById("wNextBtn").innerText = (this.step===this.steps.length - 1) ? "Confirm & Deploy" : "Next";
 
     // Show Done button when editing from review; hide Next and Back
     const doneBtn = document.getElementById("wDoneBtn");
     const backBtn = document.getElementById("wBackBtn");
     const cancelBtn = document.getElementById("wCancelBtn");
-    if(this._returnToReview && this.step !== 8){
+    if(this._returnToReview && this.step !== this.steps.length - 1){
       doneBtn.style.display = "inline-block";
       document.getElementById("wNextBtn").style.display = "none";
       backBtn.style.display = "none";
