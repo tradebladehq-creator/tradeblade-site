@@ -1840,7 +1840,7 @@ const GuidedTour = {
   start(){
     this._active = true;
     this._phase = this.P.INTRO;
-    console.log("[GuidedTour] Started — phase INTRO");
+    console.log("[GuidedTour] Started — phase INTRO, TutorialMode.isOn()=" + TutorialMode.isOn() + " muted=" + TradeAudio._muted);
     const skip = document.getElementById('tourSkipLink');
     if(skip) skip.style.display = 'block';
     const killBtn = document.getElementById('killTutorialBtn');
@@ -1882,6 +1882,7 @@ const GuidedTour = {
 
   // Called from TradeAudio when the queue drains empty
   onQueueDrain(){
+    console.log('[GuidedTour] onQueueDrain() active=' + this._active + ' phase=' + this._phase);
     if(!this._active) return;
     if(this._phase === this.P.INTRO){
       this._phase = this.P.KERNEL;
@@ -1897,18 +1898,26 @@ const GuidedTour = {
   },
 
   onWizardOpen(){
+    console.log('[GuidedTour] onWizardOpen() active=' + this._active + ' phase=' + this._phase);
     if(!this._active) return;
     if(this._phase < this.P.WIZARD){
+      const prev = this._phase;
       this._phase = this.P.WIZARD;
-      console.log("[GuidedTour] → phase WIZARD (from phase " + this._phase + ")");
+      console.log("[GuidedTour] → phase WIZARD (from phase " + prev + ")");
     }
   },
 
   onWizardStep(stepIndex){
-    if(!this._active || this._phase !== this.P.WIZARD) return;
+    console.log('[GuidedTour] onWizardStep(' + stepIndex + ') active=' + this._active + ' phase=' + this._phase + ' (WIZARD=' + this.P.WIZARD + ')');
+    if(!this._active || this._phase !== this.P.WIZARD){
+      console.warn('[GuidedTour] onWizardStep BLOCKED — active=' + this._active + ' phase=' + this._phase + ' need=' + this.P.WIZARD);
+      return;
+    }
     const clip = Wizard._STEP_CLIPS[stepIndex];
+    console.log('[GuidedTour] onWizardStep clip=' + JSON.stringify(clip));
     if(clip){
       const clips = Array.isArray(clip) ? clip : [clip];
+      console.log('[GuidedTour] Scheduling enqueue in 600ms:', clips.map(c => 'audio/' + c + '.mp3'));
       setTimeout(() => { clips.forEach(c => TradeAudio.enqueue('audio/' + c + '.mp3')); }, 600);
     }
   },
@@ -8083,6 +8092,7 @@ const Wizard = {
   ],
 
   open(){
+    console.log('[WIZ] open() called — GuidedTour.isActive()=' + GuidedTour.isActive() + ' TutorialMode.isOn()=' + TutorialMode.isOn() + ' GuidedTour._phase=' + GuidedTour._phase);
     try { TradeAudio.stop(); TutorialFlow.cancelChains(); } catch(e){}
     if(!License.isUnlocked()){
       License.showGate();
@@ -8090,10 +8100,12 @@ const Wizard = {
     }
     TradeAudio.stop(); TutorialFlow.cancelChains();
     this.step=0;
+    this._playedSteps.clear();
     document.getElementById("wizard").style.display="block";
 
     // Notify GuidedTour that wizard opened
     try { GuidedTour.onWizardOpen(); } catch(e){}
+    console.log('[WIZ] after onWizardOpen — GuidedTour._phase=' + GuidedTour._phase);
 
 
     // Clear any stale command status messages
@@ -8101,6 +8113,7 @@ const Wizard = {
     if(status) status.innerHTML = "";
 
     this.steps = Array.from(document.querySelectorAll("#wizard .step"));
+    console.log('[WIZ] DOM steps found: ' + this.steps.length);
     this.initTimeDropdowns();
     this.setDefaultTimes();
     this.onEntryStyleChange();
@@ -8176,15 +8189,15 @@ const Wizard = {
   },
 
   back(){
+    console.log('[WIZ] back() from step ' + this.step);
     TradeAudio.stop(); TutorialFlow.cancelChains();
-    TradeAudio.mute();
     if(this.step>0){
       this.step--;
       // Skip Instrument Pair (index 3) when Fully Automatic (auto-selected)
       const entryStyle=document.getElementById("wEntryStyle").value;
-      if(this.step===3 && entryStyle==="Fully Automatic"){ this.step=2; }
+      if(this.step===3 && entryStyle==="Fully Automatic"){ console.log('[WIZ] back() FA skip 3→2'); this.step=2; }
       // Skip Manual Trading Levels Behavior (index 5) when not Manual Trading Levels
-      if(this.step===5 && entryStyle!=="Manual Levels"){ this.step=4; }
+      if(this.step===5 && entryStyle!=="Manual Levels"){ console.log('[WIZ] back() manual skip 5→4'); this.step=4; }
       // Don't clear _playedSteps — Carol only plays going forward, never backward
       this.updateUI();
     } else {
@@ -8239,10 +8252,11 @@ const Wizard = {
       TradeAudio.stop(); TutorialFlow.cancelChains();
       this.step++;
       const entryStyle=document.getElementById("wEntryStyle").value;
+      console.log('[WIZ] next() → step ' + this.step + ' entryStyle=' + entryStyle);
       // Skip Instrument Pair (index 3) when Fully Automatic (auto-selected)
-      if(this.step===3 && entryStyle==="Fully Automatic"){ this.step=4; }
+      if(this.step===3 && entryStyle==="Fully Automatic"){ console.log('[WIZ] next() FA skip 3→4'); this.step=4; }
       // Skip Manual Trading Levels Behavior (index 5) when not Manual Trading Levels
-      if(this.step===5 && entryStyle!=="Manual Levels"){ this.step=6; }
+      if(this.step===5 && entryStyle!=="Manual Levels"){ console.log('[WIZ] next() manual skip 5→6'); this.step=6; }
       if(this.step===8) this.populateReview();
       this.updateUI();
       return;
@@ -8300,6 +8314,7 @@ const Wizard = {
 
     // Play step intro clip once per wizard session
     // Step 5 (Manual Trading Levels): intro clip plays first, then overlay launches on drain
+    console.log('[WIZ_AUDIO] step=' + this.step + ' alreadyPlayed=' + this._playedSteps.has(this.step) + ' GuidedTour.active=' + GuidedTour.isActive() + ' phase=' + GuidedTour._phase + ' TutMode=' + TutorialMode.isOn() + ' muted=' + TradeAudio._muted + ' clip=' + this._STEP_CLIPS[this.step]);
     if(!this._playedSteps.has(this.step)){
       if(this.step === 5 && (TutorialMode.isOn() || GuidedTour.isActive())){
         this._playedSteps.add(this.step);
