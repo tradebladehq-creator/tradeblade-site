@@ -8055,8 +8055,8 @@ const KernelSetup = {
 const Wizard = {
   step:0,
   steps:[],
-  _autoChart: true,
-  _chartMode: "both",  // "both" | "leader" | "none"
+  _autoChart: false,
+  _chartMode: "none",  // "both" | "leader" | "none"
   _playedSteps: new Set(),
   // Maps wizard step index → clip name to play when that step is first reached
   _STEP_CLIPS: [
@@ -8180,8 +8180,10 @@ const Wizard = {
     TradeAudio.mute();
     if(this.step>0){
       this.step--;
-      // Skip Manual Trading Levels Behavior (index 5) when not Manual Trading Levels
+      // Skip Instrument Pair (index 3) when Fully Automatic (auto-selected)
       const entryStyle=document.getElementById("wEntryStyle").value;
+      if(this.step===3 && entryStyle==="Fully Automatic"){ this.step=2; }
+      // Skip Manual Trading Levels Behavior (index 5) when not Manual Trading Levels
       if(this.step===5 && entryStyle!=="Manual Levels"){ this.step=4; }
       // Don't clear _playedSteps — Carol only plays going forward, never backward
       this.updateUI();
@@ -8236,8 +8238,10 @@ const Wizard = {
     if(this.step < 8){
       TradeAudio.stop(); TutorialFlow.cancelChains();
       this.step++;
-      // Skip Manual Trading Levels Behavior (index 5) when not Manual Trading Levels
       const entryStyle=document.getElementById("wEntryStyle").value;
+      // Skip Instrument Pair (index 3) when Fully Automatic (auto-selected)
+      if(this.step===3 && entryStyle==="Fully Automatic"){ this.step=4; }
+      // Skip Manual Trading Levels Behavior (index 5) when not Manual Trading Levels
       if(this.step===5 && entryStyle!=="Manual Levels"){ this.step=6; }
       if(this.step===8) this.populateReview();
       this.updateUI();
@@ -8252,10 +8256,14 @@ const Wizard = {
     const isManual = (entryStyle==="Manual Levels");
     this.steps.forEach((s,i)=>s.classList.toggle("active", i===this.step));
 
-    // Dynamic step count: skip Step 6 (index 5) when not Manual Trading Levels
-    const total = isManual ? 9 : 8;
-    // Visible step number: subtract 1 for steps after the skipped step
-    const displayStep = (!isManual && this.step > 5) ? this.step : this.step + 1;
+    // Dynamic step count: skip Instrument Pair (index 3) for FA, skip Manual Levels Behavior (index 5) when not Manual
+    const isFA = (entryStyle === "Fully Automatic");
+    const skippedSteps = (isFA ? 1 : 0) + (!isManual ? 1 : 0);
+    const total = 9 - skippedSteps;
+    // Visible step number: subtract 1 for each skipped step before or at current position
+    let displayStep = this.step + 1;
+    if(isFA && this.step >= 3) displayStep--;
+    if(!isManual && this.step > 5) displayStep--;
     document.getElementById("wProgText").innerText = `Step ${displayStep} of ${total} \u2014 ${this.titles[this.step]}`;
     document.getElementById("wProgFill").style.width = ((displayStep/total)*100) + "%";
     document.getElementById("wNextBtn").innerText = (this.step===8) ? "Confirm & Deploy" : "Next";
