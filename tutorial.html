@@ -8311,7 +8311,7 @@ const Wizard = {
 
     // Entry Style step (2): all options selectable, Next only enabled when Manual is chosen,
     // auto-select Manual near end of audio
-    if(this.step === 2 && (GuidedTour.isActive() || TutorialMode.isOn())){
+    if(this.step === 2 && GuidedTour.isActive()){
       const sel = document.getElementById('wEntryStyle');
       sel.disabled = false;
       const optDirect = document.getElementById('wOptDirectEntry');
@@ -8392,7 +8392,7 @@ const Wizard = {
     // Enable/disable Next on step 2 based on Manual selection during guided tour
     if(this.step === 2){
       const nextBtn = document.getElementById('wNextBtn');
-      if(nextBtn) nextBtn.disabled = (v !== 'Manual Levels' && (GuidedTour.isActive() || TutorialMode.isOn()));
+      if(nextBtn) nextBtn.disabled = (v !== 'Manual Levels' && GuidedTour.isActive());
     }
   },
 
