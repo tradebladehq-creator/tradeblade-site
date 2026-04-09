@@ -1134,7 +1134,7 @@ body.nt-bridge .webHide-inv{display:none !important;}
   <!-- Wizard -->
   <div id="wizard">
     <div class="wHeader">
-      <div class="wProgText" id="wProgText">Step 1 of 10 — Primary Account</div>
+      <div class="wProgText" id="wProgText">Step 1 of 9 — Primary Account</div>
       <div class="wProgBar"><div class="wProgFill" id="wProgFill"></div></div>
     </div>
 
@@ -1157,7 +1157,33 @@ body.nt-bridge .webHide-inv{display:none !important;}
         <div class="inlineHint">Different accounts recommended for live trading.</div>
       </div>
 
-      <!-- 3 -->
+      <!-- 3: Entry Style -->
+      <div class="step">
+        <div class="q">Entry Style</div>
+        <select id="wEntryStyle" onchange="Wizard.onEntryStyleChange()">
+          <option value="Manual Levels">Manual Trading Levels</option>
+          <option value="Direct Entry" id="wOptDirectEntry">Direct Entry</option>
+          <option value="Fully Automatic" id="wOptFullyAuto">Fully Automatic (Elite Plan)</option>
+        </select>
+
+        <div id="wManualBlock" style="display:block;">
+          <div class="inlineHint">Manual Trading Levels mode requires chart levels before trading is allowed.</div>
+
+          <div class="inlineHint"><img class="inlineWordmark" src="tb-wordmark.png" alt="TRADEBLADE"> remains blocked until lines are placed and you click Confirm Levels in Control Center.</div>
+        </div>
+
+        <div id="wDirectNote" class="optBox" style="display:none;">
+          Arm the pair, then click <b>BUY</b> or <b>SELL</b> on the pair card to enter.<br>
+          No chart levels are required.
+        </div>
+
+        <div id="wAutoNote" class="optBox" style="display:none;">
+          <b>Full Automation</b> — TradeBlade trades unattended for the entire session. Must be restarted at each session start.<br>
+          <b style="color:var(--blue);">Requires Elite Plan.</b>
+        </div>
+      </div>
+
+      <!-- 4: Instrument Pair -->
       <div class="step">
         <div class="q">Select Instrument Pair</div>
         <select id="wPair">
@@ -1173,7 +1199,7 @@ body.nt-bridge .webHide-inv{display:none !important;}
         </select>
       </div>
 
-      <!-- 4 -->
+      <!-- 5: Trading Window + Hard Exit -->
       <div class="step">
         <div class="q">Trading Window + Hard Exit</div>
 
@@ -1200,32 +1226,6 @@ body.nt-bridge .webHide-inv{display:none !important;}
 
         <div class="inlineHint" style="margin-top:14px;">Entries only within Start → Stop. All positions close at Hard Exit.</div>
         <div class="example" id="wTimePreview"></div>
-      </div>
-
-      <!-- 5 -->
-      <div class="step">
-        <div class="q">Entry Style</div>
-        <select id="wEntryStyle" onchange="Wizard.onEntryStyleChange()">
-          <option value="Manual Levels">Manual Trading Levels</option>
-          <option value="Direct Entry" id="wOptDirectEntry">Direct Entry</option>
-          <option value="Fully Automatic" id="wOptFullyAuto">Fully Automatic (Elite Plan)</option>
-        </select>
-
-        <div id="wManualBlock" style="display:block;">
-          <div class="inlineHint">Manual Trading Levels mode requires chart levels before trading is allowed.</div>
-
-          <div class="inlineHint"><img class="inlineWordmark" src="tb-wordmark.png" alt="TRADEBLADE"> remains blocked until lines are placed and you click Confirm Levels in Control Center.</div>
-        </div>
-
-        <div id="wDirectNote" class="optBox" style="display:none;">
-          Arm the pair, then click <b>BUY</b> or <b>SELL</b> on the pair card to enter.<br>
-          No chart levels are required.
-        </div>
-
-        <div id="wAutoNote" class="optBox" style="display:none;">
-          <b>Full Automation</b> — TradeBlade trades unattended for the entire session. Must be restarted at each session start.<br>
-          <b style="color:var(--blue);">Requires Elite Plan.</b>
-        </div>
       </div>
 
       <!-- 6 -->
@@ -1291,8 +1291,8 @@ body.nt-bridge .webHide-inv{display:none !important;}
 
         <div class="sectionTitle">Guardrail Mode</div>
         <select id="wLossMode">
-          <option value="flat">Static</option>
-          <option value="trail">Trailing</option>
+          <option value="flat">End of Day Drawdown</option>
+          <option value="trail">Intraday Trailing Drawdown</option>
         </select>
 
         <div class="sectionTitle">Session Loss Limit ($)</div>
@@ -1303,31 +1303,7 @@ body.nt-bridge .webHide-inv{display:none !important;}
         </div>
       </div>
 
-      <!-- 9: Chart Launch -->
-      <div class="step">
-        <div class="q">Chart Launch Options</div>
-        <div class="inlineHint">Open charts with <img class="inlineWordmark" src="tb-wordmark.png" alt="TRADEBLADE"> indicators after deployment.</div>
-        <div style="display:flex;gap:12px;margin-top:20px;flex-direction:column;">
-          <button type="button" class="btn-primary wChartOpt selected" id="wChartBoth"
-            onclick="Wizard.setChartMode('both')" style="padding:14px;text-align:left;">
-            <b>Both Charts</b><br><span style="opacity:0.7;font-size:12px;">Opens PropPrimary + LiveHedge charts</span>
-          </button>
-          <button type="button" class="btn-ghost wChartOpt" id="wChartLeader"
-            onclick="Wizard.setChartMode('leader')" style="padding:14px;text-align:left;">
-            <b>Leader Only</b><br><span style="opacity:0.7;font-size:12px;">Opens PropPrimary chart only — hedge runs headless</span>
-          </button>
-          <button type="button" class="btn-ghost wChartOpt" id="wChartNone"
-            onclick="Wizard.setChartMode('none')" style="padding:14px;text-align:left;">
-            <b>No Charts</b><br><span style="opacity:0.7;font-size:12px;">Charts can be opened at any time from the home screen</span>
-          </button>
-        </div>
-        <div class="optBox" style="margin-top:14px;">
-          You can always open or close charts later from the home screen.
-          For high-volume users, Leader Only is recommended — open the chart, place your levels, then close it to free resources.
-        </div>
-      </div>
-
-      <!-- 10: Review -->
+      <!-- 9: Review -->
       <div class="step">
         <div class="q">Review</div>
         <div class="review" id="wReview"></div>
@@ -4105,7 +4081,7 @@ const TutorialFlow = (() => {
     'entrydemo_outro':             ['#wEntryMode','#wDirAllowed','#wNextBtn'],
     // Wizard step-detail clips
     'wizard_step_manual':          ['#wEntryMode','#wDirAllowed'],
-    'wizard_step_chart':           ['#wChartBoth','#wChartLeader','#wChartNone'],
+    // wizard_step_chart removed — chart launch slide eliminated
     'wizard_entrymode_direct':     '#wEntryStyle',
     'wizard_manual_mode':          '#wEntryMode',
     'wizard_manual_direction':     '#wDirAllowed',
@@ -8175,8 +8151,8 @@ const KernelSetup = {
 const Wizard = {
   step:0,
   steps:[],
-  _autoChart: true,
-  _chartMode: "both",  // "both" | "leader" | "none"
+  _autoChart: false,  // charts launched from pair cards, not on deploy
+  _chartMode: "none",  // charts launched from pair cards, not on deploy
   _entryStyleLocked: false,
   _entryStyleAutoTimer: null,
   _playedSteps: new Set(),
@@ -8184,25 +8160,23 @@ const Wizard = {
   _STEP_CLIPS: [
     'wizard_step_welcome',    // 0 — Primary Account
     'wizard_step_accounts',   // 1 — Hedge Account
-    'wizard_step_instruments', // 2 — Instrument Pair
-    'wizard_timewindow_start',  // 3 — Trading Window (chains to stop → hardexit via onClipEnd)
-    'wizard_step_entrymode',  // 4 — Entry Style
+    'wizard_step_entrymode',  // 2 — Entry Style
+    'wizard_step_instruments', // 3 — Instrument Pair
+    'wizard_timewindow_start',  // 4 — Trading Window (chains to stop → hardexit via onClipEnd)
     'entrydemo_intro',        // 5 — Manual Trading Levels Behavior
     'wizard_risk_gross',      // 6 — Risk Asymmetry (chains to wizard_risk_ratio via onClipEnd)
-    'wizard_step_lossmode',   // 7 — Prop Firm Risk Rules
-    'wizard_step_chart',      // 8 — Chart Launch
-    'wizard_step_review',     // 9 — Review
+    'wizard_step_lossmode',   // 7 — Prop Account Session Guardrail
+    'wizard_step_review',     // 8 — Review
   ],
   titles:[
     "Primary Account",
     "Hedge Account",
+    "Entry Style",
     "Instrument Pair",
     "Trading Window",
-    "Entry Style",
     "Manual Trading Levels Behavior",
     "Risk Asymmetry",
     "Prop Account Session Guardrail",
-    "Chart Launch",
     "Review"
   ],
 
@@ -8230,7 +8204,7 @@ const Wizard = {
     this.onEntryStyleChange();
     this.updateTimePreview();
     this.updateRiskExample();
-    this.setChartMode('both');
+    this.setChartMode('none');
     this.updateUI();
 
     // Refresh accounts
@@ -8283,11 +8257,7 @@ const Wizard = {
     const el = document.getElementById(mode === 'both' ? 'wChartBoth' : mode === 'leader' ? 'wChartLeader' : 'wChartNone');
     if(el){ el.classList.add('selected'); el.classList.remove('btn-ghost'); el.classList.add('btn-primary'); }
     document.querySelectorAll('.wChartOpt:not(.selected)').forEach(b => { b.classList.remove('btn-primary'); b.classList.add('btn-ghost'); });
-    // Enable/disable Next on step 8 based on No Charts selection
-    if(this.step === 8){
-      const nextBtn = document.getElementById('wNextBtn');
-      if(nextBtn) nextBtn.disabled = (mode !== 'none' && (GuidedTour.isActive() || TutorialMode.isOn()));
-    }
+    // Chart launch slide removed — setChartMode kept for createPair compatibility
   },
 
   _returnToReview: false,
@@ -8302,7 +8272,7 @@ const Wizard = {
   returnToReview(){
     TradeAudio.stop(); TutorialFlow.cancelChains();
     this._returnToReview = false;
-    this.step = 9;
+    this.step = 8;
     this.populateReview();
     this.updateUI();
   },
@@ -8345,7 +8315,7 @@ const Wizard = {
       }
     }
 
-    if(this.step===3){
+    if(this.step===4){
       const start=this.getTime("start");
       const stop=this.getTime("stop");
       const exit=this.getTime("exit");
@@ -8366,16 +8336,15 @@ const Wizard = {
       }
     }
 
-    if(this.step === 4 && document.getElementById('wEntryStyle').value !== 'Manual Levels' && (GuidedTour.isActive() || TutorialMode.isOn())) return;
-    if(this.step === 8 && this._chartMode !== 'none') return;
+    if(this.step === 2 && document.getElementById('wEntryStyle').value !== 'Manual Levels' && (GuidedTour.isActive() || TutorialMode.isOn())) return;
 
-    if(this.step < 9){
+    if(this.step < 8){
       TradeAudio.stop(); TutorialFlow.cancelChains();
       this.step++;
       // Skip Manual Trading Levels Behavior (index 5) when not Manual Trading Levels
       const entryStyle=document.getElementById("wEntryStyle").value;
       if(this.step===5 && entryStyle!=="Manual Levels"){ this.step=6; }
-      if(this.step===9) this.populateReview();
+      if(this.step===8) this.populateReview();
       this.updateUI();
       return;
     }
@@ -8388,19 +8357,19 @@ const Wizard = {
     const isManual = (entryStyle==="Manual Levels");
     this.steps.forEach((s,i)=>s.classList.toggle("active", i===this.step));
 
-    // Dynamic step count: skip Step 6 (index 5) when not Manual Trading Levels
-    const total = isManual ? 10 : 9;
+    // Dynamic step count: skip Manual Trading Levels Behavior (index 5) when not Manual
+    const total = isManual ? 9 : 8;
     // Visible step number: subtract 1 for steps after the skipped step
     const displayStep = (!isManual && this.step > 5) ? this.step : this.step + 1;
     document.getElementById("wProgText").innerText = `Step ${displayStep} of ${total} \u2014 ${this.titles[this.step]}`;
     document.getElementById("wProgFill").style.width = ((displayStep/total)*100) + "%";
-    document.getElementById("wNextBtn").innerText = (this.step===9) ? "Confirm & Deploy" : "Next";
+    document.getElementById("wNextBtn").innerText = (this.step===8) ? "Confirm & Deploy" : "Next";
 
     // Show Done button when editing from review; hide Next and Back
     const doneBtn = document.getElementById("wDoneBtn");
     const backBtn = document.getElementById("wBackBtn");
     const cancelBtn = document.getElementById("wCancelBtn");
-    if(this._returnToReview && this.step !== 9){
+    if(this._returnToReview && this.step !== 8){
       doneBtn.style.display = "inline-block";
       document.getElementById("wNextBtn").style.display = "none";
       backBtn.style.display = "none";
@@ -8409,7 +8378,7 @@ const Wizard = {
       doneBtn.style.display = "none";
       document.getElementById("wNextBtn").style.display = "";
       const isTut = GuidedTour.isActive() || TutorialMode.isOn();
-      const nextDisabled = (this.step === 4 && document.getElementById('wEntryStyle').value !== 'Manual Levels' && isTut) || (this.step === 8 && this._chartMode !== 'none' && isTut);
+      const nextDisabled = (this.step === 2 && document.getElementById('wEntryStyle').value !== 'Manual Levels' && isTut);
       document.getElementById("wNextBtn").disabled = nextDisabled;
       backBtn.style.display = "";
       cancelBtn.innerText = "Cancel";
@@ -8419,9 +8388,9 @@ const Wizard = {
     // Clear stale overlay trigger if wizard moved past step 5
     if(this.step !== 5){ EntryModeDemo._pendingShow = false; this._playedSteps.delete(5); }
 
-    // Entry Style step (4): all options selectable, Next only enabled when Manual is chosen,
-    // auto-select Manual near end of audio (same model as Chart Launch step 8)
-    if(this.step === 4 && (GuidedTour.isActive() || TutorialMode.isOn())){
+    // Entry Style step (2): all options selectable, Next only enabled when Manual is chosen,
+    // auto-select Manual near end of audio
+    if(this.step === 2 && (GuidedTour.isActive() || TutorialMode.isOn())){
       const sel = document.getElementById('wEntryStyle');
       sel.disabled = false;
       const optDirect = document.getElementById('wOptDirectEntry');
@@ -8435,7 +8404,7 @@ const Wizard = {
       if(this._entryStyleAutoTimer){ clearTimeout(this._entryStyleAutoTimer); }
       this._entryStyleAutoTimer = setTimeout(() => {
         this._entryStyleAutoTimer = null;
-        if(this.step === 4){
+        if(this.step === 2){
           // Close the dropdown if it happens to be open, then auto-select + lock
           try { sel.blur(); } catch(e){}
           sel.value = 'Manual Levels';
@@ -8456,20 +8425,7 @@ const Wizard = {
       if(optAuto) optAuto.disabled = false;
     }
 
-    // Chart Launch step (8): auto-select No Charts near end of audio clip, then lock
-    if(this.step === 8 && (GuidedTour.isActive() || TutorialMode.isOn())){
-      this._chartLocked = false;
-      this._chartAutoTimer = setTimeout(() => {
-        this._chartAutoTimer = null;
-        if(this.step === 8){
-          this.setChartMode('none');
-          this._chartLocked = true;
-        }
-      }, 17000);
-    } else {
-      if(this._chartAutoTimer){ clearTimeout(this._chartAutoTimer); this._chartAutoTimer = null; }
-      this._chartLocked = false;
-    }
+    // Chart Launch slide removed — charts launched from pair cards
 
     // Play step intro clip once per wizard session
     // Step 5 (Manual Trading Levels): intro clip plays first, then overlay launches on drain
@@ -8513,8 +8469,8 @@ const Wizard = {
     document.getElementById("wManualBlock").style.display = (v==="Manual Levels") ? "block" : "none";
     document.getElementById("wDirectNote").style.display = (v==="Direct Entry") ? "block" : "none";
     document.getElementById("wAutoNote").style.display = (v==="Fully Automatic") ? "block" : "none";
-    // Enable/disable Next on step 4 based on Manual selection (same as step 8 chart mode)
-    if(this.step === 4){
+    // Enable/disable Next on step 2 based on Manual selection during guided tour
+    if(this.step === 2){
       const nextBtn = document.getElementById('wNextBtn');
       if(nextBtn) nextBtn.disabled = (v !== 'Manual Levels' && (GuidedTour.isActive() || TutorialMode.isOn()));
     }
@@ -8691,20 +8647,19 @@ const Wizard = {
     const e = (step) => `<span class="revEdit" onclick="Wizard.editFromReview(${step})">Edit</span>`;
 
     document.getElementById("wReview").innerHTML = `
-      <div class="revRow"><span><b>Pair</b>: ${cfg.pair}</span>${e(2)}</div>
+      <div class="revRow"><span><b>Pair</b>: ${cfg.pair}</span>${e(3)}</div>
       <div class="revRow"><span><b>Primary (Prop)</b>: ${cfg.primaryAccount}</span>${e(0)}</div>
       <div class="revRow"><span><b>Hedge (Live)</b>: ${cfg.hedgeAccount}</span>${e(1)}</div>
-      <div class="revRow"><span><b>Trading Window</b>: ${cfg.startLabel} \u2192 ${cfg.stopLabel}</span>${e(3)}</div>
-      <div class="revRow"><span><b>Hard Exit</b>: ${cfg.exitLabel}</span>${e(3)}</div>
-      <div class="revRow"><span><b>Entry Style</b>: ${cfg.entryStyle === "Manual Levels" ? "Manual Trading Levels" : cfg.entryStyle === "Fully Automatic" ? "Fully Automatic (Elite Plan)" : cfg.entryStyle}</span>${e(4)}</div>
-      <div class="revRow"><span><b>Level Mode</b>: ${manualNote}</span>${e(4)}</div>
+      <div class="revRow"><span><b>Trading Window</b>: ${cfg.startLabel} \u2192 ${cfg.stopLabel}</span>${e(4)}</div>
+      <div class="revRow"><span><b>Hard Exit</b>: ${cfg.exitLabel}</span>${e(4)}</div>
+      <div class="revRow"><span><b>Entry Style</b>: ${cfg.entryStyle === "Manual Levels" ? "Manual Trading Levels" : cfg.entryStyle === "Fully Automatic" ? "Fully Automatic (Elite Plan)" : cfg.entryStyle}</span>${e(2)}</div>
+      <div class="revRow"><span><b>Level Mode</b>: ${manualNote}</span>${e(2)}</div>
       <div class="revRow"><span><b>Risk Asymmetry</b> \u2014 ${cfg.ratio}:1 Risk to Reward</span>${e(6)}</div>
       <div class="revRow"><span><b>Live Gross Profit Target</b>: $${cfg.liveGross}${cfg.isCustomRisk ? " (Custom)" : ""}</span>${e(6)}</div>
       <div class="revRow"><span><b>Contracts</b>: ${cfg.propContracts} prop (mini) \u00d7 ${cfg.hedgePerProp} hedge/prop (micro) = ${d.totalHedge} total hedge</span>${e(6)}</div>
       <div class="revRow"><span><b>Trade $ Per Contract</b>: Live $${d.liveTP} TP/ $${d.liveSL} SL | Prop $${d.propTP} TP/ $${d.propSL} SL</span></div>
       ${d.totalHedge > 1 ? `<div class="revRow"><span><b>Trade $ Total</b>: Live $${d.liveTP * d.totalHedge} TP/ $${d.liveSL * d.totalHedge} SL | Prop $${d.propTP * d.propContracts} TP/ $${d.propSL * d.propContracts} SL</span></div>` : ''}
-      <div class="revRow"><span><b>Session Guardrail</b> \u2014 ${cfg.lossMode === "FlatMaxLoss" ? "Static" : "Trailing"}, Limit $${cfg.maxLoss}</span>${e(7)}</div>
-      <div class="revRow"><span><b>Charts</b>: Opened per-pair from Command Center</span>${e(8)}</div>
+      <div class="revRow"><span><b>Session Guardrail</b> \u2014 ${cfg.lossMode === "FlatMaxLoss" ? "End of Day" : "Intraday Trailing"}, Limit $${cfg.maxLoss}</span>${e(7)}</div>
     `;
   },
 
@@ -8738,10 +8693,10 @@ const Wizard = {
           this.createPair();
         }, () => {
           // User cancelled — navigate back to instrument selection step
-          this.step=2; this.updateUI();
+          this.step=3; this.updateUI();
         }, () => {
           // User chose Edit — jump to instrument step with Done button to return to review
-          this.editFromReview(2);
+          this.editFromReview(3);
         });
         return;
       }
