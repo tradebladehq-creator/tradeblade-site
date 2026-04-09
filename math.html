@@ -339,11 +339,11 @@ function HedgeAnalysis() {
   // --- Instrument & Account Type ---
   const [instrument, setInstrument] = useState("ES/MES");
   const [accountType, setAccountType] = useState("2-step");
-  const [drawdownType, setDrawdownType] = useState("trailing"); // "trailing" or "eod"
+  const [drawdownType, setDrawdownType] = useState("eod"); // "trailing" or "eod"
 
   // --- Adjustable Parameters ---
-  const [passRate, setPassRate] = useState(10);
-  const [payoutRate, setPayoutRate] = useState(25);
+  const [passRate, setPassRate] = useState(20);
+  const [payoutRate, setPayoutRate] = useState(30);
   const [propTP, setPropTP] = useState(1500);    // per-trade profit target on the prop
   const [rrRatio, setRrRatio] = useState(3);     // reward multiplier: 1:1, 1:2, 1:3
   const [friction, setFriction] = useState(35);
@@ -352,11 +352,11 @@ function HedgeAnalysis() {
 
   // --- Adjustable "Fixed" Inputs ---
   const [evalCost, setEvalCost] = useState(40);
-  const [paCost, setPaCost] = useState(85);
+  const [paCost, setPaCost] = useState(120);
   const [profitTarget, setProfitTarget] = useState(3000);
-  const [trailingDD, setTrailingDD] = useState(2500);
-  const [payoutAmt, setPayoutAmt] = useState(2000);
-  const [payoutThreshold, setPayoutThreshold] = useState(2600);
+  const [trailingDD, setTrailingDD] = useState(2000);
+  const [payoutAmt, setPayoutAmt] = useState(1500);
+  const [payoutThreshold, setPayoutThreshold] = useState(3600);
 
   // --- Straight-to-funded specific ---
   const [stfCost, setStfCost] = useState(150);
