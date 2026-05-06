@@ -187,6 +187,11 @@ const INSTRUMENTS = {
   },
 };
 
+// Normalize pair keys: "NQ / MNQ" → "NQ/MNQ" (strip spaces around slash)
+function normalizePairKey(pair) {
+  return (pair || "").replace(/\s*\/\s*/g, "/");
+}
+
 function Section({ title, icon, children, accent = C.blue }) {
   return (
     <div style={{ marginBottom: 28 }}>
@@ -336,39 +341,131 @@ function TB({ fs }) {
 }
 
 function HedgeAnalysis() {
+  // --- CC Bridge State ---
+  const [_pairId, _setPairId] = useState(null);       // non-null = opened from CC card
+  const [_slDollars, _setSlDollars] = useState(0);    // read-only from card
+  const [_tpDollars, _setTpDollars] = useState(0);    // read-only from card
+  const [_ratioFromCard, _setRatioFromCard] = useState(0); // read-only from card
+  const _initReceived = useRef(false);
+  const _suppressUpdate = useRef(false);               // prevent echo on init
+  const _channel = useRef(null);                       // BroadcastChannel for WebView2 bridge
+
   // --- Instrument & Account Type ---
   const [instrument, setInstrument] = useState("ES/MES");
   const [accountType, setAccountType] = useState("2-step");
-  const [drawdownType, setDrawdownType] = useState("eod"); // "trailing" or "eod"
+  const [drawdownType, setDrawdownType] = useState("trailing"); // "trailing" or "eod"
 
   // --- Adjustable Parameters ---
-  const [passRate, setPassRate] = useState(20);
-  const [payoutRate, setPayoutRate] = useState(30);
-  const [propTP, setPropTP] = useState(1500);    // per-trade profit target on the prop
-  const [rrRatio, setRrRatio] = useState(3);     // reward multiplier: 1:1, 1:2, 1:3
+  const [passRate, setPassRate] = useState(10);
+  const [payoutRate, setPayoutRate] = useState(25);
+  const [propTP, setPropTP] = useState(500);     // per-trade profit target on the prop
+  const [rrRatio, setRrRatio] = useState(1);     // reward multiplier: 1:1, 1:2, 1:3
   const [friction, setFriction] = useState(35);
   const [evalHedgeContracts, setEvalHedgeContracts] = useState(1);
   const [paHedgeContracts, setPaHedgeContracts] = useState(1);
 
   // --- Adjustable "Fixed" Inputs ---
   const [evalCost, setEvalCost] = useState(40);
-  const [paCost, setPaCost] = useState(120);
+  const [paCost, setPaCost] = useState(85);
   const [profitTarget, setProfitTarget] = useState(3000);
-  const [trailingDD, setTrailingDD] = useState(2000);
-  const [payoutAmt, setPayoutAmt] = useState(1500);
-  const [payoutThreshold, setPayoutThreshold] = useState(3600);
+  const [trailingDD, setTrailingDD] = useState(2500);
+  const [payoutAmt, setPayoutAmt] = useState(2000);
+  const [payoutThreshold, setPayoutThreshold] = useState(2600);
 
   // --- Straight-to-funded specific ---
   const [stfCost, setStfCost] = useState(150);
   const [stfPayoutRate, setStfPayoutRate] = useState(25);
   const [stfHedgeContracts, setStfHedgeContracts] = useState(3);
 
-  const inst = INSTRUMENTS[instrument];
+  const inst = INSTRUMENTS[normalizePairKey(instrument)] || INSTRUMENTS["ES/MES"];
+
+  // ============================================================
+  // CC → Popup: receive TB_EV_INIT and populate all fields
+  // "Pick up where I left off" — restores user's last slider positions
+  // ============================================================
+  useEffect(() => {
+    // BroadcastChannel for WebView2 bridge (primary transport)
+    try { _channel.current = new BroadcastChannel("tb_ev_bridge"); } catch(e) {}
+
+    function handleInit(e) {
+      if (!e.data || e.data.type !== "TB_EV_INIT") return;
+      const p = e.data.params;
+      if (!p) return;
+      _initReceived.current = true;
+      _suppressUpdate.current = true; // suppress TB_EV_UPDATE echo during batch setState
+
+      // Card identity & read-only TP/SL/R:R context
+      _setPairId(p.pairId || null);
+      _setSlDollars(p._slDollars || 0);
+      _setTpDollars(p._tpDollars || 0);
+      _setRatioFromCard(p._ratio || 0);
+
+      // Populate all editable fields from the card's last-saved _evParams
+      if (p.instrument) setInstrument(normalizePairKey(p.instrument));
+      if (p.accountType) setAccountType(p.accountType);
+      if (p.passRate != null) setPassRate(p.passRate);
+      if (p.payoutRate != null) setPayoutRate(p.payoutRate);
+      if (p.friction != null) setFriction(p.friction);
+      if (p.evalHedgeContracts != null) setEvalHedgeContracts(p.evalHedgeContracts);
+      if (p.paHedgeContracts != null) setPaHedgeContracts(p.paHedgeContracts);
+      if (p.evalCost != null) setEvalCost(p.evalCost);
+      if (p.paCost != null) setPaCost(p.paCost);
+      if (p.profitTarget != null) setProfitTarget(p.profitTarget);
+      if (p.trailingDD != null) setTrailingDD(p.trailingDD);
+      if (p.payoutAmt != null) setPayoutAmt(p.payoutAmt);
+      if (p.payoutThreshold != null) setPayoutThreshold(p.payoutThreshold);
+      if (p.stfCost != null) setStfCost(p.stfCost);
+      if (p.stfPayoutRate != null) setStfPayoutRate(p.stfPayoutRate);
+      if (p.stfHedgeContracts != null) setStfHedgeContracts(p.stfHedgeContracts);
+      if (p.drawdownType) setDrawdownType(p.drawdownType);
+
+      // TP/SL from card drive propTP and rrRatio (read-only in popup)
+      if (p._tpDollars > 0) setPropTP(p._tpDollars);
+      if (p._ratio > 0) setRrRatio(p._ratio);
+
+      // Allow update sending after a tick (all setStates will have flushed)
+      setTimeout(() => { _suppressUpdate.current = false; }, 50);
+    }
+    // Listen on both window.postMessage and BroadcastChannel
+    window.addEventListener("message", handleInit);
+    if (_channel.current) { _channel.current.onmessage = handleInit; }
+    return () => {
+      window.removeEventListener("message", handleInit);
+      if (_channel.current) { _channel.current.close(); _channel.current = null; }
+    };
+  }, []);
+
+  // ============================================================
+  // Popup → CC: send TB_EV_UPDATE whenever account-level params change.
+  // Does NOT send TP/SL/R:R (those are read-only from the card).
+  // Sends via BroadcastChannel + window.opener.postMessage fallback
+  // so CC always receives updates even when BroadcastChannel is isolated.
+  // Includes avgPeakFail so both pipelines use the same MC result.
+  // ============================================================
+  useEffect(() => {
+    if (!_pairId || _suppressUpdate.current) return;
+    const msg = {
+      type: "TB_EV_UPDATE",
+      pairId: _pairId,
+      params: {
+        instrument, accountType, drawdownType, passRate, payoutRate, friction,
+        evalHedgeContracts, paHedgeContracts,
+        evalCost, paCost, profitTarget, trailingDD, payoutAmt, payoutThreshold,
+        stfCost, stfPayoutRate, stfHedgeContracts,
+        avgPeakFail: effectivePeakFail,
+      }
+    };
+    try { if (_channel.current) _channel.current.postMessage(msg); } catch(e) {}
+    try { if (window.opener) window.opener.postMessage(msg, "*"); } catch(e) {}
+  }, [_pairId, instrument, accountType, drawdownType, passRate, payoutRate, friction,
+      evalHedgeContracts, paHedgeContracts, evalCost, paCost, profitTarget,
+      trailingDD, payoutAmt, payoutThreshold, stfCost, stfPayoutRate, stfHedgeContracts,
+      effectivePeakFail]);
 
   // Handle instrument change — update friction default
   const handleInstrumentChange = (newInst) => {
     setInstrument(newInst);
-    setFriction(INSTRUMENTS[newInst].defaultFriction);
+    setFriction((INSTRUMENTS[normalizePairKey(newInst)] || INSTRUMENTS["ES/MES"]).defaultFriction);
   };
 
   // Handle drawdown type change — update DD default
@@ -387,60 +484,99 @@ function HedgeAnalysis() {
   const paHedgeTickVal = (paHedgeContracts * inst.microTickVal).toFixed(2);
   const stfHedgeTickVal = (stfHedgeContracts * inst.microTickVal).toFixed(2);
 
-  // Clamp propTP to slider max when rrRatio changes
-  useEffect(() => {
-    if (propTP > 3000) setPropTP(3000);
-  }, [rrRatio]);
-
+  // ============================================================
+  // MC1: Avg MFE on Losing Trades (per-trade random walk)
+  // Simulates single trades tick-by-tick to TP or SL barrier.
+  // For losers (hit SL), tracks peak above entry (uncapturable).
+  // ============================================================
   const [avgPeakSimulated, setAvgPeakSimulated] = useState(0);
-  const [avgPeakSimulatedPA, setAvgPeakSimulatedPA] = useState(0);
+  const [mcRunning, setMcRunning] = useState(false);
+  const mcWorker = useRef(null);
+  const mcTimer = useRef(null);
 
-  // ============================================================
-  // MC2 Worker Code (shared by eval and PA workers)
-  // Simulates repeated trades (each resolving at +TP or -SL)
-  // accumulating P/L until account hits +target or trailing DD blow.
-  // Tracks: avg trades per cycle, avg account peak on prop-failing
-  // cycles (system success). Peak includes winning trades that push
-  // the account up before it eventually blows.
-  // ============================================================
-  const MC2_WORKER_CODE = `
-    self.onmessage = function(e) {
-      const { TP, SL, tick, profitTarget, trailingDD, numSims } = e.data;
-      if (SL <= 0 || TP <= 0 || profitTarget <= 0 || trailingDD <= 0) { self.postMessage({ avgTrades: 0, avgPeakOnFail: 0 }); return; }
-      let totalTrades = 0, totalPeak = 0, failCount = 0;
-      for (let i = 0; i < numSims; i++) {
-        let acct = 0, trades = 0, peak = 0, floor = -trailingDD;
-        while (acct < profitTarget && acct > floor) {
-          let pos = 0;
+  useEffect(() => {
+    const workerCode = `
+      self.onmessage = function(e) {
+        const { TP, SL, tick, numSims } = e.data;
+        if (SL <= 0 || TP <= 0) { self.postMessage(0); return; }
+        let totalMFE = 0, loserCount = 0;
+        for (let i = 0; i < numSims; i++) {
+          let pos = 0, mfe = 0;
           while (true) {
             pos += Math.random() < 0.5 ? tick : -tick;
-            if (pos >= TP) { acct += TP; break; }
-            if (pos <= -SL) { acct -= SL; break; }
+            if (pos > mfe) mfe = pos;
+            if (pos >= TP) break;
+            if (pos <= -SL) { totalMFE += mfe; loserCount++; break; }
           }
-          if (acct > peak) { peak = acct; floor = peak - trailingDD; }
-          trades++;
         }
-        totalTrades += trades;
-        if (acct <= floor) { totalPeak += peak; failCount++; }
-      }
-      self.postMessage({ avgTrades: totalTrades / numSims, avgPeakOnFail: failCount > 0 ? totalPeak / failCount : 0 });
-    };
-  `;
+        self.postMessage(loserCount > 0 ? totalMFE / loserCount : 0);
+      };
+    `;
+    const blob = new Blob([workerCode], { type: "application/javascript" });
+    mcWorker.current = new Worker(URL.createObjectURL(blob));
+    mcWorker.current.onmessage = (e) => { setAvgPeakSimulated(e.data); setMcRunning(false); };
+    return () => mcWorker.current.terminate();
+  }, []);
 
-  // --- MC2 Eval: cycles target profitTarget ---
+  useEffect(() => {
+    if (mcTimer.current) clearTimeout(mcTimer.current);
+    mcTimer.current = setTimeout(() => {
+      setMcRunning(true);
+      mcWorker.current.postMessage({
+        TP: propTP,
+        SL: propTP / rrRatio,
+        tick: inst.fullTickVal,
+        numSims: 1000,
+      });
+    }, 100);
+    return () => clearTimeout(mcTimer.current);
+  }, [propTP, rrRatio, inst.fullTickVal]);
+
+  // EOD: full drawdown is deterministically capturable (peak = 0)
+  // Trailing: MC-simulated peak reduces capturable amount
+  const effectivePeakFail = drawdownType === "eod" ? 0 : avgPeakSimulated;
+
+  // ============================================================
+  // MC2: Avg Trades Per Cycle (full cycle simulation)
+  // Simulates repeated trades (each resolving at +TP or -SL)
+  // accumulating P/L until account hits +profitTarget or -trailingDD.
+  // Captures trade count per cycle, averages across runs.
+  // Auto-sets commission slider: avgTrades × RT commission.
+  // ============================================================
   const [avgTradesPerCycle, setAvgTradesPerCycle] = useState(0);
   const [mc2Running, setMc2Running] = useState(false);
   const mc2Worker = useRef(null);
   const mc2Timer = useRef(null);
 
   useEffect(() => {
-    const blob = new Blob([MC2_WORKER_CODE], { type: "application/javascript" });
+    const workerCode = `
+      self.onmessage = function(e) {
+        const { TP, SL, tick, profitTarget, trailingDD, numSims } = e.data;
+        if (SL <= 0 || TP <= 0 || profitTarget <= 0 || trailingDD <= 0) { self.postMessage(0); return; }
+        let totalTrades = 0;
+        for (let i = 0; i < numSims; i++) {
+          let acct = 0;
+          let trades = 0;
+          while (acct < profitTarget && acct > -trailingDD) {
+            let pos = 0;
+            while (true) {
+              pos += Math.random() < 0.5 ? tick : -tick;
+              if (pos >= TP) { acct += TP; break; }
+              if (pos <= -SL) { acct -= SL; break; }
+            }
+            trades++;
+          }
+          totalTrades += trades;
+        }
+        self.postMessage(totalTrades / numSims);
+      };
+    `;
+    const blob = new Blob([workerCode], { type: "application/javascript" });
     mc2Worker.current = new Worker(URL.createObjectURL(blob));
     mc2Worker.current.onmessage = (e) => {
-      setAvgTradesPerCycle(e.data.avgTrades);
-      setAvgPeakSimulated(e.data.avgPeakOnFail);
+      setAvgTradesPerCycle(e.data);
       setMc2Running(false);
-      setFriction(Math.round(e.data.avgTrades * NT_MICRO_RT.free));
+      setFriction(Math.round(e.data * NT_MICRO_RT.free));
     };
     return () => mc2Worker.current.terminate();
   }, []);
@@ -457,44 +593,9 @@ function HedgeAnalysis() {
         trailingDD,
         numSims: 1000,
       });
-    }, 500);
+    }, 100);
     return () => clearTimeout(mc2Timer.current);
   }, [propTP, rrRatio, inst.fullTickVal, profitTarget, trailingDD]);
-
-  // --- MC2 PA: cycles target payoutThreshold ---
-  const [avgTradesPerCyclePA, setAvgTradesPerCyclePA] = useState(0);
-  const [frictionPA, setFrictionPA] = useState(0);
-  const [mc2PARunning, setMc2PARunning] = useState(false);
-  const mc2PAWorker = useRef(null);
-  const mc2PATimer = useRef(null);
-
-  useEffect(() => {
-    const blob = new Blob([MC2_WORKER_CODE], { type: "application/javascript" });
-    mc2PAWorker.current = new Worker(URL.createObjectURL(blob));
-    mc2PAWorker.current.onmessage = (e) => {
-      setAvgTradesPerCyclePA(e.data.avgTrades);
-      setAvgPeakSimulatedPA(e.data.avgPeakOnFail);
-      setMc2PARunning(false);
-      setFrictionPA(Math.round(e.data.avgTrades * NT_MICRO_RT.free));
-    };
-    return () => mc2PAWorker.current.terminate();
-  }, []);
-
-  useEffect(() => {
-    if (mc2PATimer.current) clearTimeout(mc2PATimer.current);
-    mc2PATimer.current = setTimeout(() => {
-      setMc2PARunning(true);
-      mc2PAWorker.current.postMessage({
-        TP: propTP,
-        SL: propTP / rrRatio,
-        tick: inst.fullTickVal,
-        profitTarget: payoutThreshold,
-        trailingDD,
-        numSims: 1000,
-      });
-    }, 500);
-    return () => clearTimeout(mc2PATimer.current);
-  }, [propTP, rrRatio, inst.fullTickVal, payoutThreshold, trailingDD]);
 
   // ============================================================
   // 2-STEP MODEL (eval → PA → payout)
@@ -509,20 +610,16 @@ function HedgeAnalysis() {
     const p2 = pPass * pFailPA;
     const p3 = pPass * pPayGivenPass;
 
-    // EOD: full drawdown is deterministically capturable (peak = 0)
-    // Trailing: MC-simulated peak reduces capturable amount
-    const evalPeak = drawdownType === "eod" ? 0 : avgPeakSimulated;
-    const paPeak = drawdownType === "eod" ? 0 : avgPeakSimulatedPA;
-    const propPLEvalFail = evalPeak - trailingDD;
+    const propPLEvalFail = effectivePeakFail - trailingDD;
     const hedgeEvalFail = -evalHedgeRatio * propPLEvalFail;
     const hedgeEvalPass = -evalHedgeRatio * profitTarget;
-    const propPLPAFail = paPeak - trailingDD;
+    const propPLPAFail = effectivePeakFail - trailingDD;
     const hedgePAFail = -paHedgeRatio * propPLPAFail;
     const propPLPASuccess = payoutThreshold;
     const hedgePASuccess = -paHedgeRatio * propPLPASuccess;
 
     const eFric = friction * evalHedgeContracts;
-    const pFric = frictionPA * paHedgeContracts;
+    const pFric = friction * paHedgeContracts;
 
     const net1 = -evalCost + hedgeEvalFail - eFric;
     const net2 = -evalCost - paCost + hedgeEvalPass - eFric + hedgePAFail - pFric;
@@ -550,8 +647,8 @@ function HedgeAnalysis() {
       ev, evNH, sd, sdNH, cyclesHedge, cyclesNH,
       hedgeOnlyEV: ev - evNH, payoutThreshold, eFric, pFric,
     };
-  }, [passRate, payoutRate, avgPeakSimulated, avgPeakSimulatedPA, friction, frictionPA, evalHedgeContracts, paHedgeContracts,
-      evalCost, paCost, profitTarget, trailingDD, payoutAmt, payoutThreshold, evalHedgeRatio, paHedgeRatio, drawdownType]);
+  }, [passRate, payoutRate, effectivePeakFail, friction, evalHedgeContracts, paHedgeContracts,
+      evalCost, paCost, profitTarget, trailingDD, payoutAmt, payoutThreshold, evalHedgeRatio, paHedgeRatio]);
 
   // ============================================================
   // STRAIGHT-TO-FUNDED MODEL (funded → payout or blow)
@@ -561,16 +658,14 @@ function HedgeAnalysis() {
     const pFail = 1 - pPay;
 
     // Fail: prop blows the funded account
-    // EOD: full drawdown capturable (peak = 0); Trailing: MC-simulated peak
-    const stfPeak = drawdownType === "eod" ? 0 : avgPeakSimulatedPA;
-    const propPLFail = stfPeak - trailingDD;
+    const propPLFail = effectivePeakFail - trailingDD;
     const hedgeFail = -stfHedgeRatio * propPLFail;
 
     // Success: prop accumulates enough for payout
     const propPLSuccess = payoutThreshold;
     const hedgeSuccess = -stfHedgeRatio * propPLSuccess;
 
-    const hFric = frictionPA * stfHedgeContracts;
+    const hFric = friction * stfHedgeContracts;
 
     const netFail = -stfCost + hedgeFail - hFric;
     const netSuccess = -stfCost + payoutAmt + hedgeSuccess - hFric;
@@ -595,7 +690,7 @@ function HedgeAnalysis() {
       ev, evNH, sd, sdNH, cyclesHedge, cyclesNH,
       hedgeOnlyEV: ev - evNH, hFric,
     };
-  }, [stfPayoutRate, avgPeakSimulatedPA, frictionPA, stfHedgeContracts, stfCost, payoutAmt, payoutThreshold, stfHedgeRatio, trailingDD, drawdownType]);
+  }, [stfPayoutRate, effectivePeakFail, friction, stfHedgeContracts, stfCost, payoutAmt, payoutThreshold, stfHedgeRatio, trailingDD]);
 
   // ============================================================
   // RENDER
@@ -851,10 +946,12 @@ function HedgeAnalysis() {
           <div style={{ marginBottom: 14 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span style={{ fontFamily: sansFont, fontSize: 12, color: C.dim, whiteSpace: "nowrap" }}>Prop Profit Target</span>
-                <span style={{ fontFamily: font, fontSize: 13, color: C.text, fontWeight: 600, minWidth: 52, textAlign: "right", display: "inline-block" }}>${propTP.toLocaleString()}</span>
+                <span style={{ fontFamily: sansFont, fontSize: 12, color: _pairId ? C.faint : C.dim }}>
+                  Prop Profit Target{_pairId ? " (from card)" : ""}
+                </span>
+                <span style={{ fontFamily: font, fontSize: 13, color: C.text, fontWeight: 600 }}>${propTP.toLocaleString()}</span>
               </div>
-              <Toggle value={rrRatio} onChange={setRrRatio} accent={C.purple}
+              <Toggle value={rrRatio} onChange={_pairId ? () => {} : setRrRatio} accent={_pairId ? C.faint : C.purple}
                 options={[
                   { value: 1, label: "1:1" },
                   { value: 2, label: "1:2" },
@@ -862,13 +959,17 @@ function HedgeAnalysis() {
                 ]} />
             </div>
             <div style={{ fontFamily: sansFont, fontSize: 10, color: C.faint, marginTop: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {`SL: $${propSL.toFixed(0)} · Losses to fail: ~${Math.ceil(trailingDD / propSL)}`}
-              {` · `}<span style={{ color: mc2Running ? C.amber : C.green }}>{`Eval Peak: $${avgPeakSimulated.toFixed(0)}`}</span>
-              {` · `}<span style={{ color: mc2PARunning ? C.amber : C.green }}>{`PA Peak: $${avgPeakSimulatedPA.toFixed(0)}`}</span>
+              {_pairId
+                ? <span style={{ color: C.amber }}>SL: ${_slDollars.toLocaleString()} · TP: ${_tpDollars.toLocaleString()} · R:R 1:{rrRatio} — set in wizard (read-only here)</span>
+                : <>{`SL: $${propSL.toFixed(0)} · Losses to fail: ~${Math.ceil(trailingDD / propSL)}`}</>
+              }
+              {` · `}<span style={{ color: C.green }}>{`Avg Peak (MC): $${avgPeakSimulated.toFixed(0)}`}</span>
+              {mcRunning && <span style={{ color: C.amber, marginLeft: 4 }}>computing...</span>}
             </div>
-            <input type="range" min={50} max={3000} step={50} value={propTP}
-              onChange={e => setPropTP(Number(e.target.value))}
-              style={{ width: "100%", accentColor: C.blue, marginTop: 4, height: 4 }} />
+            <input type="range" min={50} max={2500} step={50} value={propTP}
+              onChange={_pairId ? undefined : (e => setPropTP(Number(e.target.value)))}
+              disabled={!!_pairId}
+              style={{ width: "100%", accentColor: _pairId ? C.faint : C.blue, marginTop: 4, height: 4, opacity: _pairId ? 0.4 : 1 }} />
           </div>
 
           <Param label={`Commission Costs / ${inst.micro} / Phase`} value={friction} onChange={setFriction}
