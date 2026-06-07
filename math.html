@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>How Much Does Failure Pay? â€” TradeBlade Hedge Profit Calculator</title>
+  <title>How Much Does Failure Pay? — TradeBlade Hedge Profit Calculator</title>
   <meta name="description" content="TradeBlade Hedge Profit Calculator: plug in your prop firm costs, payouts, and hedge size. See exactly what eval failure pays you." />
   <link rel="icon" href="assets/favicon.png" type="image/png" />
   <style>
@@ -187,7 +187,7 @@ const INSTRUMENTS = {
   },
 };
 
-// Normalize pair keys: "NQ / MNQ" â†’ "NQ/MNQ" (strip spaces around slash)
+// Normalize pair keys: "NQ / MNQ" → "NQ/MNQ" (strip spaces around slash)
 function normalizePairKey(pair) {
   return (pair || "").replace(/\s*\/\s*/g, "/");
 }
@@ -360,9 +360,9 @@ function HedgeAnalysis() {
   const [payoutRate, setPayoutRate] = useState(25);
   const [propTP, setPropTP] = useState(3000);    // per-trade profit target on the prop
   const [rrRatio, setRrRatio] = useState(3);     // reward multiplier: 1:1, 1:2, 1:3
-  const [friction, setFriction] = useState(35);  // MC2 worker auto-sets this from avg trades/cycle â€” leave at the seed
+  const [friction, setFriction] = useState(35);  // MC2 worker auto-sets this from avg trades/cycle — leave at the seed
   const [evalHedgeContracts, setEvalHedgeContracts] = useState(1);
-  const paHedgeContracts = 2;  // funded phase-1 hedge â€” fixed (phase 2 = 4); system-set by the funded climb, not user-tunable
+  const paHedgeContracts = 2;  // funded phase-1 hedge — fixed (phase 2 = 4); system-set by the funded climb, not user-tunable
 
   // --- Adjustable "Fixed" Inputs ---
   const [evalCost, setEvalCost] = useState(70);
@@ -380,8 +380,8 @@ function HedgeAnalysis() {
   const inst = INSTRUMENTS[normalizePairKey(instrument)] || INSTRUMENTS["ES/MES"];
 
   // ============================================================
-  // CC â†’ Popup: receive TB_EV_INIT and populate all fields
-  // "Pick up where I left off" â€” restores user's last slider positions
+  // CC → Popup: receive TB_EV_INIT and populate all fields
+  // "Pick up where I left off" — restores user's last slider positions
   // ============================================================
   useEffect(() => {
     // BroadcastChannel for WebView2 bridge (primary transport)
@@ -435,7 +435,7 @@ function HedgeAnalysis() {
   }, []);
 
   // ============================================================
-  // Popup â†’ CC: send TB_EV_UPDATE whenever account-level params change.
+  // Popup → CC: send TB_EV_UPDATE whenever account-level params change.
   // Does NOT send TP/SL/R:R (those are read-only from the card).
   // Sends via BroadcastChannel + window.opener.postMessage fallback
   // so CC always receives updates even when BroadcastChannel is isolated.
@@ -461,13 +461,13 @@ function HedgeAnalysis() {
       trailingDD, payoutAmt, payoutThreshold, stfCost, stfPayoutRate, stfHedgeContracts,
       effectivePeakFail]);
 
-  // Handle instrument change â€” update friction default
+  // Handle instrument change — update friction default
   const handleInstrumentChange = (newInst) => {
     setInstrument(newInst);
     setFriction((INSTRUMENTS[normalizePairKey(newInst)] || INSTRUMENTS["ES/MES"]).defaultFriction);
   };
 
-  // Handle drawdown type change â€” update DD default
+  // Handle drawdown type change — update DD default
   const handleDrawdownTypeChange = (type) => {
     setDrawdownType(type);
     setTrailingDD(type === "eod" ? 2000 : 2500);
@@ -480,7 +480,7 @@ function HedgeAnalysis() {
   const FUNDED_PHASE2_AT = payoutThreshold / 2;           // phase-2 boundary = halfway to payout (tracks the toggleable payout)
   const BONUS_ROUND_AVG = 800;                            // avg bonus-round contribution per payout cycle (MC-averaged)
   const stfHedgeRatio = stfHedgeContracts * 0.1;
-  const propSL = propTP / rrRatio;   // SL = TP / k  (1:3 â†’ TP=$1875, SL=$625)
+  const propSL = propTP / rrRatio;   // SL = TP / k  (1:3 → TP=$1875, SL=$625)
 
   const evalHedgeTickVal = (evalHedgeContracts * inst.microTickVal).toFixed(2);
   const paHedgeTickVal = (paHedgeContracts * inst.microTickVal).toFixed(2);
@@ -543,7 +543,7 @@ function HedgeAnalysis() {
   // Simulates repeated trades (each resolving at +TP or -SL)
   // accumulating P/L until account hits +profitTarget or -trailingDD.
   // Captures trade count per cycle, averages across runs.
-  // Auto-sets commission slider: avgTrades Ã— RT commission.
+  // Auto-sets commission slider: avgTrades × RT commission.
   // ============================================================
   const [avgTradesPerCycle, setAvgTradesPerCycle] = useState(0);
   const [mc2Running, setMc2Running] = useState(false);
@@ -600,7 +600,7 @@ function HedgeAnalysis() {
   }, [propTP, rrRatio, inst.fullTickVal, profitTarget, trailingDD]);
 
   // ============================================================
-  // 2-STEP MODEL (eval â†’ PA â†’ payout)
+  // 2-STEP MODEL (eval → PA → payout)
   // ============================================================
   const r2 = useMemo(() => {
     const pPass = passRate / 100;
@@ -619,19 +619,19 @@ function HedgeAnalysis() {
     // Capture: once the account touches phase 2 (payout/2) the hedge ratchets to 4 micro and stays there,
     // so ANY blow from phase 2 captures the phase-2 amount ($800-class); blows that never reach it are
     // phase-1 ($400-class). Weight by the gambler's-ruin odds a blown account ever reached phase 2
-    // (floor -trailingDD, boundary +payout/2, target +payout). Exact â€” no path simulation needed.
+    // (floor -trailingDD, boundary +payout/2, target +payout). Exact — no path simulation needed.
     const _pBlowNoP2 = FUNDED_PHASE2_AT / (FUNDED_PHASE2_AT + trailingDD);
     const _pBlowP2   = (trailingDD / (FUNDED_PHASE2_AT + trailingDD)) * ((payoutThreshold - FUNDED_PHASE2_AT) / (payoutThreshold + trailingDD));
     const pReachP2Blow = (_pBlowNoP2 + _pBlowP2) > 0 ? _pBlowP2 / (_pBlowNoP2 + _pBlowP2) : 0;
     // Realized funded-blow capture, weighted by phase:
-    //   Phase 1 blow (never climbed past payout/2): $400 (drawdown Ã— 2-micro ratio). No climb paid.
-    //   Phase 2 blow (did climb past payout/2):     $800 capture âˆ’ $360 climb drag = $440 net.
+    //   Phase 1 blow (never climbed past payout/2): $400 (drawdown × 2-micro ratio). No climb paid.
+    //   Phase 2 blow (did climb past payout/2):     $800 capture − $360 climb drag = $440 net.
     // Climb drag only exists on the share that reached phase 2; phase-1 blows never paid it.
     const phase1BlowCapture = paHedgeRatio   * Math.abs(propPLPAFail);
     const phase2BlowCapture = paHedgeRatioP2 * Math.abs(propPLPAFail) - paHedgeRatio * FUNDED_PHASE2_AT;
     const hedgePAFail = (1 - pReachP2Blow) * phase1BlowCapture + pReachP2Blow * phase2BlowCapture;
     const propPLPASuccess = payoutThreshold;
-    // Drag climbing to payout: two-tier â€” phase 1 (2 micro, to payout/2) then phase 2 (4 micro) above
+    // Drag climbing to payout: two-tier — phase 1 (2 micro, to payout/2) then phase 2 (4 micro) above
     const hedgePASuccess = -(Math.min(propPLPASuccess, FUNDED_PHASE2_AT) * paHedgeRatio + Math.max(0, propPLPASuccess - FUNDED_PHASE2_AT) * paHedgeRatioP2);
 
     const eFric = friction * evalHedgeContracts;
@@ -667,7 +667,7 @@ function HedgeAnalysis() {
       evalCost, paCost, profitTarget, trailingDD, payoutAmt, payoutThreshold, evalHedgeRatio, paHedgeRatio, paHedgeRatioP2]);
 
   // ============================================================
-  // STRAIGHT-TO-FUNDED MODEL (funded â†’ payout or blow)
+  // STRAIGHT-TO-FUNDED MODEL (funded → payout or blow)
   // ============================================================
   const r1 = useMemo(() => {
     const pPay = stfPayoutRate / 100;
@@ -774,7 +774,7 @@ function HedgeAnalysis() {
       background: C.bg, color: C.text, minHeight: "100vh",
       fontFamily: sansFont, padding: "24px 20px", maxWidth: 860, margin: "0 auto",
     }}>
-      {/* â”€â”€â”€ TRADEBLADE HEADER â”€â”€â”€ */}
+      {/* ─── TRADEBLADE HEADER ─── */}
       <div style={{ marginBottom: 24, borderBottom: `1px solid ${C.border}`, paddingBottom: 16 }}>
         {/* Brand mark */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
@@ -813,7 +813,7 @@ function HedgeAnalysis() {
             {is2Step ? `${evalHedgeContracts}/${paHedgeContracts} ${inst.micro}` : `${stfHedgeContracts} ${inst.micro}`}
           </span>{" "}
           on a personal account.
-          {is2Step ? " Eval losses are simulated; hedge gains are real â€” this asymmetry is the engine." : " Funded account losses are the prop's capital; hedge gains are real."}
+          {is2Step ? " Eval losses are simulated; hedge gains are real — this asymmetry is the engine." : " Funded account losses are the prop's capital; hedge gains are real."}
         </p>
 
         {/* Instrument & Account Type selectors */}
@@ -821,7 +821,7 @@ function HedgeAnalysis() {
           <Dropdown label="Instrument" value={instrument} onChange={handleInstrumentChange}
             options={Object.keys(INSTRUMENTS).map(k => ({
               value: k,
-              label: `${k} â€” ${INSTRUMENTS[k].name}`,
+              label: `${k} — ${INSTRUMENTS[k].name}`,
             }))} />
           <Toggle value={accountType} onChange={setAccountType} accent={C.blue}
             options={[
@@ -836,7 +836,7 @@ function HedgeAnalysis() {
         </div>
       </div>
 
-      {/* â”€â”€â”€ TRADEBLADE INSTRUMENT INFO BAR â”€â”€â”€ */}
+      {/* ─── TRADEBLADE INSTRUMENT INFO BAR ─── */}
       <div style={{
         background: C.card, border: `1px solid ${C.border}`, borderRadius: 8,
         padding: "10px 14px", marginBottom: 20, display: "flex", flexWrap: "wrap",
@@ -849,7 +849,7 @@ function HedgeAnalysis() {
         <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
           <span style={{ fontSize: 10, color: C.faint, fontFamily: sansFont }}>PROP</span>
           <span style={{ fontSize: 12, color: C.text, fontFamily: font, fontWeight: 600 }}>
-            1 {inst.full} Â· ${inst.fullTickVal.toFixed(2)}/tick
+            1 {inst.full} · ${inst.fullTickVal.toFixed(2)}/tick
           </span>
         </div>
         <div style={{ width: 1, height: 14, background: C.border }} />
@@ -857,8 +857,8 @@ function HedgeAnalysis() {
           <span style={{ fontSize: 10, color: C.faint, fontFamily: sansFont }}>HEDGE</span>
           <span style={{ fontSize: 12, color: C.cyan, fontFamily: font, fontWeight: 600 }}>
             {is2Step
-              ? `${evalHedgeContracts}â†’${paHedgeContracts} ${inst.micro} Â· $${evalHedgeTickVal}â†’$${paHedgeTickVal}/tick`
-              : `${stfHedgeContracts} ${inst.micro} Â· $${stfHedgeTickVal}/tick`
+              ? `${evalHedgeContracts}→${paHedgeContracts} ${inst.micro} · $${evalHedgeTickVal}→$${paHedgeTickVal}/tick`
+              : `${stfHedgeContracts} ${inst.micro} · $${stfHedgeTickVal}/tick`
             }
           </span>
         </div>
@@ -876,13 +876,13 @@ function HedgeAnalysis() {
         <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
           <span style={{ fontSize: 10, color: C.faint, fontFamily: sansFont }}>NT COMM</span>
           <span style={{ fontSize: 12, color: C.dim, fontFamily: font }}>
-            ${NT_MICRO_RT.free.toFixed(2)}/RT (Free) Â· ${NT_MICRO_RT.lifetime.toFixed(2)}/RT (Lifetime)
+            ${NT_MICRO_RT.free.toFixed(2)}/RT (Free) · ${NT_MICRO_RT.lifetime.toFixed(2)}/RT (Lifetime)
           </span>
         </div>
       </div>
 
-      {/* â”€â”€â”€ ACCOUNT CONFIGURATION â”€â”€â”€ */}
-      <Section title="Account Configuration" icon="ðŸ’²" accent={C.amber}>
+      {/* ─── ACCOUNT CONFIGURATION ─── */}
+      <Section title="Account Configuration" icon="💲" accent={C.amber}>
         <div style={{
           background: C.card, padding: 16, borderRadius: 8, border: `1px solid ${C.border}`,
           display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px",
@@ -891,7 +891,7 @@ function HedgeAnalysis() {
             <>
               <Param label="Eval Cost" value={evalCost} onChange={setEvalCost}
                 min={15} max={300} step={5} fmt={v => `$${v}`}
-                sub="Apex 50k: $40 Â· Topstep 50k: $49 Â· FTMO: $155" />
+                sub="Apex 50k: $40 · Topstep 50k: $49 · FTMO: $155" />
               <Param label="PA Activation / Monthly" value={paCost} onChange={setPaCost}
                 min={0} max={300} step={5} fmt={v => `$${v}`}
                 sub="Monthly fee once funded (Apex: $85)" />
@@ -901,14 +901,14 @@ function HedgeAnalysis() {
               <Param label={drawdownType === "eod" ? "EOD Drawdown" : "Trailing Drawdown"} value={trailingDD} onChange={setTrailingDD}
                 min={1000} max={5000} step={100} fmt={v => `$${v.toLocaleString()}`}
                 sub={drawdownType === "eod"
-                  ? "EOD drawdown: moves at end of day only (Apex 50k EOD: $2,000 Â· Daily loss limit: $1,000)"
+                  ? "EOD drawdown: moves at end of day only (Apex 50k EOD: $2,000 · Daily loss limit: $1,000)"
                   : "Trailing drawdown: moves tick-by-tick intraday (Apex 50k: $2,500)"} />
               <Param label="Payout Amount" value={payoutAmt} onChange={setPayoutAmt}
                 min={500} max={10000} step={100} fmt={v => `$${v.toLocaleString()}`}
                 sub="Cash received per successful payout cycle" />
               <Param label="Amount Needed to Reach Payout" value={payoutThreshold} onChange={setPayoutThreshold}
                 min={1000} max={15000} step={100} fmt={v => `$${v.toLocaleString()}`}
-                sub="Total funded P/L to unlock payout (25k: ~$1,500 Â· 50k: ~$2,600 Â· 150k: ~$5,000 Â· 300k: ~$9,000)" />
+                sub="Total funded P/L to unlock payout (25k: ~$1,500 · 50k: ~$2,600 · 150k: ~$5,000 · 300k: ~$9,000)" />
             </>
           ) : (
             <>
@@ -928,15 +928,15 @@ function HedgeAnalysis() {
                   : "Trailing drawdown: moves tick-by-tick intraday"} />
               <Param label="Amount Needed to Reach Payout" value={payoutThreshold} onChange={setPayoutThreshold}
                 min={1000} max={15000} step={100} fmt={v => `$${v.toLocaleString()}`}
-                sub="Total funded P/L to unlock payout (25k: ~$1,500 Â· 50k: ~$2,600 Â· 150k: ~$5,000 Â· 300k: ~$9,000)" />
+                sub="Total funded P/L to unlock payout (25k: ~$1,500 · 50k: ~$2,600 · 150k: ~$5,000 · 300k: ~$9,000)" />
               <div /> {/* spacer for grid */}
             </>
           )}
         </div>
       </Section>
 
-      {/* â”€â”€â”€ MODEL ASSUMPTIONS â”€â”€â”€ */}
-      <Section title="Model Assumptions (Adjustable)" icon="âš™ï¸" accent={C.purple}>
+      {/* ─── MODEL ASSUMPTIONS ─── */}
+      <Section title="Model Assumptions (Adjustable)" icon="⚙️" accent={C.purple}>
         <div style={{
           background: C.card, padding: 16, borderRadius: 8, border: `1px solid ${C.border}`,
           display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px",
@@ -976,10 +976,10 @@ function HedgeAnalysis() {
             </div>
             <div style={{ fontFamily: sansFont, fontSize: 10, color: C.faint, marginTop: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {_pairId
-                ? <span style={{ color: C.amber }}>SL: ${_slDollars.toLocaleString()} Â· TP: ${_tpDollars.toLocaleString()} Â· R:R 1:{rrRatio} â€” set in wizard (read-only here)</span>
-                : <>{`SL: $${propSL.toFixed(0)} Â· Losses to fail: ~${Math.ceil(trailingDD / propSL)}`}</>
+                ? <span style={{ color: C.amber }}>SL: ${_slDollars.toLocaleString()} · TP: ${_tpDollars.toLocaleString()} · R:R 1:{rrRatio} — set in wizard (read-only here)</span>
+                : <>{`SL: $${propSL.toFixed(0)} · Losses to fail: ~${Math.ceil(trailingDD / propSL)}`}</>
               }
-              {` Â· `}<span style={{ color: C.green }}>{`Avg Peak (MC): $${avgPeakSimulated.toFixed(0)}`}</span>
+              {` · `}<span style={{ color: C.green }}>{`Avg Peak (MC): $${avgPeakSimulated.toFixed(0)}`}</span>
               {mcRunning && <span style={{ color: C.amber, marginLeft: 4 }}>computing...</span>}
             </div>
             <input type="range" min={50} max={5000} step={50} value={propTP}
@@ -990,7 +990,7 @@ function HedgeAnalysis() {
 
           <Param label={`Commission Costs / ${inst.micro} / Phase`} value={friction} onChange={setFriction}
             min={0} max={200} step={5} fmt={v => `$${v}`}
-            sub={<>{`Avg trades/cycle (MC): ~${avgTradesPerCycle.toFixed(1)} Ã— $${NT_MICRO_RT.free.toFixed(2)}/RT = $${(avgTradesPerCycle * NT_MICRO_RT.free).toFixed(0)}`}{mc2Running && <span style={{ color: C.amber, marginLeft: 4, fontSize: 9 }}>computing...</span>}{` Â· Override slider to customize`}</>} />
+            sub={<>{`Avg trades/cycle (MC): ~${avgTradesPerCycle.toFixed(1)} × $${NT_MICRO_RT.free.toFixed(2)}/RT = $${(avgTradesPerCycle * NT_MICRO_RT.free).toFixed(0)}`}{mc2Running && <span style={{ color: C.amber, marginLeft: 4, fontSize: 9 }}>computing...</span>}{` · Override slider to customize`}</>} />
 
           <div style={{ gridColumn: "1 / -1", borderTop: `1px solid ${C.border}`, margin: "6px 0 10px" }} />
 
@@ -998,17 +998,17 @@ function HedgeAnalysis() {
             <>
               <Param label={`Eval Hedge (${inst.micro})`} value={evalHedgeContracts} onChange={setEvalHedgeContracts}
                 min={1} max={10} fmt={v => `${v} ${inst.micro}`}
-                sub={`= ${(evalHedgeContracts * 10)}% of 1 ${inst.full} Â· $${evalHedgeTickVal}/tick Â· $${(evalHedgeContracts * friction).toFixed(0)} commission`} />
+                sub={`= ${(evalHedgeContracts * 10)}% of 1 ${inst.full} · $${evalHedgeTickVal}/tick · $${(evalHedgeContracts * friction).toFixed(0)} commission`} />
               <div style={{ marginBottom: 14 }}>
                 <div style={{ fontFamily: sansFont, fontSize: 12, color: C.dim, marginBottom: 3 }}>
                   Funded Hedge <span style={{ color: C.faint }}>(system-set, phase-based)</span>
                 </div>
                 <div style={{ fontFamily: font, fontSize: 12, color: C.text, lineHeight: 1.6 }}>
-                  {`Phase 1 (â†’$${FUNDED_PHASE2_AT.toLocaleString()}): `}<span style={{ color: C.cyan, fontWeight: 600 }}>{paHedgeContracts} {inst.micro}</span>
-                  {` Â· Phase 2: `}<span style={{ color: C.cyan, fontWeight: 600 }}>{paHedgeContracts * 2} {inst.micro}</span>
+                  {`Phase 1 (→$${FUNDED_PHASE2_AT.toLocaleString()}): `}<span style={{ color: C.cyan, fontWeight: 600 }}>{paHedgeContracts} {inst.micro}</span>
+                  {` · Phase 2: `}<span style={{ color: C.cyan, fontWeight: 600 }}>{paHedgeContracts * 2} {inst.micro}</span>
                 </div>
                 <div style={{ fontFamily: sansFont, fontSize: 10, color: C.faint, marginTop: 2 }}>
-                  Steps up with the funded climb â€” not adjustable.
+                  Steps up with the funded climb — not adjustable.
                 </div>
               </div>
             </>
@@ -1016,15 +1016,15 @@ function HedgeAnalysis() {
             <>
               <Param label={`Hedge Contracts (${inst.micro})`} value={stfHedgeContracts} onChange={setStfHedgeContracts}
                 min={1} max={10} fmt={v => `${v} ${inst.micro}`}
-                sub={`= ${(stfHedgeContracts * 10)}% of 1 ${inst.full} Â· $${stfHedgeTickVal}/tick Â· $${(stfHedgeContracts * friction).toFixed(0)} commission`} />
+                sub={`= ${(stfHedgeContracts * 10)}% of 1 ${inst.full} · $${stfHedgeTickVal}/tick · $${(stfHedgeContracts * friction).toFixed(0)} commission`} />
               <div /> {/* spacer */}
             </>
           )}
         </div>
       </Section>
 
-      {/* â”€â”€â”€ ASYMMETRY EXPLAINER â”€â”€â”€ */}
-      <Section title={is2Step ? <><TB /> Sim/Real Asymmetry</> : <><TB /> Capital Asymmetry</>} icon="ðŸ”‘" accent={C.amber}>
+      {/* ─── ASYMMETRY EXPLAINER ─── */}
+      <Section title={is2Step ? <><TB /> Sim/Real Asymmetry</> : <><TB /> Capital Asymmetry</>} icon="🔑" accent={C.amber}>
         <div style={{
           background: C.card, padding: 16, borderRadius: 8, border: `1px solid ${C.border}`,
           fontSize: 12, lineHeight: 1.7, color: C.dim,
@@ -1038,12 +1038,12 @@ function HedgeAnalysis() {
               </p>
               <p style={{ margin: "0 0 8px" }}>
                 <strong style={{ color: C.green }}>When PropPrimary fails ({(r2.p1 * 100).toFixed(0)}% of cycles):</strong> Prop sim loss ~${Math.abs(r2.propPLEvalFail).toLocaleString()}
-                {" â†’ "} LiveHedge real gain of <span style={{ color: C.green, fontWeight: 700 }}>+${r2.hedgeEvalFail.toFixed(0)}</span> ({evalHedgeContracts} {inst.micro}).
+                {" → "} LiveHedge real gain of <span style={{ color: C.green, fontWeight: 700 }}>+${r2.hedgeEvalFail.toFixed(0)}</span> ({evalHedgeContracts} {inst.micro}).
                 You paid ${evalCost} for the eval but recovered ${r2.hedgeEvalFail.toFixed(0)}.
               </p>
               <p style={{ margin: 0 }}>
                 <strong style={{ color: C.red }}>When PropPrimary passes ({passRate}%):</strong> Prop sim win of ${profitTarget.toLocaleString()}
-                {" â†’ "} LiveHedge real loss of <span style={{ color: C.red, fontWeight: 700 }}>${r2.hedgeEvalPass.toFixed(0)}</span> ({evalHedgeContracts} {inst.micro}).
+                {" → "} LiveHedge real loss of <span style={{ color: C.red, fontWeight: 700 }}>${r2.hedgeEvalPass.toFixed(0)}</span> ({evalHedgeContracts} {inst.micro}).
                 But this unlocks the PA where real payouts live.
               </p>
             </>
@@ -1056,11 +1056,11 @@ function HedgeAnalysis() {
               </p>
               <p style={{ margin: "0 0 8px" }}>
                 <strong style={{ color: C.green }}>When PropPrimary blows ({(r1.pFail * 100).toFixed(0)}% of cycles):</strong> Prop funded loss ~${Math.abs(r1.propPLFail).toLocaleString()}
-                {" â†’ "} LiveHedge real gain of <span style={{ color: C.green, fontWeight: 700 }}>+${r1.hedgeFail.toFixed(0)}</span> ({stfHedgeContracts} {inst.micro}).
+                {" → "} LiveHedge real gain of <span style={{ color: C.green, fontWeight: 700 }}>+${r1.hedgeFail.toFixed(0)}</span> ({stfHedgeContracts} {inst.micro}).
               </p>
               <p style={{ margin: 0 }}>
                 <strong style={{ color: C.red }}>When PropPrimary pays out ({stfPayoutRate}%):</strong> Prop funded gain of ${payoutThreshold.toLocaleString()}
-                {" â†’ "} LiveHedge real loss of <span style={{ color: C.red, fontWeight: 700 }}>${r1.hedgeSuccess.toFixed(0)}</span> ({stfHedgeContracts} {inst.micro}).
+                {" → "} LiveHedge real loss of <span style={{ color: C.red, fontWeight: 700 }}>${r1.hedgeSuccess.toFixed(0)}</span> ({stfHedgeContracts} {inst.micro}).
                 But you receive the ${payoutAmt.toLocaleString()} payout.
               </p>
             </>
@@ -1068,41 +1068,41 @@ function HedgeAnalysis() {
         </div>
       </Section>
 
-      {/* â”€â”€â”€ SCENARIOS â”€â”€â”€ */}
-      <Section title={is2Step ? "Three Outcome Scenarios" : "Two Outcome Scenarios"} icon="ðŸŽ¯" accent={C.blue}>
+      {/* ─── SCENARIOS ─── */}
+      <Section title={is2Step ? "Three Outcome Scenarios" : "Two Outcome Scenarios"} icon="🎯" accent={C.blue}>
         {is2Step ? (
           <>
             <ScenarioCard
-              title="SCENARIO 1 â€” FAIL EVAL" prob={r2.p1} color={C.green} icon="ðŸ“‰"
+              title="SCENARIO 1 — FAIL EVAL" prob={r2.p1} color={C.green} icon="📉"
               items={[
                 { label: "Eval fee", val: -evalCost },
                 { label: `Prop sim P/L (not real money)`, val: r2.propPLEvalFail, fmt: `$${r2.propPLEvalFail.toLocaleString()} sim`, skip: true },
-                { label: `Hedge real gain (${evalHedgeContracts} ${inst.micro} Ã— 1/10 of $${Math.abs(r2.propPLEvalFail).toLocaleString()})`, val: r2.hedgeEvalFail },
-                { label: `Hedge commissions (${evalHedgeContracts}Ã—$${friction})`, val: -r2.eFric },
+                { label: `Hedge real gain (${evalHedgeContracts} ${inst.micro} × 1/10 of $${Math.abs(r2.propPLEvalFail).toLocaleString()})`, val: r2.hedgeEvalFail },
+                { label: `Hedge commissions (${evalHedgeContracts}×$${friction})`, val: -r2.eFric },
               ]}
               net={r2.net1}
             />
             <ScenarioCard
-              title="SCENARIO 2 â€” PASS EVAL, FAIL PA" prob={r2.p2} color={C.red} icon="ðŸ’€"
+              title="SCENARIO 2 — PASS EVAL, FAIL PA" prob={r2.p2} color={C.red} icon="💀"
               items={[
                 { label: "Eval fee + PA activation", val: -(evalCost + paCost) },
                 { label: `Hedge loss during eval (${evalHedgeContracts} ${inst.micro} vs $${profitTarget.toLocaleString()} sim target)`, val: r2.hedgeEvalPass },
-                { label: `Hedge commissions â€” eval (${evalHedgeContracts}Ã—$${friction})`, val: -r2.eFric },
-                { label: `Hedge realized on PA blow (avg â€” ${(r2.pReachP2Blow * 100).toFixed(0)}% reach phase 2: $800 capture âˆ’ $360 climb = $440; else $400)`, val: r2.hedgePAFail },
-                { label: `Hedge commissions â€” PA (${paHedgeContracts}Ã—$${friction})`, val: -r2.pFric },
+                { label: `Hedge commissions — eval (${evalHedgeContracts}×$${friction})`, val: -r2.eFric },
+                { label: `Hedge realized on PA blow (avg — ${(r2.pReachP2Blow * 100).toFixed(0)}% reach phase 2: $800 capture − $360 climb = $440; else $400)`, val: r2.hedgePAFail },
+                { label: `Hedge commissions — PA (${paHedgeContracts}×$${friction})`, val: -r2.pFric },
                 { label: "Prop PA payout", val: 0 },
               ]}
               net={r2.net2}
             />
             <ScenarioCard
-              title={`SCENARIO 3 â€” PASS EVAL, $${payoutAmt.toLocaleString()} PAYOUT`} prob={r2.p3} color={C.cyan} icon="ðŸ’°"
+              title={`SCENARIO 3 — PASS EVAL, $${payoutAmt.toLocaleString()} PAYOUT`} prob={r2.p3} color={C.cyan} icon="💰"
               items={[
                 { label: "Eval fee + PA activation", val: -(evalCost + paCost) },
                 { label: `Hedge loss during eval (${evalHedgeContracts} ${inst.micro} vs $${profitTarget.toLocaleString()} sim target)`, val: r2.hedgeEvalPass },
-                { label: `Hedge commissions â€” eval (${evalHedgeContracts}Ã—$${friction})`, val: -r2.eFric },
+                { label: `Hedge commissions — eval (${evalHedgeContracts}×$${friction})`, val: -r2.eFric },
                 { label: `Prop payout received (cash)`, val: payoutAmt },
                 { label: `Hedge loss during PA (P1 ${paHedgeContracts}/P2 ${paHedgeContracts * 2} ${inst.micro} across $${r2.propPLPASuccess.toLocaleString()} climb)`, val: r2.hedgePASuccess },
-                { label: `Hedge commissions â€” PA (${paHedgeContracts}Ã—$${friction})`, val: -r2.pFric },
+                { label: `Hedge commissions — PA (${paHedgeContracts}×$${friction})`, val: -r2.pFric },
                 { label: `Bonus round (avg capture/payout)`, val: r2.bonusRoundAvg },
               ]}
               net={r2.net3}
@@ -1112,29 +1112,29 @@ function HedgeAnalysis() {
               padding: 10, marginTop: 4, fontSize: 10, color: C.dim, lineHeight: 1.5,
             }}>
               <strong style={{ color: C.amber }}>Scenario 3 note:</strong> Prop accumulates +${r2.propPLPASuccess.toLocaleString()} funded gain to reach payout threshold.
-              The ${payoutAmt.toLocaleString()} payout comes from those accumulated gains â€” the hedge only runs against the ${r2.propPLPASuccess.toLocaleString()} trading P/L, not payout on top of it.
+              The ${payoutAmt.toLocaleString()} payout comes from those accumulated gains — the hedge only runs against the ${r2.propPLPASuccess.toLocaleString()} trading P/L, not payout on top of it.
               Remaining ${(payoutThreshold - payoutAmt) >= 0 ? (payoutThreshold - payoutAmt).toLocaleString() : 0} stays in PA as buffer above locked floor.
             </div>
           </>
         ) : (
           <>
             <ScenarioCard
-              title="SCENARIO 1 â€” BLOW FUNDED ACCOUNT" prob={r1.pFail} color={C.green} icon="ðŸ“‰"
+              title="SCENARIO 1 — BLOW FUNDED ACCOUNT" prob={r1.pFail} color={C.green} icon="📉"
               items={[
                 { label: "Account fee", val: -stfCost },
                 { label: `Prop funded P/L (firm's capital)`, val: r1.propPLFail, fmt: `$${r1.propPLFail.toLocaleString()} funded`, skip: true },
-                { label: `Hedge real gain (${stfHedgeContracts} ${inst.micro} Ã— 1/10 of $${Math.abs(r1.propPLFail).toLocaleString()})`, val: r1.hedgeFail },
-                { label: `Hedge commissions (${stfHedgeContracts}Ã—$${friction})`, val: -r1.hFric },
+                { label: `Hedge real gain (${stfHedgeContracts} ${inst.micro} × 1/10 of $${Math.abs(r1.propPLFail).toLocaleString()})`, val: r1.hedgeFail },
+                { label: `Hedge commissions (${stfHedgeContracts}×$${friction})`, val: -r1.hFric },
               ]}
               net={r1.netFail}
             />
             <ScenarioCard
-              title={`SCENARIO 2 â€” $${payoutAmt.toLocaleString()} PAYOUT`} prob={r1.pPay} color={C.cyan} icon="ðŸ’°"
+              title={`SCENARIO 2 — $${payoutAmt.toLocaleString()} PAYOUT`} prob={r1.pPay} color={C.cyan} icon="💰"
               items={[
                 { label: "Account fee", val: -stfCost },
                 { label: `Prop payout received (cash)`, val: payoutAmt },
-                { label: `Hedge loss (${stfHedgeContracts} ${inst.micro} Ã— $${payoutThreshold.toLocaleString()} funded gain)`, val: r1.hedgeSuccess },
-                { label: `Hedge commissions (${stfHedgeContracts}Ã—$${friction})`, val: -r1.hFric },
+                { label: `Hedge loss (${stfHedgeContracts} ${inst.micro} × $${payoutThreshold.toLocaleString()} funded gain)`, val: r1.hedgeSuccess },
+                { label: `Hedge commissions (${stfHedgeContracts}×$${friction})`, val: -r1.hFric },
               ]}
               net={r1.netSuccess}
             />
@@ -1142,8 +1142,8 @@ function HedgeAnalysis() {
         )}
       </Section>
 
-      {/* â”€â”€â”€ EV SUMMARY â”€â”€â”€ */}
-      <Section title={<><TB /> Expected Value Per Cycle</>} icon="ðŸ“Š" accent={C.green}>
+      {/* ─── EV SUMMARY ─── */}
+      <Section title={<><TB /> Expected Value Per Cycle</>} icon="📊" accent={C.green}>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
           <MetricBox label="EV WITH HEDGE" value={`${r.ev >= 0 ? "+" : ""}$${r.ev.toFixed(2)}`}
             color={r.ev >= 0 ? C.green : C.red} sub={`Standard dev: $${r.sd.toFixed(0)}`} />
@@ -1166,8 +1166,8 @@ function HedgeAnalysis() {
         </div>
       </Section>
 
-      {/* â”€â”€â”€ LIVE ACCOUNT CAPITAL REQUIRED â”€â”€â”€ */}
-      <Section title={<><TB /> Live Account Capital Â· {inst.micro}</>} icon="ðŸ¦" accent={C.green}>
+      {/* ─── LIVE ACCOUNT CAPITAL REQUIRED ─── */}
+      <Section title={<><TB /> Live Account Capital · {inst.micro}</>} icon="🏦" accent={C.green}>
         {/* Max drawdown breakdown */}
         <div style={{
           background: C.card, border: `1px solid ${C.border}`, borderRadius: 10,
@@ -1177,18 +1177,18 @@ function HedgeAnalysis() {
             fontFamily: sansFont, fontSize: 12, fontWeight: 700, color: C.amber,
             marginBottom: 10, display: "flex", alignItems: "center", gap: 6,
           }}>
-            <span style={{ fontSize: 14 }}>ðŸ“‰</span>
+            <span style={{ fontSize: 14 }}>📉</span>
             Maximum Real Money Account Drawdown
           </div>
           <div style={{ fontSize: 11, color: C.dim, fontFamily: sansFont, marginBottom: 10, lineHeight: 1.5 }}>
-            This is the deepest your real money account can draw down in a single cycle â€” when the prop account <strong style={{ color: C.text }}>succeeds through all phases</strong>.
+            This is the deepest your real money account can draw down in a single cycle — when the prop account <strong style={{ color: C.text }}>succeeds through all phases</strong>.
             The hedge side loses on every phase where the prop profits. The payout at the end covers the drawdown and then some.
           </div>
           <div style={{ display: "grid", gap: 3, marginBottom: 10 }}>
             {is2Step ? (
               <>
                 {[
-                  { label: `Eval phase hedge loss (${evalHedgeContracts} ${inst.micro} Ã— ${(evalHedgeRatio * 100).toFixed(0)}% of $${profitTarget.toLocaleString()} target)`, val: -capital.worstEvalLoss },
+                  { label: `Eval phase hedge loss (${evalHedgeContracts} ${inst.micro} × ${(evalHedgeRatio * 100).toFixed(0)}% of $${profitTarget.toLocaleString()} target)`, val: -capital.worstEvalLoss },
                   { label: `PA phase hedge loss (P1 ${paHedgeContracts}/P2 ${paHedgeContracts * 2} ${inst.micro} across $${payoutThreshold.toLocaleString()} climb)`, val: -capital.worstPALoss },
                   { label: `Total commissions (eval: $${r2.eFric} + PA: $${r2.pFric})`, val: -capital.totalFriction },
                 ].map((item, i) => (
@@ -1206,8 +1206,8 @@ function HedgeAnalysis() {
             ) : (
               <>
                 {[
-                  { label: `Funded phase hedge loss (${stfHedgeContracts} ${inst.micro} Ã— ${(stfHedgeRatio * 100).toFixed(0)}% of $${payoutThreshold.toLocaleString()} payout threshold)`, val: -capital.worstLoss },
-                  { label: `Total commissions (${stfHedgeContracts}Ã—$${friction})`, val: -capital.totalFriction },
+                  { label: `Funded phase hedge loss (${stfHedgeContracts} ${inst.micro} × ${(stfHedgeRatio * 100).toFixed(0)}% of $${payoutThreshold.toLocaleString()} payout threshold)`, val: -capital.worstLoss },
+                  { label: `Total commissions (${stfHedgeContracts}×$${friction})`, val: -capital.totalFriction },
                 ].map((item, i) => (
                   <div key={i} style={{
                     display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -1285,7 +1285,7 @@ function HedgeAnalysis() {
                 ${inst.intradayMargin.toLocaleString()}<span style={{ fontSize: 10, color: C.dim }}>/contract</span>
               </div>
               <div style={{ fontFamily: font, fontSize: 11, color: C.text, marginTop: 2 }}>
-                Ã— {capital.maxContracts} = ${capital.intradayMargin.toLocaleString()}
+                × {capital.maxContracts} = ${capital.intradayMargin.toLocaleString()}
               </div>
             </div>
             <div style={{
@@ -1298,7 +1298,7 @@ function HedgeAnalysis() {
                 ${inst.initialMargin.toLocaleString()}<span style={{ fontSize: 10, color: C.dim }}>/contract</span>
               </div>
               <div style={{ fontFamily: font, fontSize: 11, color: C.text, marginTop: 2 }}>
-                Ã— {capital.maxContracts} = ${capital.overnightMargin.toLocaleString()}
+                × {capital.maxContracts} = ${capital.overnightMargin.toLocaleString()}
               </div>
             </div>
           </div>
@@ -1330,7 +1330,7 @@ function HedgeAnalysis() {
             </div>
             <div style={{ display: "grid", gap: 2 }}>
               {[
-                { label: `Intraday margin (${capital.maxContracts} Ã— $${inst.intradayMargin.toLocaleString()})`, val: `$${capital.intradayMargin.toLocaleString()}` },
+                { label: `Intraday margin (${capital.maxContracts} × $${inst.intradayMargin.toLocaleString()})`, val: `$${capital.intradayMargin.toLocaleString()}` },
                 { label: "Max hedge drawdown", val: `$${capital.worstCaseLoss.toFixed(0)}` },
               ].map((item, i) => (
                 <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "2px 0" }}>
@@ -1363,7 +1363,7 @@ function HedgeAnalysis() {
             </div>
             <div style={{ display: "grid", gap: 2 }}>
               {[
-                { label: `Exchange margin (${capital.maxContracts} Ã— $${inst.initialMargin.toLocaleString()})`, val: `$${capital.overnightMargin.toLocaleString()}` },
+                { label: `Exchange margin (${capital.maxContracts} × $${inst.initialMargin.toLocaleString()})`, val: `$${capital.overnightMargin.toLocaleString()}` },
                 { label: "Max hedge drawdown", val: `$${capital.worstCaseLoss.toFixed(0)}` },
               ].map((item, i) => (
                 <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "2px 0" }}>
@@ -1398,8 +1398,8 @@ function HedgeAnalysis() {
         </div>
       </Section>
 
-      {/* â”€â”€â”€ COMPARISON TABLE â”€â”€â”€ */}
-      <Section title="Side-by-Side Comparison" icon="âš–ï¸" accent={C.cyan}>
+      {/* ─── COMPARISON TABLE ─── */}
+      <Section title="Side-by-Side Comparison" icon="⚖️" accent={C.cyan}>
         <div style={{
           background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, overflow: "hidden",
         }}>
@@ -1472,8 +1472,8 @@ function HedgeAnalysis() {
         </div>
       </Section>
 
-      {/* â”€â”€â”€ STRATEGIC ANALYSIS â”€â”€â”€ */}
-      <Section title={<><TB /> Strategic Analysis</>} icon="ðŸ§ " accent={C.amber}>
+      {/* ─── STRATEGIC ANALYSIS ─── */}
+      <Section title={<><TB /> Strategic Analysis</>} icon="🧠" accent={C.amber}>
         <div style={{
           background: C.card, border: `1px solid ${C.border}`, borderRadius: 8,
           padding: 16, fontSize: 12, color: C.dim, lineHeight: 1.7,
@@ -1481,14 +1481,14 @@ function HedgeAnalysis() {
           {is2Step ? (
             <>
               <p style={{ margin: "0 0 10px" }}>
-                <strong style={{ color: C.green }}>The sim/real asymmetry is <TB />'s edge.</strong> During eval, <TB /> PropPrimary trades sim capital â€” failures cost only ${evalCost}.
+                <strong style={{ color: C.green }}>The sim/real asymmetry is <TB />'s edge.</strong> During eval, <TB /> PropPrimary trades sim capital — failures cost only ${evalCost}.
                 But <TB /> LiveHedge captures real gains from those sim failures. With {evalHedgeContracts} {inst.micro} during eval ({(evalHedgeRatio * 100).toFixed(0)}% ratio) and a {passRate}% pass rate,
                 <strong style={{ color: C.text }}> {(r2.p1 * 100).toFixed(0)}% of cycles generate hedge profits averaging +${r2.hedgeEvalFail.toFixed(0)}</strong>,
                 turning the most common outcome (eval failure) from a -${evalCost} loss into a {r2.net1 >= 0 ? `+$${r2.net1.toFixed(0)} gain` : `$${r2.net1.toFixed(0)} loss`}.
               </p>
               <p style={{ margin: "0 0 10px" }}>
                 <strong style={{ color: C.cyan }}>LiveHedge scales up in PA:</strong> Switching to {paHedgeContracts} {inst.micro} during PA ({(paHedgeRatio * 100).toFixed(0)}% ratio) amplifies
-                both the recovery on PA failures and the drag on PA successes. The hedge runs against the ${r2.propPLPASuccess.toLocaleString()} funded gain needed to reach payout threshold â€”
+                both the recovery on PA failures and the drag on PA successes. The hedge runs against the ${r2.propPLPASuccess.toLocaleString()} funded gain needed to reach payout threshold —
                 the ${payoutAmt.toLocaleString()} payout comes from those gains, not on top of them.
               </p>
               <p style={{ margin: "0 0 10px" }}>
@@ -1498,14 +1498,14 @@ function HedgeAnalysis() {
               </p>
               <p style={{ margin: "0 0 10px" }}>
                 <strong style={{ color: C.amber }}>The trade-off:</strong> When PropPrimary succeeds, LiveHedge costs you.
-                Scenario 3 nets +${r2.net3.toFixed(0)} with <TB /> vs +${r2.net3_nh.toFixed(0)} without â€” ${Math.abs(r2.net3 - r2.net3_nh).toFixed(0)} less upside.
+                Scenario 3 nets +${r2.net3.toFixed(0)} with <TB /> vs +${r2.net3_nh.toFixed(0)} without — ${Math.abs(r2.net3 - r2.net3_nh).toFixed(0)} less upside.
                 But success is rare ({(r2.p3 * 100).toFixed(0)}%) and <TB /> makes the dominant failure path profitable.
               </p>
               <p style={{ margin: 0 }}>
                 <strong style={{ color: C.purple }}>Capital needed:</strong> LiveHedge account requires
                 {" "}<strong style={{ color: C.green }}>${capital.recIntraday.toLocaleString()}</strong> (intraday) to
                 {" "}<strong style={{ color: C.amber }}>${capital.recOvernight.toLocaleString()}</strong> (overnight)
-                {" "}with recommended 25% buffer â€” see the Live Account Capital breakdown above for the full drawdown math.
+                {" "}with recommended 25% buffer — see the Live Account Capital breakdown above for the full drawdown math.
               </p>
             </>
           ) : (
@@ -1517,7 +1517,7 @@ function HedgeAnalysis() {
                 turning account blowups from a -${stfCost} loss into a {r1.netFail >= 0 ? `+$${r1.netFail.toFixed(0)} gain` : `$${r1.netFail.toFixed(0)} loss`}.
               </p>
               <p style={{ margin: "0 0 10px" }}>
-                <strong style={{ color: C.cyan }}>Simpler model, cleaner edge.</strong> No eval phase means no sim/real transition â€”
+                <strong style={{ color: C.cyan }}>Simpler model, cleaner edge.</strong> No eval phase means no sim/real transition —
                 <TB /> LiveHedge runs against funded P/L from day one. Variance reduction: {r1.sdNH > 0 ? ((1 - r1.sd / r1.sdNH) * 100).toFixed(0) : 0}%.
                 You reach 95% confidence in <strong style={{ color: C.text }}>{r1.cyclesHedge === Infinity ? "N/A" : r1.cyclesHedge} cycles</strong> vs {r1.cyclesNH === Infinity ? "N/A" : r1.cyclesNH} without the <TB /> system.
               </p>
@@ -1531,8 +1531,8 @@ function HedgeAnalysis() {
         </div>
       </Section>
 
-      {/* â”€â”€â”€ NT COMMISSION REFERENCE â”€â”€â”€ */}
-      <Section title={<><TB /> Â· NinjaTrader {inst.micro} Commissions</>} icon="ðŸ“‹" accent={C.faint}>
+      {/* ─── NT COMMISSION REFERENCE ─── */}
+      <Section title={<><TB /> · NinjaTrader {inst.micro} Commissions</>} icon="📋" accent={C.faint}>
         <div style={{
           background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, overflow: "hidden",
         }}>
@@ -1568,8 +1568,8 @@ function HedgeAnalysis() {
         </div>
       </Section>
 
-      {/* â”€â”€â”€ FOOTER â”€â”€â”€ */}
-      {/* â”€â”€â”€ TRADEBLADE FOOTER â”€â”€â”€ */}
+      {/* ─── FOOTER ─── */}
+      {/* ─── TRADEBLADE FOOTER ─── */}
       <div style={{
         textAlign: "center", padding: "16px 0 12px", fontSize: 10, color: C.faint,
         borderTop: `1px solid ${C.border}`, marginTop: 8, lineHeight: 1.5,
@@ -1584,26 +1584,26 @@ function HedgeAnalysis() {
           <span style={{ fontFamily: font, fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>
             <span style={{ color: C.cyan }}>TRADEBLADE</span>
           </span>
-          <span style={{ color: C.faint, fontSize: 9 }}>Â·</span>
+          <span style={{ color: C.faint, fontSize: 9 }}>·</span>
           <span style={{ fontFamily: font, fontSize: 9, color: C.faint, letterSpacing: 1.5 }}>
             HEDGE EXECUTION SYSTEM
           </span>
         </div>
         <br />
-        {inst.full}/{inst.micro} ({inst.name}) Â· {inst.full}: ${inst.fullTickVal.toFixed(2)}/tick Â· {inst.micro}: ${inst.microTickVal.toFixed(2)}/tick Â· Ratio: 1 {inst.micro} = 1/10 {inst.full}
+        {inst.full}/{inst.micro} ({inst.name}) · {inst.full}: ${inst.fullTickVal.toFixed(2)}/tick · {inst.micro}: ${inst.microTickVal.toFixed(2)}/tick · Ratio: 1 {inst.micro} = 1/10 {inst.full}
         <br />
         {is2Step
-          ? `Eval hedge: ${evalHedgeContracts} ${inst.micro} = ${(evalHedgeRatio * 100).toFixed(0)}% Â· PA hedge: ${paHedgeContracts} ${inst.micro} = ${(paHedgeRatio * 100).toFixed(0)}% Â· Commissions: $${friction}/${inst.micro}/phase`
-          : `Hedge: ${stfHedgeContracts} ${inst.micro} = ${(stfHedgeRatio * 100).toFixed(0)}% ratio Â· Commissions: $${friction}/${inst.micro}/phase`
+          ? `Eval hedge: ${evalHedgeContracts} ${inst.micro} = ${(evalHedgeRatio * 100).toFixed(0)}% · PA hedge: ${paHedgeContracts} ${inst.micro} = ${(paHedgeRatio * 100).toFixed(0)}% · Commissions: $${friction}/${inst.micro}/phase`
+          : `Hedge: ${stfHedgeContracts} ${inst.micro} = ${(stfHedgeRatio * 100).toFixed(0)}% ratio · Commissions: $${friction}/${inst.micro}/phase`
         }
         <br />
         {is2Step
-          ? `PA hedge runs against $${payoutThreshold.toLocaleString()} funded gain (payout threshold) â€” $${payoutAmt.toLocaleString()} payout comes from those gains`
-          : `Hedge runs against $${payoutThreshold.toLocaleString()} funded gain â€” $${payoutAmt.toLocaleString()} payout comes from those gains`
+          ? `PA hedge runs against $${payoutThreshold.toLocaleString()} funded gain (payout threshold) — $${payoutAmt.toLocaleString()} payout comes from those gains`
+          : `Hedge runs against $${payoutThreshold.toLocaleString()} funded gain — $${payoutAmt.toLocaleString()} payout comes from those gains`
         }
         <br />
         <span style={{ color: C.faint, fontSize: 9, marginTop: 4, display: "inline-block" }}>
-          <TB /> PropPrimary + LiveHedge Â· NinjaTrader Platform
+          <TB /> PropPrimary + LiveHedge · NinjaTrader Platform
         </span>
       </div>
     </div>
