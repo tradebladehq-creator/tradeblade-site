@@ -4,8 +4,15 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>TradeBlade — Eval Hedge System</title>
-<meta content="TradeBlade Hedge System: a simple way to hedge prop firm evaluations with a small live account and real math." name="description"/>
+<title>TradeBlade — Prop Eval Hedge System for NinjaTrader 8</title>
+<meta content="TradeBlade is a NinjaTrader 8 add-on that hedges prop firm evaluations with a small live account and real math. Built exclusively for NinjaTrader 8." name="description"/>
+<link href="https://tradebladehq.com/" rel="canonical"/>
+<meta content="TradeBlade — Prop Eval Hedge System for NinjaTrader 8" property="og:title"/>
+<meta content="Fail the eval. Get paid anyway. A NinjaTrader 8 add-on that puts a small live hedge behind your prop eval." property="og:description"/>
+<meta content="https://tradebladehq.com/assets/tb-logo.png" property="og:image"/>
+<meta content="https://tradebladehq.com/" property="og:url"/>
+<meta content="website" property="og:type"/>
+<meta content="summary" name="twitter:card"/>
 <link href="assets/favicon.png" rel="icon" type="image/png"/>
 <link href="styles.css" rel="stylesheet"/>
 <script src="i18n.js?v=6" defer></script>
@@ -33,11 +40,17 @@
 <img alt="TradeBlade logo" class="brand-logo" src="assets/tb-logo.png"/>
 <span class="brand-wordmark">TRADEBLADE</span>
 </a>
-<nav class="nav-links"><a href="#math" data-i18n="nav_hedge">Hedge</a><a href="math.html" data-i18n="nav_math">Math</a><a href="#book" data-i18n="nav_book">Free Book</a><a href="#pricing" data-i18n="nav_pricing">Pricing</a><a href="#faq" data-i18n="nav_faq">FAQ</a></nav>
-<a class="btn btn-primary get-access-btn" href="#pricing" data-i18n="nav_get_access">Get Access</a>
+<nav class="nav-links"><a href="#math" data-i18n="nav_hedge">Hedge</a><a href="math.html" data-i18n="nav_math">Math</a><a href="#book" data-i18n="nav_book">Free Book</a><a href="#alpha" data-i18n="nav_alpha">Alpha</a><a href="#pricing" data-i18n="nav_pricing">Pricing</a><a href="#faq" data-i18n="nav_faq">FAQ</a></nav>
+<a class="btn btn-primary get-access-btn" href="#alpha" data-i18n="nav_get_access">Join the Alpha</a>
 </div>
 </header>
 <main>
+
+<div class="alpha-banner" role="region" aria-label="Alpha announcement" style="background:linear-gradient(135deg,rgba(23,139,202,0.18),rgba(54,210,122,0.12));border-top:1px solid rgba(23,139,202,0.45);border-bottom:1px solid rgba(23,139,202,0.45);padding:14px 16px;text-align:center;font-size:15px;line-height:1.5;color:var(--text);">
+<strong style="color:var(--tb-blue-light);" data-i18n="alpha_banner_strong">TradeBlade is in active development — Alpha phase.</strong>
+<span data-i18n="alpha_banner_text">No payment, no plans. We're inviting traders to use the software free in exchange for honest feedback.</span>
+<a href="#alpha" data-i18n="alpha_banner_link" style="color:var(--tb-blue-light);font-weight:600;text-decoration:underline;margin-left:6px;">Join the alpha →</a>
+</div>
 
 <section class="hero" id="hedge">
 <div class="container hero-inner">
@@ -45,8 +58,12 @@
 <h1 class="headline" data-i18n="hero_headline">FAIL THE EVAL.<br/>GET PAID ANYWAY.</h1>
 <p class="subhead" data-i18n="hero_subhead">Most prop traders fail evaluations. TradeBlade puts a small live hedge behind your eval so every blow‑up feeds your real account. The math works because failure is the most common outcome — and you're on the right side of it.</p>
 <div class="cta-row">
-<a class="btn btn-primary get-access-btn" href="#pricing" data-i18n="hero_cta_access">Get Access</a>
+<a class="btn btn-primary get-access-btn" href="#alpha" data-i18n="hero_cta_access">Join the Alpha (Free)</a>
 <a class="btn btn-ghost" href="math.html" data-i18n="hero_cta_math">See the Math</a>
+</div>
+<div style="margin-top:16px;display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border:1px solid rgba(23,139,202,0.5);border-radius:999px;background:rgba(23,139,202,0.1);font-size:14px;font-weight:600;color:var(--tb-blue-light);">
+<img alt="" src="assets/favicon.png" style="width:16px;height:16px;" aria-hidden="true"/>
+<span data-i18n="hero_nt8_exclusive">A NinjaTrader 8 add-on — requires an active NinjaTrader 8 installation. No other platforms supported.</span>
 </div>
 <div class="hero-logo-wrap">
 <img alt="TradeBlade" class="hero-logo" src="assets/tb-logo.png"/>
@@ -63,8 +80,6 @@
 </div>
 </section>
 
-<section class="hud-demo" id="hud">
-</section>
 <section class="engine-showcase" id="math">
 <div class="container">
 <div class="engine-header">
@@ -160,30 +175,90 @@
 </div>
 <div class="row" style="gap:18px; flex-wrap:wrap; margin-top:18px;">
 <div style="flex:0 0 260px; max-width:260px;">
-<a href="assets/TheMathematicsOfSurvival.pdf" target="_blank"><img alt="The Mathematics of Survival cover" src="assets/ebook-cover.png" style="width:100%; border-radius:14px; border:1px solid var(--soft);"/></a>
+<a href="assets/TheMathematicsOfSurvival.pdf" target="_blank" rel="noopener"><img alt="The Mathematics of Survival cover" loading="lazy" src="assets/ebook-cover.png" style="width:100%; border-radius:14px; border:1px solid var(--soft);"/></a>
 </div>
 <div style="flex:1; min-width:260px;">
-<div class=”card” style=”padding:18px;”>
-<h3 id=”tb-book-h3” style=”margin-top:0;” data-i18n=”book_inside_title”>What’s inside</h3>
-<ul class=”muted” style=”margin:10px 0 0 18px; line-height:1.6;”>
-<li id=”tb-book-li1” data-i18n=”book_li_1”>Why “knowing” isn’t enough — the math proves it.</li>
-<li id=”tb-book-li2” data-i18n=”book_li_2”>The real enemy is inside the trader: impulse, fear, revenge, and drift.</li>
-<li id=”tb-book-li3” data-i18n=”book_li_3”>Jesse Livermore: the man who knew everything… and still lost the war.</li>
-<li id=”tb-book-li4” data-i18n=”book_li_4”>How to “build the dam”: hard rules that stop you from bleeding out.</li>
-<li id=”tb-book-li5” data-i18n=”book_li_5”>TradeBlade: mechanical execution for humans.</li>
-<li id=”tb-book-li6” data-i18n=”book_li_6”>The appendix: the math behind survival.</li>
+<div class="card" style="padding:18px;">
+<h3 id="tb-book-h3" style="margin-top:0;" data-i18n="book_inside_title">What’s inside</h3>
+<ul class="muted" style="margin:10px 0 0 18px; line-height:1.6;">
+<li id="tb-book-li1" data-i18n="book_li_1">Why “knowing” isn’t enough — the math proves it.</li>
+<li id="tb-book-li2" data-i18n="book_li_2">The real enemy is inside the trader: impulse, fear, revenge, and drift.</li>
+<li id="tb-book-li3" data-i18n="book_li_3">Jesse Livermore: the man who knew everything… and still lost the war.</li>
+<li id="tb-book-li4" data-i18n="book_li_4">How to “build the dam”: hard rules that stop you from bleeding out.</li>
+<li id="tb-book-li5" data-i18n="book_li_5">TradeBlade: mechanical execution for humans.</li>
+<li id="tb-book-li6" data-i18n="book_li_6">The appendix: the math behind survival.</li>
 </ul>
-<p id=”tb-book-footer” class=”muted small” style=”margin-top:12px;” data-i18n=”book_footer”>If you’ve ever said “my strategy works in backtests but not live,” start here.</p>
+<p id="tb-book-footer" class="muted small" style="margin-top:12px;" data-i18n="book_footer">If you’ve ever said “my strategy works in backtests but not live,” start here.</p>
 </div>
-<a class="btn btn-primary wfull" href="#cta" style="margin-top:12px;" data-i18n="book_cta">Get the free PDF — enter your email below</a>
+<a class="btn btn-primary wfull" href="#cta" style="margin-top:12px;" data-i18n="book_cta">Get the free PDF &amp; join the alpha — enter your email below</a>
 </div>
 </div>
 </div>
 </section>
+<section class="pricing" id="alpha">
+<div class="container">
+<h2 class="section-title" data-i18n="alpha_title">Join the Alpha</h2>
+<p class="section-sub" data-i18n="alpha_sub">TradeBlade is in active development. We're not selling it yet — we're inviting traders to use the full software for free in exchange for honest feedback that helps us make it production-ready.</p>
+<div style="text-align:center;margin-top:20px;padding:16px 22px;border:1px solid rgba(23,139,202,0.5);border-radius:12px;background:rgba(23,139,202,0.09);font-size:18px;font-weight:700;color:var(--text);" data-i18n="alpha_anchor">Alpha testers run the full Elite tier — <span style="color:var(--tb-blue-light);">$399/mo after launch</span> — free.</div>
+
+<div class="grid3 mt-24">
+<div class="card price featured" style="text-align:left;">
+<div class="most-popular-badge" data-i18n="alpha_youget_badge">What you get</div>
+<div class="tag" style="font-size:18px;" data-i18n="alpha_youget_name">Full software — free</div>
+<ul class="plist" style="margin-top:18px;">
+<li data-i18n="alpha_youget_li_1"><strong style="color:var(--tb-blue-light);">Full TradeBlade Engine</strong> — every hedge, every guardrail, every feature</li>
+<li data-i18n="alpha_youget_li_2">Full HUD, risk guardrails, daily loss enforcement</li>
+<li data-i18n="alpha_youget_li_3">All instruments supported (ES/MES, NQ/MNQ, YM/MYM, RTY/M2K)</li>
+<li data-i18n="alpha_youget_li_4">Multiple independent hedges</li>
+<li data-i18n="alpha_youget_li_5">Direct founder access — your questions get answered fast</li>
+<li data-i18n="alpha_youget_li_6">Updates as we ship them, often weekly</li>
+<li data-i18n="alpha_youget_li_7">No payment. No card on file. No trial countdown.</li>
+</ul>
+</div>
+<div class="card price reveal" style="text-align:left;">
+<div class="tag" style="font-size:18px;" data-i18n="alpha_youdo_name">What we ask in return</div>
+<ul class="plist" style="margin-top:18px;">
+<li data-i18n="alpha_youdo_li_1"><strong style="color:var(--tb-blue-light);">Use it.</strong> Run it on a real eval. Push it hard.</li>
+<li data-i18n="alpha_youdo_li_2">Tell us what works, what doesn't, what's missing</li>
+<li data-i18n="alpha_youdo_li_3">Report bugs as you find them (we respond quickly)</li>
+<li data-i18n="alpha_youdo_li_4">Be patient with rough edges — it's alpha</li>
+<li data-i18n="alpha_youdo_li_5">Honest feedback, not flattery. We need the real read.</li>
+</ul>
+</div>
+<div class="card price reveal" style="text-align:left;">
+<div class="tag" style="font-size:18px;" data-i18n="alpha_how_name">How to join</div>
+<p style="color:var(--muted);line-height:1.7;margin-top:18px;" data-i18n="alpha_how_p1">Request the free book below. That tells us you're interested. We'll reach out about the alpha cohort and walk you through installation and onboarding.</p>
+<p style="color:var(--muted);line-height:1.7;margin-top:14px;" data-i18n="alpha_how_p2">Limited slots so we can actually support every alpha trader properly. First come, first reviewed.</p>
+<a class="btn btn-primary wfull" href="#cta" data-i18n="alpha_how_cta" style="margin-top:18px;">Request the book &amp; join the alpha</a>
+</div>
+</div>
+
+<div style="text-align:center;margin-top:28px;padding:20px;border:1px solid rgba(23,139,202,0.35);border-radius:14px;background:rgba(23,139,202,0.06);">
+<p style="margin:0;font-size:18px;font-weight:700;color:var(--tb-blue-light);" data-i18n="alpha_banner_2_strong">Pre-release software. Not a free trial.</p>
+<p style="margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.5;" data-i18n="alpha_banner_2_sub">Pricing and plans will come when TradeBlade ships out of alpha. Right now we're focused on building it right — and the people helping us do that get to use it for free, forever for the alpha period.</p>
+</div>
+
+<!-- Diversification callout — kept because the strategy explanation still applies -->
+<div class="card" style="margin-top:28px;padding:24px 28px;border:1px solid var(--tb-blue);background:linear-gradient(135deg,rgba(23,139,202,0.08),rgba(14,165,188,0.05));">
+<h3 style="margin:0 0 10px;font-size:18px;color:var(--text);" data-i18n="diversification_title">🛡️ Why multiple independent hedges — not a trade copier</h3>
+<p style="color:var(--muted);line-height:1.7;margin:0 0 10px;" data-i18n="diversification_p1">A trade copier mirrors one strategy across every account. That's fast to set up, but it means every eval hits the same levels, takes the same entries, and faces the same drawdowns at the same time. When the worst case hits, it hits <em>all of them at once.</em></p>
+<p style="color:var(--muted);line-height:1.7;margin:0 0 10px;" data-i18n="diversification_p2">TradeBlade runs each hedge as an independent strategy instance inside NinjaTrader. Different entry levels. Different session windows. Different risk parameters. When one eval blows up on a stop run, the others aren't in the same trade. Your worst-case scenario stays isolated to a single account instead of multiplying across your entire portfolio.</p>
+<p style="color:var(--text);line-height:1.7;margin:0;font-weight:600;" data-i18n="diversification_p3">More hedges with independent execution means smoother returns, smaller drawdowns, and a much faster path to statistical profitability. Trade copiers give you speed. Independent strategies give you survival.</p>
+</div>
+
+</div>
+</section>
+
 <section class="pricing" id="pricing">
 <div class="container">
-<h2 class="section-title" data-i18n="pricing_title">Choose your plan</h2>
-<p class="section-sub" data-i18n="pricing_sub">Every plan includes the full TradeBlade Engine, HUD, risk guardrails, and updates. The difference is how many eval hedges you can run — and how much support you get.</p>
+<h2 class="section-title" data-i18n="pricing_locked_title">Pricing at launch</h2>
+<p class="section-sub" data-i18n="pricing_locked_sub">This is what TradeBlade will cost when it ships out of alpha. Every plan is a NinjaTrader 8 license — the difference is how many eval hedges you can run.</p>
+
+<div style="text-align:center;margin-top:18px;padding:14px 18px;border:1px solid rgba(54,210,122,0.4);border-radius:12px;background:rgba(54,210,122,0.07);font-size:15px;line-height:1.5;">
+<strong style="color:#36D27A;" data-i18n="pricing_locked_banner">Nothing on this page is for sale yet.</strong>
+<span data-i18n="pricing_locked_banner_2">During alpha, testers run the full Elite tier free.</span>
+<a href="#alpha" data-i18n="pricing_free_alpha" style="color:var(--tb-blue-light);font-weight:600;text-decoration:underline;margin-left:6px;">Join the alpha →</a>
+</div>
 
 <div class="grid3 mt-24">
 <div class="card price featured">
@@ -201,9 +276,9 @@
 <li data-i18n="pricing_pro_li_7">AI-assisted support</li>
 <li data-i18n="pricing_pro_li_8">Email support (72-hour response)</li>
 <li data-i18n="pricing_pro_li_9">Updates included</li>
-<li data-i18n="pricing_guarantee">30-day money-back guarantee</li>
 </ul>
-<a class="btn btn-primary wfull" href="https://buy.stripe.com/5kQ5kCb7e5n4ef72wJgbm00" data-i18n="pricing_pro_cta">Choose Pro</a>
+<span class="btn wfull" aria-disabled="true" style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid rgba(255,255,255,0.18);" data-i18n="pricing_locked_btn">🔒 Locked during alpha</span>
+<a href="#alpha" style="display:block;text-align:center;margin-top:10px;color:var(--tb-blue-light);font-weight:600;font-size:14px;" data-i18n="pricing_free_alpha_card">Free during alpha →</a>
 </div>
 <div class="card price reveal">
 <div class="tag" data-i18n="pricing_desk_name">Desk</div>
@@ -217,9 +292,9 @@
 <li data-i18n="pricing_desk_li_5">Guided onboarding</li>
 <li data-i18n="pricing_desk_li_6">Multi-account dashboard</li>
 <li data-i18n="pricing_desk_li_7">Enhanced analytics</li>
-<li data-i18n="pricing_guarantee">30-day money-back guarantee</li>
 </ul>
-<a class="btn btn-ghost wfull" href="https://buy.stripe.com/5kQaEW8Z63eW5IBfjvgbm01" data-i18n="pricing_desk_cta">Choose Desk</a>
+<span class="btn wfull" aria-disabled="true" style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid rgba(255,255,255,0.18);" data-i18n="pricing_locked_btn">🔒 Locked during alpha</span>
+<a href="#alpha" style="display:block;text-align:center;margin-top:10px;color:var(--tb-blue-light);font-weight:600;font-size:14px;" data-i18n="pricing_free_alpha_card">Free during alpha →</a>
 </div>
 <div class="card price reveal">
 <div class="tag" data-i18n="pricing_elite_name">Elite</div>
@@ -233,24 +308,13 @@
 <li data-i18n="pricing_elite_li_5">White-glove support</li>
 <li data-i18n="pricing_elite_li_6">Custom template development</li>
 <li data-i18n="pricing_elite_li_7"><strong style="color:var(--tb-blue-light);">Full Automation</strong> — unattended for the entire session (must restart at session start)</li>
-<li data-i18n="pricing_guarantee">30-day money-back guarantee</li>
 </ul>
-<a class="btn btn-ghost wfull" href="https://buy.stripe.com/eVq3cu6QYaHofjb8V7gbm02" data-i18n="pricing_elite_cta">Choose Elite</a>
+<span class="btn wfull" aria-disabled="true" style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid rgba(255,255,255,0.18);" data-i18n="pricing_locked_btn">🔒 Locked during alpha</span>
+<a href="#alpha" style="display:block;text-align:center;margin-top:10px;color:var(--tb-blue-light);font-weight:600;font-size:14px;" data-i18n="pricing_free_alpha_card">Free during alpha →</a>
 </div>
 </div>
 
-<div style="text-align:center;margin-top:28px;padding:20px;border:1px solid rgba(34,197,94,0.3);border-radius:14px;background:rgba(34,197,94,0.06);">
-<p style="margin:0;font-size:18px;font-weight:700;color:#22c55e;" data-i18n="pricing_guarantee_banner">💰 30-Day Money-Back Guarantee — No Questions Asked</p>
-<p style="margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.5;" data-i18n="pricing_guarantee_sub">Try TradeBlade risk-free. If it's not for you within the first 30 days, email us and we'll refund every penny. No hoops, no forms, no hassle.</p>
-</div>
-
-<!-- Diversification callout -->
-<div class="card" style="margin-top:28px;padding:24px 28px;border:1px solid var(--tb-blue);background:linear-gradient(135deg,rgba(23,139,202,0.08),rgba(14,165,188,0.05));">
-<h3 style="margin:0 0 10px;font-size:18px;color:var(--text);" data-i18n="diversification_title">🛡️ Why multiple independent hedges — not a trade copier</h3>
-<p style="color:var(--muted);line-height:1.7;margin:0 0 10px;" data-i18n="diversification_p1">A trade copier mirrors one strategy across every account. That's fast to set up, but it means every eval hits the same levels, takes the same entries, and faces the same drawdowns at the same time. When the worst case hits, it hits <em>all of them at once.</em></p>
-<p style="color:var(--muted);line-height:1.7;margin:0 0 10px;" data-i18n="diversification_p2">TradeBlade runs each hedge as an independent strategy instance inside NinjaTrader. Different entry levels. Different session windows. Different risk parameters. When one eval blows up on a stop run, the others aren't in the same trade. Your worst-case scenario stays isolated to a single account instead of multiplying across your entire portfolio.</p>
-<p style="color:var(--text);line-height:1.7;margin:0;font-weight:600;" data-i18n="diversification_p3">More hedges with independent execution means smoother returns, smaller drawdowns, and a much faster path to statistical profitability. Trade copiers give you speed. Independent strategies give you survival.</p>
-</div>
+<p class="muted small" style="text-align:center;margin-top:18px;" data-i18n="pricing_nt8_note">All plans are licenses for the TradeBlade NinjaTrader 8 add-on. An active NinjaTrader 8 installation is required — TradeBlade does not run on any other platform.</p>
 
 </div>
 </section>
@@ -299,16 +363,16 @@
 <section class="cta" id="cta">
 <div class="container cta-inner">
 <div class="cta-copy">
-<h3 data-i18n="cta_title">Get the free e-book &amp; product updates</h3>
-<p data-i18n="cta_sub">We respect your time and will never spam you.</p>
+<h3 data-i18n="cta_title">Get the free book &amp; join the alpha list</h3>
+<p data-i18n="cta_sub">Requesting the book is how we know you're interested. We'll email the PDF immediately and follow up about joining the alpha cohort — free TradeBlade access in exchange for honest feedback.</p>
 <form class="form" id="earlyAccessForm">
-<input id="formEmail" name="email" placeholder="Your email" required="" type="email" data-i18n-placeholder="cta_email_placeholder"/>
-<input id="formBroker" name="broker" placeholder="Your broker (optional)" type="text" data-i18n-placeholder="cta_broker_placeholder"/>
-<button class="btn btn-primary" id="formSubmitBtn" type="submit" data-i18n="cta_submit">Send me the book</button>
+<input id="formEmail" name="email" placeholder="Your email" aria-label="Email address" required="" type="email" data-i18n-placeholder="cta_email_placeholder"/>
+<input id="formBroker" name="broker" placeholder="Your broker (optional)" aria-label="Your broker (optional)" type="text" data-i18n-placeholder="cta_broker_placeholder"/>
+<button class="btn btn-primary" id="formSubmitBtn" type="submit" data-i18n="cta_submit">Send me the book &amp; alpha invite</button>
 <div id="formMessage" style="display:none; margin-top:8px; font-size:14px;"></div>
-<div class="fine" data-i18n="cta_fine">We'll email you the book immediately, plus occasional product updates. Unsubscribe anytime.</div>
+<div class="fine" data-i18n="cta_fine">We'll email the book immediately. We'll follow up separately about the alpha cohort with installation instructions and onboarding. Unsubscribe anytime.</div>
 </form>
-<a href="assets/TheMathematicsOfSurvival.pdf" target="_blank"><img alt="The Mathematics of Survival cover" src="assets/ebook-cover.png" style="width:180px; border-radius:10px; border:1px solid var(--soft); margin-top:18px;"/></a>
+<a href="assets/TheMathematicsOfSurvival.pdf" target="_blank" rel="noopener"><img alt="The Mathematics of Survival cover" loading="lazy" src="assets/ebook-cover.png" style="width:180px; border-radius:10px; border:1px solid var(--soft); margin-top:18px;"/></a>
 </div>
 <div class="cta-card card">
 <div class="row align-center gap">
@@ -336,7 +400,7 @@
 <div class="row gap">
 <a class="muted" href="#" data-i18n="footer_terms">Terms</a>
 <a class="muted" href="#" data-i18n="footer_privacy">Privacy</a>
-<a class="muted" href="#" data-i18n="footer_contact">Contact</a>
+<a class="muted" href="mailto:support@tradebladehq.com" data-i18n="footer_contact">Contact</a>
 </div>
 </div>
 <!-- Partners / Ecosystem -->
