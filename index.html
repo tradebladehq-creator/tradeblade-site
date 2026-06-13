@@ -368,6 +368,7 @@
 <form class="form" id="earlyAccessForm">
 <input id="formEmail" name="email" placeholder="Your email" aria-label="Email address" required="" type="email" data-i18n-placeholder="cta_email_placeholder"/>
 <input id="formBroker" name="broker" placeholder="Your broker (optional)" aria-label="Your broker (optional)" type="text" data-i18n-placeholder="cta_broker_placeholder"/>
+<div class="cf-turnstile" data-sitekey="0x4AAAAAADkB5ffggpT2lFjv" style="margin:8px 0;"></div>
 <button class="btn btn-primary" id="formSubmitBtn" type="submit" data-i18n="cta_submit">Send me the book &amp; alpha invite</button>
 <div id="formMessage" style="display:none; margin-top:8px; font-size:14px;"></div>
 <div class="fine" data-i18n="cta_fine">We'll email the book immediately. We'll follow up separately about the alpha cohort with installation instructions and onboarding. Unsubscribe anytime.</div>
@@ -398,8 +399,8 @@
 <span class="muted">© <span id="y"></span> TradeBlade Technologies LLC</span>
 </div>
 <div class="row gap">
-<a class="muted" href="#" data-i18n="footer_terms">Terms</a>
-<a class="muted" href="#" data-i18n="footer_privacy">Privacy</a>
+<a class="muted" href="terms.html" data-i18n="footer_terms">Terms</a>
+<a class="muted" href="privacy.html" data-i18n="footer_privacy">Privacy</a>
 <a class="muted" href="mailto:support@tradebladehq.com" data-i18n="footer_contact">Contact</a>
 </div>
 </div>
@@ -438,6 +439,14 @@ document.getElementById('earlyAccessForm').addEventListener('submit', async func
 
   if (!email) return;
 
+  const tsToken = (window.turnstile && turnstile.getResponse()) || '';
+  if (!tsToken) {
+    msg.style.display = 'block';
+    msg.style.color = '#ef4444';
+    msg.textContent = (window.TB_I18N && window.TB_I18N.t('js_verify')) || 'Please complete the verification box first.';
+    return;
+  }
+
   btn.disabled = true;
   btn.textContent = (window.TB_I18N && window.TB_I18N.t('js_joining')) || 'Joining...';
   msg.style.display = 'none';
@@ -446,7 +455,7 @@ document.getElementById('earlyAccessForm').addEventListener('submit', async func
     const resp = await fetch('https://tradeblade-license.tradebladehq.workers.dev/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, broker: broker, lang: (window.TB_I18N && window.TB_I18N.current()) || 'en' })
+      body: JSON.stringify({ email: email, broker: broker, lang: (window.TB_I18N && window.TB_I18N.current()) || 'en', turnstileToken: tsToken })
     });
 
     const data = await resp.json();
@@ -467,8 +476,10 @@ document.getElementById('earlyAccessForm').addEventListener('submit', async func
     msg.textContent = (window.TB_I18N && window.TB_I18N.t('js_error')) || 'Something went wrong. Try again or email support@tradebladehq.com';
     btn.disabled = false;
     btn.textContent = (window.TB_I18N && window.TB_I18N.t('js_join_list')) || 'Join the list';
+    if (window.turnstile) turnstile.reset();   // token is single-use; allow retry
   }
 });
 </script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </body>
 </html>
