@@ -452,7 +452,7 @@ document.getElementById('earlyAccessForm').addEventListener('submit', async func
   msg.style.display = 'none';
 
   try {
-    const resp = await fetch('https://tradeblade-license.tradebladehq.workers.dev/api/subscribe', {
+    const resp = await fetch('https://updates.tradebladehq.com/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email, broker: broker, lang: (window.TB_I18N && window.TB_I18N.current()) || 'en', turnstileToken: tsToken })
