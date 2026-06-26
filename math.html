@@ -410,7 +410,7 @@ function HedgeAnalysis() {
       if (p.evalCost != null) setEvalCost(p.evalCost);
       if (p.paCost != null) setPaCost(p.paCost);
       if (p.profitTarget != null) setProfitTarget(p.profitTarget);
-      if (p.trailingDD != null) setTrailingDD(p.trailingDD);
+      if (p.trailingDD != null && p.trailingDD >= 1000 && p.trailingDD <= 25000) setTrailingDD(p.trailingDD);  // out-of-range (e.g. maxLoss-seeded 25000) → falls back to $2,000 default
       if (p.payoutAmt != null) setPayoutAmt(p.payoutAmt);
       if (p.payoutThreshold != null) setPayoutThreshold(p.payoutThreshold);
       if (p.stfCost != null) setStfCost(p.stfCost);
