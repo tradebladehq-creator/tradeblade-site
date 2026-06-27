@@ -546,39 +546,100 @@ function HedgeAnalysis() {
   // Auto-sets commission slider: avgTrades × RT commission.
   // ============================================================
   const [avgTradesPerCycle, setAvgTradesPerCycle] = useState(0);
+  const [mcOut, setMcOut] = useState(null);          // MC2 funded+eval result: per-scenario commission/hedge + payout probability
   const [mc2Running, setMc2Running] = useState(false);
   const mc2Worker = useRef(null);
   const mc2Timer = useRef(null);
 
   useEffect(() => {
+    // Funded-regime MC: eval (1 micro, single-day pass) + funded 3-phase model
+    // (P1 2-micro→$1,800, P2 4-micro→$3,600 dynamic TP, bonus 4-micro→$1,500), EOD trailing
+    // floor that locks once equity crosses the lock trigger, global qualifying-day counter
+    // (first payout days 1-5, bonus days 6-10, no reset until 2nd payout). Returns per-scenario
+    // realized hedge, commission, and the payout probability. Validated against a 300k node MC.
     const workerCode = `
-      self.onmessage = function(e) {
-        const { TP, SL, tick, profitTarget, trailingDD, numSims } = e.data;
-        if (SL <= 0 || TP <= 0 || profitTarget <= 0 || trailingDD <= 0) { self.postMessage(0); return; }
-        let totalTrades = 0;
-        for (let i = 0; i < numSims; i++) {
-          let acct = 0;
-          let trades = 0;
-          while (acct < profitTarget && acct > -trailingDD) {
-            let pos = 0;
-            while (true) {
-              pos += Math.random() < 0.5 ? tick : -tick;
-              if (pos >= TP) { acct += TP; break; }
-              if (pos <= -SL) { acct -= SL; break; }
-            }
-            trades++;
-          }
-          totalTrades += trades;
+      function simEval(c){
+        let cur=0,trades=0,hedge=0;
+        while(cur > -c.trailingDD + 1e-9 && cur < c.profitTarget - 1e-9){
+          const TP=c.profitTarget-cur, SL=Math.min(c.dailyCap, cur+c.trailingDD);
+          trades++;
+          if(Math.random() < SL/(TP+SL)){ cur+=TP; hedge-=c.evalContracts*0.1*TP; }
+          else { cur-=SL; hedge+=c.evalContracts*0.1*SL; }
         }
-        self.postMessage(totalTrades / numSims);
+        return { trades:trades, passed: cur >= c.profitTarget-1e-9, hedge:hedge };
+      }
+      function simFunded(c){
+        let profit=0,hw=0,locked=false,qual=0,t1=0,t2=0,tb=0,paHedge=0,bonusHedge=0,commC=0,reachedP2=false;
+        function floorOf(){ return locked ? c.lockedFloor : (hw - c.trailingDD); }
+        while(profit < c.phase2At - 1e-9){
+          const rem=c.phase2At-profit, dn=Math.max(1, Math.ceil(rem/c.fundedCap));
+          const TP=Math.min(rem/dn, c.fundedCap), SL=c.dailyCap;
+          t1++; commC+=c.p1Contracts;
+          if(Math.random() < SL/(TP+SL)){ profit+=TP; paHedge-=c.p1Contracts*0.1*TP; qual++; if(profit>hw)hw=profit; if(hw>=c.lockTrigger)locked=true; }
+          else { const loss=Math.min(SL, profit-floorOf()); profit-=loss; paHedge+=c.p1Contracts*0.1*loss; if(profit<=floorOf()+1e-9) return {scen:2,reachedP2:reachedP2,t1:t1,t2:t2,tb:tb,paHedge:paHedge,bonusHedge:bonusHedge,commC:commC,bonusPayout:false}; }
+        }
+        reachedP2=true;
+        while(profit < c.payoutThreshold - 1e-9){
+          const rem=c.payoutThreshold-profit, dn=Math.max(1, c.qualFirst-qual);
+          const TP=Math.min(rem/dn, c.fundedCap), SL=c.dailyCap;
+          t2++; commC+=c.p2Contracts;
+          if(Math.random() < SL/(TP+SL)){ profit+=TP; paHedge-=c.p2Contracts*0.1*TP; qual++; if(profit>hw)hw=profit; if(hw>=c.lockTrigger)locked=true; }
+          else { const loss=Math.min(SL, profit-floorOf()); profit-=loss; paHedge+=c.p2Contracts*0.1*loss; if(profit<=floorOf()+1e-9) return {scen:2,reachedP2:reachedP2,t1:t1,t2:t2,tb:tb,paHedge:paHedge,bonusHedge:bonusHedge,commC:commC,bonusPayout:false}; }
+        }
+        let bp=0;
+        while(bp < c.bonusTarget - 1e-9){
+          const rem=c.bonusTarget-bp, dn=Math.max(1, c.qualBonus-qual);
+          const TP=Math.min(rem/dn, c.bonusCap), SL=c.dailyCap;
+          tb++; commC+=c.bonusContracts;
+          if(Math.random() < SL/(TP+SL)){ bp+=TP; bonusHedge-=c.bonusContracts*0.1*TP; qual++; }
+          else { const loss=Math.min(SL, bp+c.trailingDD); bp-=loss; bonusHedge+=c.bonusContracts*0.1*loss; if(bp<=-c.trailingDD+1e-9) return {scen:3,reachedP2:reachedP2,t1:t1,t2:t2,tb:tb,paHedge:paHedge,bonusHedge:bonusHedge,commC:commC,bonusPayout:false}; }
+        }
+        return {scen:3,reachedP2:reachedP2,t1:t1,t2:t2,tb:tb,paHedge:paHedge,bonusHedge:bonusHedge,commC:commC,bonusPayout:true};
+      }
+      self.onmessage = function(e){
+        const c = e.data;
+        if(c.profitTarget<=0 || c.trailingDD<=0 || c.payoutThreshold<=0 || c.dailyCap<=0){ self.postMessage(null); return; }
+        const N = c.numSims;
+        let blowP1=0,blowP2=0,payout=0,bonusPay=0,sumT1=0,nP2=0,sumT2=0,nBonus=0,sumTb=0;
+        let n2=0,paHedge2=0,comm2=0,n3=0,paHedge3=0,bonusNet3=0,comm3=0,evalTrades=0,trades2=0,trades3=0;
+        for(let i=0;i<N;i++){
+          evalTrades += simEval(c).trades;
+          const r = simFunded(c);
+          sumT1 += r.t1;
+          if(r.reachedP2){ nP2++; sumT2 += r.t2; }
+          if(r.scen===2){ if(r.reachedP2) blowP2++; else blowP1++; n2++; paHedge2+=r.paHedge; comm2+=r.commC*c.RT; trades2+=r.t1+r.t2; }
+          else { payout++; nBonus++; sumTb+=r.tb; n3++; paHedge3+=r.paHedge; comm3+=r.commC*c.RT; bonusNet3 += r.bonusHedge + (r.bonusPayout ? c.payoutAmt : 0); trades3+=r.t1+r.t2+r.tb; if(r.bonusPayout) bonusPay++; }
+        }
+        const evalAvg = evalTrades/N;
+        self.postMessage({
+          payoutProb: payout/N,
+          evalTrades: evalAvg,
+          evalComm: evalAvg * c.evalContracts * c.RT,
+          scen2Hedge: n2 ? paHedge2/n2 : 0,
+          scen2Comm: n2 ? comm2/n2 : 0,
+          scen3PAHedge: n3 ? paHedge3/n3 : 0,
+          scen3BonusNet: n3 ? bonusNet3/n3 : 0,
+          scen3Comm: n3 ? comm3/n3 : 0,
+          t1Avg: sumT1/N,
+          t2Avg: nP2 ? sumT2/nP2 : 0,
+          bonusAvg: nBonus ? sumTb/nBonus : 0,
+          blowP1: blowP1/N, blowP2: blowP2/N, bonus2nd: bonusPay/N,
+          scen2Trades: n2 ? trades2/n2 : 0, scen3Trades: n3 ? trades3/n3 : 0
+        });
       };
     `;
     const blob = new Blob([workerCode], { type: "application/javascript" });
     mc2Worker.current = new Worker(URL.createObjectURL(blob));
     mc2Worker.current.onmessage = (e) => {
-      setAvgTradesPerCycle(e.data);
       setMc2Running(false);
-      setFriction(Math.round(e.data * NT_MICRO_RT.free));
+      const d = e.data;
+      if (!d) return;
+      setMcOut(d);
+      setAvgTradesPerCycle(d.t1Avg + d.t2Avg + d.bonusAvg);
+      // friction slider = blended per-cycle funded commission (fallback/legacy display; real commission is per-scenario via mcOut)
+      const blended = (1 - d.payoutProb) * d.scen2Comm + d.payoutProb * d.scen3Comm;
+      setFriction(Math.round(blended));
+      if (d.payoutProb != null) setPayoutRate(Math.round(d.payoutProb * 100));
     };
     return () => mc2Worker.current.terminate();
   }, []);
@@ -588,16 +649,24 @@ function HedgeAnalysis() {
     mc2Timer.current = setTimeout(() => {
       setMc2Running(true);
       mc2Worker.current.postMessage({
-        TP: propTP,
-        SL: propTP / rrRatio,
-        tick: inst.fullTickVal,
-        profitTarget,
-        trailingDD,
-        numSims: 1000,
+        profitTarget, trailingDD,
+        dailyCap: propTP / rrRatio,                 // Apex daily-loss cap ($1,000 at default 3000/3)
+        phase2At: FUNDED_PHASE2_AT,                 // doubling point = payoutThreshold/2 = $1,800
+        payoutThreshold,                            // first payout target $3,600
+        lockedFloor: 100, lockTrigger: trailingDD + 100,   // EOD floor locks at +$100 once equity hits +$2,100
+        fundedCap: payoutThreshold / 2,             // 50% consistency cap on $3,600 = $1,800
+        bonusTarget: payoutAmt, bonusCap: payoutAmt / 2, payoutAmt,  // bonus $1,500, cap $750
+        qualFirst: 5, qualBonus: 10,                // 5-day min; bonus needs 5 fresh (cumulative 10)
+        evalContracts: evalHedgeContracts,
+        p1Contracts: paHedgeContracts,              // funded phase 1 = 2 micro
+        p2Contracts: 2 * paHedgeContracts,          // phase 2 doubles to 4 micro
+        bonusContracts: 2 * paHedgeContracts,       // bonus holds 4 micro
+        RT: NT_MICRO_RT.free,
+        numSims: 8000,
       });
     }, 100);
     return () => clearTimeout(mc2Timer.current);
-  }, [propTP, rrRatio, inst.fullTickVal, profitTarget, trailingDD]);
+  }, [profitTarget, trailingDD, propTP, rrRatio, payoutThreshold, payoutAmt, evalHedgeContracts, paHedgeContracts]);
 
   // ============================================================
   // 2-STEP MODEL (eval → PA → payout)
@@ -627,19 +696,24 @@ function HedgeAnalysis() {
     //   Phase 1 blow (never climbed past payout/2): $400 (drawdown × 2-micro ratio). No climb paid.
     //   Phase 2 blow (did climb past payout/2):     $800 capture − $360 climb drag = $440 net.
     // Climb drag only exists on the share that reached phase 2; phase-1 blows never paid it.
+    // Legacy closed-form fallbacks (used only until the MC worker posts its first result)
     const phase1BlowCapture = paHedgeRatio   * Math.abs(propPLPAFail);
     const phase2BlowCapture = paHedgeRatioP2 * Math.abs(propPLPAFail) - paHedgeRatio * FUNDED_PHASE2_AT;
-    const hedgePAFail = (1 - pReachP2Blow) * phase1BlowCapture + pReachP2Blow * phase2BlowCapture;
+    const hedgePAFail_legacy = (1 - pReachP2Blow) * phase1BlowCapture + pReachP2Blow * phase2BlowCapture;
     const propPLPASuccess = payoutThreshold;
-    // Drag climbing to payout: two-tier — phase 1 (2 micro, to payout/2) then phase 2 (4 micro) above
-    const hedgePASuccess = -(Math.min(propPLPASuccess, FUNDED_PHASE2_AT) * paHedgeRatio + Math.max(0, propPLPASuccess - FUNDED_PHASE2_AT) * paHedgeRatioP2);
+    const hedgePASuccess_legacy = -(Math.min(propPLPASuccess, FUNDED_PHASE2_AT) * paHedgeRatio + Math.max(0, propPLPASuccess - FUNDED_PHASE2_AT) * paHedgeRatioP2);
 
-    const eFric = friction * evalHedgeContracts;
-    const pFric = friction * paHedgeContracts;
+    // MC-derived per-scenario commission + realized hedge (preferred); flat/closed-form fallback when mcOut is null.
+    const eFric          = mcOut ? mcOut.evalComm      : friction * evalHedgeContracts;   // eval-leg commission (1 micro)
+    const hedgePAFail    = mcOut ? mcOut.scen2Hedge    : hedgePAFail_legacy;              // scen-2 realized funded capture (P1+P2)
+    const pFricFail      = mcOut ? mcOut.scen2Comm     : friction * paHedgeContracts;     // scen-2 funded commission
+    const hedgePASuccess = mcOut ? mcOut.scen3PAHedge  : hedgePASuccess_legacy;           // scen-3 funded (P1+P2) hedge drag
+    const pFricPay       = mcOut ? mcOut.scen3Comm     : friction * paHedgeContracts;     // scen-3 funded commission (P1+P2+bonus)
+    const bonusRoundAvg  = mcOut ? mcOut.scen3BonusNet : BONUS_ROUND_AVG;                 // bonus hedge + 2nd payout, netted
 
     const net1 = -evalCost + hedgeEvalFail - eFric;
-    const net2 = -evalCost - paCost + hedgeEvalPass - eFric + hedgePAFail - pFric;
-    const net3 = -evalCost - paCost + hedgeEvalPass - eFric + payoutAmt + hedgePASuccess - pFric + BONUS_ROUND_AVG;
+    const net2 = -evalCost - paCost + hedgeEvalPass - eFric + hedgePAFail - pFricFail;
+    const net3 = -evalCost - paCost + hedgeEvalPass - eFric + payoutAmt + hedgePASuccess - pFricPay + bonusRoundAvg;
 
     const net1_nh = -evalCost;
     const net2_nh = -evalCost - paCost;
@@ -661,10 +735,12 @@ function HedgeAnalysis() {
       propPLPAFail, hedgePAFail, propPLPASuccess, hedgePASuccess,
       net1, net2, net3, net1_nh, net2_nh, net3_nh,
       ev, evNH, sd, sdNH, cyclesHedge, cyclesNH,
-      hedgeOnlyEV: ev - evNH, payoutThreshold, eFric, pFric, bonusRoundAvg: BONUS_ROUND_AVG, pReachP2Blow,
+      hedgeOnlyEV: ev - evNH, payoutThreshold, eFric, pFric: pFricFail, pFricFail, pFricPay, bonusRoundAvg, pReachP2Blow,
+      mcEvalTrades: mcOut ? mcOut.evalTrades : null, mcT1: mcOut ? mcOut.t1Avg : null, mcT2: mcOut ? mcOut.t2Avg : null, mcBonus: mcOut ? mcOut.bonusAvg : null,
+      mcScen2Trades: mcOut ? mcOut.scen2Trades : null, mcScen3Trades: mcOut ? mcOut.scen3Trades : null,
     };
   }, [passRate, payoutRate, effectivePeakFail, friction, evalHedgeContracts, paHedgeContracts,
-      evalCost, paCost, profitTarget, trailingDD, payoutAmt, payoutThreshold, evalHedgeRatio, paHedgeRatio, paHedgeRatioP2]);
+      evalCost, paCost, profitTarget, trailingDD, payoutAmt, payoutThreshold, evalHedgeRatio, paHedgeRatio, paHedgeRatioP2, mcOut]);
 
   // ============================================================
   // STRAIGHT-TO-FUNDED MODEL (funded → payout or blow)
@@ -990,7 +1066,7 @@ function HedgeAnalysis() {
 
           <Param label={`Commission Costs / ${inst.micro} / Phase`} value={friction} onChange={setFriction}
             min={0} max={200} step={5} fmt={v => `$${v}`}
-            sub={<>{`Avg trades/cycle (MC): ~${avgTradesPerCycle.toFixed(1)} × $${NT_MICRO_RT.free.toFixed(2)}/RT = $${(avgTradesPerCycle * NT_MICRO_RT.free).toFixed(0)}`}{mc2Running && <span style={{ color: C.amber, marginLeft: 4, fontSize: 9 }}>computing...</span>}{` · Override slider to customize`}</>} />
+            sub={<>{mcOut ? `MC commission/cycle — eval $${mcOut.evalComm.toFixed(0)} · fail $${mcOut.scen2Comm.toFixed(0)} · payout $${mcOut.scen3Comm.toFixed(0)}` : `Funded MC: computing…`}{mc2Running && <span style={{ color: C.amber, marginLeft: 4, fontSize: 9 }}>computing...</span>}{` · Slider = manual fallback`}</>} />
 
           <div style={{ gridColumn: "1 / -1", borderTop: `1px solid ${C.border}`, margin: "6px 0 10px" }} />
 
@@ -998,7 +1074,7 @@ function HedgeAnalysis() {
             <>
               <Param label={`Eval Hedge (${inst.micro})`} value={evalHedgeContracts} onChange={setEvalHedgeContracts}
                 min={1} max={10} fmt={v => `${v} ${inst.micro}`}
-                sub={`= ${(evalHedgeContracts * 10)}% of 1 ${inst.full} · $${evalHedgeTickVal}/tick · $${(evalHedgeContracts * friction).toFixed(0)} commission`} />
+                sub={`= ${(evalHedgeContracts * 10)}% of 1 ${inst.full} · $${evalHedgeTickVal}/tick · $${(mcOut ? mcOut.evalComm : evalHedgeContracts * friction).toFixed(0)} commission`} />
               <div style={{ marginBottom: 14 }}>
                 <div style={{ fontFamily: sansFont, fontSize: 12, color: C.dim, marginBottom: 3 }}>
                   Funded Hedge <span style={{ color: C.faint }}>(system-set, phase-based)</span>
@@ -1078,7 +1154,7 @@ function HedgeAnalysis() {
                 { label: "Eval fee", val: -evalCost },
                 { label: `Prop sim P/L (not real money)`, val: r2.propPLEvalFail, fmt: `$${r2.propPLEvalFail.toLocaleString()} sim`, skip: true },
                 { label: `Hedge real gain (${evalHedgeContracts} ${inst.micro} × 1/10 of $${Math.abs(r2.propPLEvalFail).toLocaleString()})`, val: r2.hedgeEvalFail },
-                { label: `Hedge commissions (${evalHedgeContracts}×$${friction})`, val: -r2.eFric },
+                { label: `Hedge commissions — eval (~${(r2.eFric / NT_MICRO_RT.free).toFixed(1)} RT × $${NT_MICRO_RT.free.toFixed(2)})`, val: -r2.eFric },
               ]}
               net={r2.net1}
             />
@@ -1087,9 +1163,9 @@ function HedgeAnalysis() {
               items={[
                 { label: "Eval fee + PA activation", val: -(evalCost + paCost) },
                 { label: `Hedge loss during eval (${evalHedgeContracts} ${inst.micro} vs $${profitTarget.toLocaleString()} sim target)`, val: r2.hedgeEvalPass },
-                { label: `Hedge commissions — eval (${evalHedgeContracts}×$${friction})`, val: -r2.eFric },
-                { label: `Hedge realized on PA blow (avg — ${(r2.pReachP2Blow * 100).toFixed(0)}% reach phase 2: $800 capture − $360 climb = $440; else $400)`, val: r2.hedgePAFail },
-                { label: `Hedge commissions — PA (${paHedgeContracts}×$${friction})`, val: -r2.pFric },
+                { label: `Hedge commissions — eval (~${(r2.eFric / NT_MICRO_RT.free).toFixed(1)} RT × $${NT_MICRO_RT.free.toFixed(2)})`, val: -r2.eFric },
+                { label: `Funded hedge realized on blow (MC avg, P1+P2)`, val: r2.hedgePAFail },
+                { label: `Funded commission — P1+P2 (${r2.mcScen2Trades ? '~' + r2.mcScen2Trades.toFixed(1) + 't, ' : ''}${(r2.pFricFail / NT_MICRO_RT.free).toFixed(1)} RT × $${NT_MICRO_RT.free.toFixed(2)})`, val: -r2.pFricFail },
                 { label: "Prop PA payout", val: 0 },
               ]}
               net={r2.net2}
@@ -1099,11 +1175,11 @@ function HedgeAnalysis() {
               items={[
                 { label: "Eval fee + PA activation", val: -(evalCost + paCost) },
                 { label: `Hedge loss during eval (${evalHedgeContracts} ${inst.micro} vs $${profitTarget.toLocaleString()} sim target)`, val: r2.hedgeEvalPass },
-                { label: `Hedge commissions — eval (${evalHedgeContracts}×$${friction})`, val: -r2.eFric },
+                { label: `Hedge commissions — eval (~${(r2.eFric / NT_MICRO_RT.free).toFixed(1)} RT × $${NT_MICRO_RT.free.toFixed(2)})`, val: -r2.eFric },
                 { label: `Prop payout received (cash)`, val: payoutAmt },
-                { label: `Hedge loss during PA (P1 ${paHedgeContracts}/P2 ${paHedgeContracts * 2} ${inst.micro} across $${r2.propPLPASuccess.toLocaleString()} climb)`, val: r2.hedgePASuccess },
-                { label: `Hedge commissions — PA (${paHedgeContracts}×$${friction})`, val: -r2.pFric },
-                { label: `Bonus round (avg capture/payout)`, val: r2.bonusRoundAvg },
+                { label: `Funded hedge drag — P1+P2 (MC avg, $${r2.propPLPASuccess.toLocaleString()} climb)`, val: r2.hedgePASuccess },
+                { label: `Funded commission — P1+P2+bonus (${r2.mcScen3Trades ? '~' + r2.mcScen3Trades.toFixed(1) + 't, ' : ''}${(r2.pFricPay / NT_MICRO_RT.free).toFixed(1)} RT × $${NT_MICRO_RT.free.toFixed(2)})`, val: -r2.pFricPay },
+                { label: `Bonus round — hedge + 2nd payout (MC avg)`, val: r2.bonusRoundAvg },
               ]}
               net={r2.net3}
             />
