@@ -36,7 +36,7 @@
   function load(code, cb){
     if(code==='en'){ cb && cb(null); return; }
     if(cache[code]){ apply(cache[code], code); cb && cb(cache[code]); return; }
-    fetch('lang/'+code+'.json?v=6').then(function(r){
+    fetch('lang/'+code+'.json?v=7').then(function(r){
       if(!r.ok) throw new Error(r.status);
       return r.json();
     }).then(function(data){

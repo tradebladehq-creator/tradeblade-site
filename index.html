@@ -15,7 +15,7 @@
 <meta content="summary" name="twitter:card"/>
 <link href="assets/favicon.png" rel="icon" type="image/png"/>
 <link href="styles.css" rel="stylesheet"/>
-<script src="i18n.js?v=6" defer></script>
+<script src="i18n.js?v=7" defer></script>
 <script>
 // Capture hash before browser scrolls, then scroll correctly after full load
 (function() {
@@ -260,14 +260,26 @@
 <a href="#alpha" data-i18n="pricing_free_alpha" style="color:var(--tb-blue-light);font-weight:600;text-decoration:underline;margin-left:6px;">Join the alpha →</a>
 </div>
 
+<div class="phone-band mt-24">
+<img src="assets/tb-phone-app.png" alt="The TradeBlade phone app showing a live pair card" loading="lazy" />
+<div>
+<div class="phone-band-new" data-i18n="pricing_phone_new">New</div>
+<h3 data-i18n="pricing_phone_title">TradeBlade on your phone</h3>
+<p class="muted" data-i18n="pricing_phone_sub">Watch your hedged pairs live and arm, enter or flatten them from anywhere. Your PC does the trading; the phone is your remote.</p>
+<p class="phone-band-how" data-i18n="pricing_phone_how"><strong>Included with Desk and Elite.</strong> Add it to Pro for $30/mo.</p>
+</div>
+</div>
+
 <div class="grid3 mt-24">
-<div class="card price featured">
+<div class="card price featured" id="proCard">
 <div class="most-popular-badge" data-i18n="pricing_popular">Most Popular</div>
-<div class="tag" data-i18n="pricing_pro_name">Pro</div>
-<div class="price-amt" data-i18n="pricing_pro_price">$69/mo</div>
+<div class="tag"><span class="pro-off" data-i18n="pricing_pro_name">Pro</span><span class="pro-on" data-i18n="pricing_proplus_name">Pro Plus</span></div>
+<div class="price-amt"><span class="pro-off" data-i18n="pricing_pro_price">$69/mo</span><span class="pro-on" data-i18n="pricing_proplus_price">$99/mo</span></div>
+<label class="addon-switch"><input type="checkbox" id="proPhoneAddon" onchange="document.getElementById('proCard').classList.toggle('with-phone', this.checked)" /><span class="addon-track"><span class="addon-knob"></span></span><span data-i18n="pricing_phone_addon">Add the phone app <strong>+$30/mo</strong></span></label>
 <p class="muted" data-i18n="pricing_pro_desc">One hedge. One eval. Full execution discipline.</p>
 <ul class="plist">
 <li data-i18n="pricing_pro_li_1"><strong style="color:var(--tb-blue-light);">1 eval hedge</strong> (PropPrimary + LiveHedge pair)</li>
+<li class="phone-inc pro-on" data-i18n="pricing_phone_included"><strong>Phone app included</strong></li>
 <li data-i18n="pricing_pro_li_2">Full TradeBlade Engine + HUD</li>
 <li data-i18n="pricing_pro_li_3">Live trading enabled</li>
 <li data-i18n="pricing_pro_li_4">Risk guardrails &amp; daily loss enforcement</li>
@@ -286,6 +298,7 @@
 <p class="muted" data-i18n="pricing_desk_desc">Five independent hedges. Real diversification across evals.</p>
 <ul class="plist">
 <li data-i18n="pricing_desk_li_1"><strong style="color:var(--tb-blue-light);">5 eval hedges</strong> (5 independent strategy pairs)</li>
+<li class="phone-inc" data-i18n="pricing_phone_included"><strong>Phone app included</strong></li>
 <li data-i18n="pricing_desk_li_2">Everything in Pro</li>
 <li data-i18n="pricing_desk_li_3">Email support within 24 hours</li>
 <li data-i18n="pricing_desk_li_4">Priority AI + human-assisted troubleshooting</li>
@@ -302,6 +315,7 @@
 <p class="muted" data-i18n="pricing_elite_desc">Twenty hedges. Maximum scale. Founder-level access.</p>
 <ul class="plist">
 <li data-i18n="pricing_elite_li_1"><strong style="color:var(--tb-blue-light);">20 eval hedges</strong> (20 independent strategy pairs)</li>
+<li class="phone-inc" data-i18n="pricing_phone_included"><strong>Phone app included</strong></li>
 <li data-i18n="pricing_elite_li_2">Everything in Desk</li>
 <li data-i18n="pricing_elite_li_3">Direct founder access (limited slots)</li>
 <li data-i18n="pricing_elite_li_4">Scheduled calls &amp; strategy tune-ups</li>

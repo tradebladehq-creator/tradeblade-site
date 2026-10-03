@@ -655,3 +655,24 @@ html[dir="rtl"] .badge-content{text-align:right}
 html[dir="rtl"] .fine{text-align:right}
 html[dir="rtl"] .disclaimer-content{text-align:right}
 html[dir="rtl"] .footer .row{flex-direction:row-reverse}
+
+/* Pricing: phone app band + Pro add-on switch */
+.phone-band{display:flex;align-items:center;gap:26px;padding:20px 26px;border:1px solid rgba(23,139,202,0.45);border-radius:14px;background:rgba(23,139,202,0.08)}
+.phone-band img{width:130px;height:auto;flex:0 0 auto}
+.phone-band h3{margin:4px 0 6px;font-size:24px}
+.phone-band p{margin:0 0 8px;line-height:1.55}
+.phone-band-new{color:var(--tb-blue-light);font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase}
+.phone-band-how{color:#fff}
+@media(max-width:560px){.phone-band{flex-direction:column;text-align:center;padding:18px}}
+.pro-on{display:none}
+#proCard.with-phone .pro-on{display:inline}
+#proCard.with-phone li.pro-on{display:list-item}
+#proCard.with-phone .pro-off{display:none}
+.addon-switch{display:flex;align-items:center;gap:10px;margin:10px 0 12px;padding:10px 12px;border:1px solid rgba(74,173,228,0.45);border-radius:10px;background:rgba(74,173,228,0.08);cursor:pointer;font-size:14px;user-select:none}
+.addon-switch input{position:absolute;opacity:0;width:0;height:0}
+.addon-track{position:relative;flex:0 0 auto;width:40px;height:22px;border-radius:11px;background:rgba(255,255,255,0.18);transition:background .15s}
+.addon-knob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s}
+.addon-switch input:checked + .addon-track{background:#178BCA}
+.addon-switch input:checked + .addon-track .addon-knob{left:20px}
+.addon-switch input:focus-visible + .addon-track{outline:2px solid #fff;outline-offset:2px}
+li.phone-inc strong{color:var(--tb-blue-light)}
