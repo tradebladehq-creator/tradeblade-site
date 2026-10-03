@@ -676,3 +676,5 @@ html[dir="rtl"] .footer .row{flex-direction:row-reverse}
 .addon-switch input:checked + .addon-track .addon-knob{left:20px}
 .addon-switch input:focus-visible + .addon-track{outline:2px solid #fff;outline-offset:2px}
 li.phone-inc strong{color:var(--tb-blue-light)}
+
+html[dir="rtl"] .most-popular-badge{right:auto;left:12px}
