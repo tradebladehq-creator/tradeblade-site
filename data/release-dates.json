@@ -1,0 +1,20 @@
+{
+  "note": "Big 7:30 a.m. Central (8:30 a.m. Eastern) U.S. economic releases. Read by the TradeBlade Command Center. Sources: bls.gov/schedule/news_release, bea.gov/news/schedule, census.gov/retail/release_schedule.html",
+  "updated": "2026-10-03",
+  "until": "2026-12-31",
+  "dates": {
+    "2026-10-14": "CPI",
+    "2026-10-15": "PPI and retail sales",
+    "2026-10-29": "GDP and PCE",
+    "2026-11-06": "Jobs report",
+    "2026-11-10": "CPI",
+    "2026-11-13": "PPI",
+    "2026-11-17": "Retail sales",
+    "2026-11-25": "GDP and PCE",
+    "2026-12-04": "Jobs report",
+    "2026-12-10": "CPI",
+    "2026-12-15": "PPI",
+    "2026-12-16": "Retail sales",
+    "2026-12-23": "GDP and PCE"
+  }
+}
