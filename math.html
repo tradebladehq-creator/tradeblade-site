@@ -347,6 +347,11 @@ function HedgeAnalysis() {
   const [_tpDollars, _setTpDollars] = useState(0);    // read-only from card
   const [_ratioFromCard, _setRatioFromCard] = useState(0); // read-only from card
   const _initReceived = useRef(false);
+  // One-way link (2026-10-03): the card feeds this tool, never the other way round.
+  // Only the Command Center's hidden copy (loaded with ?headless=1) reports a result back,
+  // and it does so when the card is launched or its target / stop is changed on the card.
+  // The tool the user opens is free to move everything; nothing in it reaches the card.
+  const _headless = useRef(/[?&]headless=1/.test(window.location.search)).current;
   const _suppressUpdate = useRef(false);               // prevent echo on init
   const _channel = useRef(null);                       // BroadcastChannel for WebView2 bridge
 
@@ -391,6 +396,9 @@ function HedgeAnalysis() {
       if (!e.data || e.data.type !== "TB_EV_INIT") return;
       const p = e.data.params;
       if (!p) return;
+      // The hidden copy takes only the hidden-run messages; the opened tool takes only its own,
+      // and only the first one, so values the user has moved are never snapped back.
+      if (_headless ? !p._headless : (p._headless || _initReceived.current)) return;
       _initReceived.current = true;
       _suppressUpdate.current = true; // suppress TB_EV_UPDATE echo during batch setState
 
@@ -418,7 +426,7 @@ function HedgeAnalysis() {
       if (p.stfHedgeContracts != null) setStfHedgeContracts(p.stfHedgeContracts);
       if (p.drawdownType) setDrawdownType(p.drawdownType);
 
-      // TP/SL from card drive propTP and rrRatio (read-only in popup)
+      // TP/SL from card are the starting point for propTP and rrRatio
       if (p._tpDollars > 0) setPropTP(p._tpDollars);
       if (p._ratio > 0) setRrRatio(p._ratio);
 
@@ -435,14 +443,14 @@ function HedgeAnalysis() {
   }, []);
 
   // ============================================================
-  // Popup → CC: send TB_EV_UPDATE whenever account-level params change.
-  // Does NOT send TP/SL/R:R (those are read-only from the card).
+  // Hidden copy → CC: send TB_EV_UPDATE with the result for the card.
+  // The opened tool never sends (one-way: card → tool).
   // Sends via BroadcastChannel + window.opener.postMessage fallback
   // so CC always receives updates even when BroadcastChannel is isolated.
   // Includes avgPeakFail so both pipelines use the same MC result.
   // ============================================================
   useEffect(() => {
-    if (!_pairId || _suppressUpdate.current) return;
+    if (!_headless || !_pairId || _suppressUpdate.current) return;
     const msg = {
       type: "TB_EV_UPDATE",
       pairId: _pairId,
@@ -1038,12 +1046,12 @@ function HedgeAnalysis() {
           <div style={{ marginBottom: 14 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span style={{ fontFamily: sansFont, fontSize: 12, color: _pairId ? C.faint : C.dim }}>
-                  Prop Profit Target{_pairId ? " (from card)" : ""}
+                <span style={{ fontFamily: sansFont, fontSize: 12, color: C.dim }}>
+                  Prop Profit Target
                 </span>
                 <span style={{ fontFamily: font, fontSize: 13, color: C.text, fontWeight: 600 }}>${propTP.toLocaleString()}</span>
               </div>
-              <Toggle value={rrRatio} onChange={_pairId ? () => {} : setRrRatio} accent={_pairId ? C.faint : C.purple}
+              <Toggle value={rrRatio} onChange={setRrRatio} accent={C.purple}
                 options={[
                   { value: 1, label: "1:1" },
                   { value: 2, label: "1:2" },
@@ -1051,17 +1059,13 @@ function HedgeAnalysis() {
                 ]} />
             </div>
             <div style={{ fontFamily: sansFont, fontSize: 10, color: C.faint, marginTop: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {_pairId
-                ? <span style={{ color: C.amber }}>SL: ${_slDollars.toLocaleString()} · TP: ${_tpDollars.toLocaleString()} · R:R 1:{rrRatio} — set in wizard (read-only here)</span>
-                : <>{`SL: $${propSL.toFixed(0)} · Losses to fail: ~${Math.ceil(trailingDD / propSL)}`}</>
-              }
+              <>{`SL: $${propSL.toFixed(0)} · Losses to fail: ~${Math.ceil(trailingDD / propSL)}`}</>
               {` · `}<span style={{ color: C.green }}>{`Avg Peak (MC): $${avgPeakSimulated.toFixed(0)}`}</span>
               {mcRunning && <span style={{ color: C.amber, marginLeft: 4 }}>computing...</span>}
             </div>
             <input type="range" min={50} max={5000} step={50} value={propTP}
-              onChange={_pairId ? undefined : (e => setPropTP(Number(e.target.value)))}
-              disabled={!!_pairId}
-              style={{ width: "100%", accentColor: _pairId ? C.faint : C.blue, marginTop: 4, height: 4, opacity: _pairId ? 0.4 : 1 }} />
+              onChange={e => setPropTP(Number(e.target.value))}
+              style={{ width: "100%", accentColor: C.blue, marginTop: 4, height: 4 }} />
           </div>
 
           <Param label={`Commission Costs / ${inst.micro} / Phase`} value={friction} onChange={setFriction}
