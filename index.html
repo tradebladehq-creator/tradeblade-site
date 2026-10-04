@@ -289,7 +289,7 @@
 <li data-i18n="pricing_pro_li_8">Email support (72-hour response)</li>
 <li data-i18n="pricing_pro_li_9">Updates included</li>
 </ul>
-<span class="btn wfull" aria-disabled="true" style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid rgba(255,255,255,0.18);" data-i18n="pricing_locked_btn">🔒 Locked during alpha</span>
+<span class="btn wfull" aria-disabled="true" style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid rgba(255,255,255,0.18);" data-i18n="pricing_locked_btn" data-plan="Pro" data-buy="https://buy.stripe.com/5kQ5kCb7e5n4ef72wJgbm00" data-plan-plus="Pro Plus" data-buy-plus="https://buy.stripe.com/fZu8wO8Z67vc7QJ6MZgbm03">🔒 Locked during alpha</span>
 <a href="#alpha" style="display:block;text-align:center;margin-top:10px;color:var(--tb-blue-light);font-weight:600;font-size:14px;" data-i18n="pricing_free_alpha_card">Free during alpha →</a>
 </div>
 <div class="card price reveal">
@@ -306,7 +306,7 @@
 <li data-i18n="pricing_desk_li_6">Multi-account dashboard</li>
 <li data-i18n="pricing_desk_li_7">Enhanced analytics</li>
 </ul>
-<span class="btn wfull" aria-disabled="true" style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid rgba(255,255,255,0.18);" data-i18n="pricing_locked_btn">🔒 Locked during alpha</span>
+<span class="btn wfull" aria-disabled="true" style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid rgba(255,255,255,0.18);" data-i18n="pricing_locked_btn" data-plan="Desk" data-buy="https://buy.stripe.com/5kQaEW8Z63eW5IBfjvgbm01">🔒 Locked during alpha</span>
 <a href="#alpha" style="display:block;text-align:center;margin-top:10px;color:var(--tb-blue-light);font-weight:600;font-size:14px;" data-i18n="pricing_free_alpha_card">Free during alpha →</a>
 </div>
 <div class="card price reveal">
@@ -323,7 +323,7 @@
 <li data-i18n="pricing_elite_li_6">Custom template development</li>
 <li data-i18n="pricing_elite_li_7"><strong style="color:var(--tb-blue-light);">Full Automation</strong> — unattended for the entire session (must restart at session start)</li>
 </ul>
-<span class="btn wfull" aria-disabled="true" style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid rgba(255,255,255,0.18);" data-i18n="pricing_locked_btn">🔒 Locked during alpha</span>
+<span class="btn wfull" aria-disabled="true" style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid rgba(255,255,255,0.18);" data-i18n="pricing_locked_btn" data-plan="Elite" data-buy="https://buy.stripe.com/eVq3cu6QYaHofjb8V7gbm02">🔒 Locked during alpha</span>
 <a href="#alpha" style="display:block;text-align:center;margin-top:10px;color:var(--tb-blue-light);font-weight:600;font-size:14px;" data-i18n="pricing_free_alpha_card">Free during alpha →</a>
 </div>
 </div>
@@ -495,5 +495,27 @@ document.getElementById('earlyAccessForm').addEventListener('submit', async func
 });
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+/* Plan checkout links. DORMANT while TB_SALES_OPEN is false (alpha): the buttons stay locked and
+   nothing can be pressed. Set it to true to open sales: each locked button becomes its checkout
+   link, and the Pro card follows the phone-app switch (Pro, or Pro Plus with the phone app). */
+(function(){
+  var TB_SALES_OPEN = false;
+  if(!TB_SALES_OPEN) return;
+  var sw = document.getElementById('proPhoneAddon');
+  document.querySelectorAll('[data-buy]').forEach(function(el){
+    var a = document.createElement('a');
+    a.className = 'btn btn-primary wfull';
+    var set = function(){
+      var plus = !!(el.getAttribute('data-buy-plus') && sw && sw.checked);
+      a.href = el.getAttribute(plus ? 'data-buy-plus' : 'data-buy');
+      a.textContent = 'Choose ' + el.getAttribute(plus ? 'data-plan-plus' : 'data-plan');
+    };
+    set();
+    if(el.getAttribute('data-buy-plus') && sw) sw.addEventListener('change', set);
+    el.parentNode.replaceChild(a, el);
+  });
+})();
+</script>
 </body>
 </html>
