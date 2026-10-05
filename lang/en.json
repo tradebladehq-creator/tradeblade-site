@@ -155,6 +155,7 @@
   "pricing_desk_li_5": "Guided onboarding",
   "pricing_desk_li_6": "Multi-account dashboard",
   "pricing_desk_li_7": "Enhanced analytics",
+  "pricing_copier_included": "<strong style=\"color:var(--tb-blue-light);\">TradeBlade Trade Copier</strong>",
   "pricing_desk_cta": "Choose Desk",
   "pricing_elite_name": "Elite",
   "pricing_elite_price": "$399/mo",
@@ -170,10 +171,6 @@
   "pricing_guarantee": "30-day money-back guarantee",
   "pricing_guarantee_banner": "\ud83d\udcb0 30-Day Money-Back Guarantee \u2014 No Questions Asked",
   "pricing_guarantee_sub": "Try TradeBlade risk-free. If it\u2019s not for you within the first 30 days, email us and we\u2019ll refund every penny. No hoops, no forms, no hassle.",
-  "diversification_title": "\ud83d\udee1\ufe0f Why multiple independent hedges \u2014 not a trade copier",
-  "diversification_p1": "A trade copier mirrors one strategy across every account. That\u2019s fast to set up, but it means every eval hits the same levels, takes the same entries, and faces the same drawdowns at the same time. When the worst case hits, it hits <em>all of them at once.</em>",
-  "diversification_p2": "TradeBlade runs each hedge as an independent strategy instance inside NinjaTrader. Different entry levels. Different session windows. Different risk parameters. When one eval blows up on a stop run, the others aren\u2019t in the same trade. Your worst-case scenario stays isolated to a single account instead of multiplying across your entire portfolio.",
-  "diversification_p3": "More hedges with independent execution means smoother returns, smaller drawdowns, and a much faster path to statistical profitability. Trade copiers give you speed. Independent strategies give you survival.",
 
   "faq_title": "Frequently Asked Questions",
   "faq_1_q": "What is TradeBlade?",
