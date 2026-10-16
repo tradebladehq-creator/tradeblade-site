@@ -543,8 +543,14 @@ function HedgeAnalysis() {
   }, [propTP, rrRatio, inst.fullTickVal]);
 
   // EOD: full drawdown is deterministically capturable (peak = 0)
-  // Trailing: MC-simulated peak reduces capturable amount
-  const effectivePeakFail = drawdownType === "eod" ? 0 : avgPeakSimulated;
+  // Trailing (intraday): the floor follows the account's highest point, so a failing account gives back
+  // the drawdown from its PEAK. The average peak of an account that fails, on a trail of D with a target T,
+  // is D - T*p/(1-p) with p = e^(-T/D), the chance of reaching the target first (2026-10-15, TODO 102:
+  // checked by simulation, 100,000 accounts; $2,500 trail and $3,000 target: peak $1,207, loss $1,293).
+  // The single losing trade's peak (MC1) is not that: an account takes many trades before it fails.
+  const acctPeakFail = (T, D) => { if (!(T > 0) || !(D > 0)) return 0; const p = Math.exp(-T / D); return Math.round(Math.max(0, D - T * p / (1 - p))); };
+  const effectivePeakFail = drawdownType === "eod" ? 0 : acctPeakFail(profitTarget, trailingDD);
+  const stfPeakFail = drawdownType === "eod" ? 0 : acctPeakFail(payoutThreshold, trailingDD);
 
   // ============================================================
   // MC2: Avg Trades Per Cycle (full cycle simulation)
@@ -576,9 +582,43 @@ function HedgeAnalysis() {
         }
         return { trades:trades, passed: cur >= c.profitTarget-1e-9, hedge:hedge };
       }
+      // An intraday trail (TODO 102): the trade is walked in steps of c.step dollars, the high-water mark follows
+      // every step, and the account fails the moment equity touches the floor, inside the trade. An EOD trail
+      // moves the floor only on a closed winning trade (as before). Returns { win, move } for one trade.
+      function walk(c, st, entry, TP, SL){
+        let x = entry;
+        while(true){
+          x += Math.random() < 0.5 ? c.step : -c.step;
+          if(x > st.hw){ st.hw = x; if(st.hw >= c.lockTrigger) st.locked = true; }
+          if(x >= entry + TP) return { win: true, move: TP };
+          const fl = st.locked ? c.lockedFloor : (st.hw - c.trailingDD);
+          if(x <= entry - SL || x <= fl) return { win: false, move: entry - Math.max(x, fl, entry - SL) };
+        }
+      }
       function simFunded(c){
         let profit=0,hw=0,locked=false,qual=0,t1=0,t2=0,tb=0,paHedge=0,bonusHedge=0,commC=0,reachedP2=false;
         function floorOf(){ return locked ? c.lockedFloor : (hw - c.trailingDD); }
+        if(c.intraday){
+          const st = { hw: 0, locked: false };
+          const fl = () => st.locked ? c.lockedFloor : (st.hw - c.trailingDD);
+          const leg = (TP, SL, contracts) => {
+            const r = walk(c, st, profit, TP, SL);
+            if(r.win){ profit += TP; paHedge -= contracts * 0.1 * TP; qual++; return true; }
+            profit -= r.move; paHedge += contracts * 0.1 * r.move; return profit > fl() + 1e-9;
+          };
+          while(profit < c.phase2At - 1e-9){
+            const rem=c.phase2At-profit, dn=Math.max(1, Math.ceil(rem/c.fundedCap));
+            t1++; commC+=c.p1Contracts;
+            if(!leg(Math.min(rem/dn, c.fundedCap), c.dailyCap, c.p1Contracts)) return {scen:2,reachedP2:false,t1:t1,t2:t2,tb:tb,paHedge:paHedge,bonusHedge:bonusHedge,commC:commC,bonusPayout:false};
+          }
+          reachedP2=true;
+          while(profit < c.payoutThreshold - 1e-9){
+            const rem=c.payoutThreshold-profit, dn=Math.max(1, c.qualFirst-qual);
+            t2++; commC+=c.p2Contracts;
+            if(!leg(Math.min(rem/dn, c.fundedCap), c.dailyCap, c.p2Contracts)) return {scen:2,reachedP2:true,t1:t1,t2:t2,tb:tb,paHedge:paHedge,bonusHedge:bonusHedge,commC:commC,bonusPayout:false};
+          }
+          hw = st.hw; locked = st.locked;
+        } else {
         while(profit < c.phase2At - 1e-9){
           const rem=c.phase2At-profit, dn=Math.max(1, Math.ceil(rem/c.fundedCap));
           const TP=Math.min(rem/dn, c.fundedCap), SL=c.dailyCap;
@@ -594,13 +634,16 @@ function HedgeAnalysis() {
           if(Math.random() < SL/(TP+SL)){ profit+=TP; paHedge-=c.p2Contracts*0.1*TP; qual++; if(profit>hw)hw=profit; if(hw>=c.lockTrigger)locked=true; }
           else { const loss=Math.min(SL, profit-floorOf()); profit-=loss; paHedge+=c.p2Contracts*0.1*loss; if(profit<=floorOf()+1e-9) return {scen:2,reachedP2:reachedP2,t1:t1,t2:t2,tb:tb,paHedge:paHedge,bonusHedge:bonusHedge,commC:commC,bonusPayout:false}; }
         }
+        }
+        // 4. the bonus round: the room after the first payout is the balance left minus the LOCKED floor
+        //    (payout line - payout - locked floor = $2,000 on the defaults), not the trailing drawdown (TODO 102)
         let bp=0;
         while(bp < c.bonusTarget - 1e-9){
           const rem=c.bonusTarget-bp, dn=Math.max(1, c.qualBonus-qual);
           const TP=Math.min(rem/dn, c.bonusCap), SL=c.dailyCap;
           tb++; commC+=c.bonusContracts;
           if(Math.random() < SL/(TP+SL)){ bp+=TP; bonusHedge-=c.bonusContracts*0.1*TP; qual++; }
-          else { const loss=Math.min(SL, bp+c.trailingDD); bp-=loss; bonusHedge+=c.bonusContracts*0.1*loss; if(bp<=-c.trailingDD+1e-9) return {scen:3,reachedP2:reachedP2,t1:t1,t2:t2,tb:tb,paHedge:paHedge,bonusHedge:bonusHedge,commC:commC,bonusPayout:false}; }
+          else { const loss=Math.min(SL, bp+c.bonusRoom); bp-=loss; bonusHedge+=c.bonusContracts*0.1*loss; if(bp<=-c.bonusRoom+1e-9) return {scen:3,reachedP2:reachedP2,t1:t1,t2:t2,tb:tb,paHedge:paHedge,bonusHedge:bonusHedge,commC:commC,bonusPayout:false}; }
         }
         return {scen:3,reachedP2:reachedP2,t1:t1,t2:t2,tb:tb,paHedge:paHedge,bonusHedge:bonusHedge,commC:commC,bonusPayout:true};
       }
@@ -627,6 +670,7 @@ function HedgeAnalysis() {
           scen2Comm: n2 ? comm2/n2 : 0,
           scen3PAHedge: n3 ? paHedge3/n3 : 0,
           scen3BonusNet: n3 ? bonusNet3/n3 : 0,
+          scen3BonusPay: n3 ? bonusPay/n3*c.payoutAmt : 0,     // the second payout alone (no hedge in it)
           scen3Comm: n3 ? comm3/n3 : 0,
           t1Avg: sumT1/N,
           t2Avg: nP2 ? sumT2/nP2 : 0,
@@ -662,6 +706,8 @@ function HedgeAnalysis() {
         phase2At: FUNDED_PHASE2_AT,                 // doubling point = payoutThreshold/2 = $1,800
         payoutThreshold,                            // first payout target $3,600
         lockedFloor: 100, lockTrigger: trailingDD + 100,   // EOD floor locks at +$100 once equity hits +$2,100
+        bonusRoom: Math.max(1, payoutThreshold - payoutAmt - 100),   // room after the first payout, down to the locked floor
+        intraday: drawdownType !== "eod", step: 50,         // intraday trail: trades walked in $50 steps
         fundedCap: payoutThreshold / 2,             // 50% consistency cap on $3,600 = $1,800
         bonusTarget: payoutAmt, bonusCap: payoutAmt / 2, payoutAmt,  // bonus $1,500, cap $750
         qualFirst: 5, qualBonus: 10,                // 5-day min; bonus needs 5 fresh (cumulative 10)
@@ -670,11 +716,11 @@ function HedgeAnalysis() {
         p2Contracts: 2 * paHedgeContracts,          // phase 2 doubles to 4 micro
         bonusContracts: 2 * paHedgeContracts,       // bonus holds 4 micro
         RT: NT_MICRO_RT.free,
-        numSims: 8000,
+        numSims: drawdownType !== "eod" ? 4000 : 8000,
       });
     }, 100);
     return () => clearTimeout(mc2Timer.current);
-  }, [profitTarget, trailingDD, propTP, rrRatio, payoutThreshold, payoutAmt, evalHedgeContracts, paHedgeContracts]);
+  }, [profitTarget, trailingDD, propTP, rrRatio, payoutThreshold, payoutAmt, evalHedgeContracts, paHedgeContracts, drawdownType]);
 
   // ============================================================
   // 2-STEP MODEL (eval → PA → payout)
@@ -682,7 +728,9 @@ function HedgeAnalysis() {
   const r2 = useMemo(() => {
     const pPass = passRate / 100;
     const pFail = 1 - pPass;
-    const pPayGivenPass = payoutRate / 100;
+    // the captures below come from the simulation, so its own payout rate goes with them (TODO 102); the slider
+    // is used only until the simulation has run
+    const pPayGivenPass = mcOut && mcOut.payoutProb != null ? mcOut.payoutProb : payoutRate / 100;
     const pFailPA = 1 - pPayGivenPass;
 
     const p1 = pFail;
@@ -725,7 +773,7 @@ function HedgeAnalysis() {
 
     const net1_nh = -evalCost;
     const net2_nh = -evalCost - paCost;
-    const net3_nh = -evalCost - paCost + payoutAmt;
+    const net3_nh = -evalCost - paCost + payoutAmt + (mcOut ? mcOut.scen3BonusPay : 0);   // the second payout counts with or without a hedge
 
     const ev = p1 * net1 + p2 * net2 + p3 * net3;
     const evNH = p1 * net1_nh + p2 * net2_nh + p3 * net3_nh;
@@ -758,7 +806,7 @@ function HedgeAnalysis() {
     const pFail = 1 - pPay;
 
     // Fail: prop blows the funded account
-    const propPLFail = effectivePeakFail - trailingDD;
+    const propPLFail = stfPeakFail - trailingDD;
     const hedgeFail = -stfHedgeRatio * propPLFail;
 
     // Success: prop accumulates enough for payout
@@ -790,7 +838,7 @@ function HedgeAnalysis() {
       ev, evNH, sd, sdNH, cyclesHedge, cyclesNH,
       hedgeOnlyEV: ev - evNH, hFric,
     };
-  }, [stfPayoutRate, effectivePeakFail, friction, stfHedgeContracts, stfCost, payoutAmt, payoutThreshold, stfHedgeRatio, trailingDD]);
+  }, [stfPayoutRate, stfPeakFail, friction, stfHedgeContracts, stfCost, payoutAmt, payoutThreshold, stfHedgeRatio, trailingDD]);
 
   // ============================================================
   // RENDER
@@ -1032,7 +1080,7 @@ function HedgeAnalysis() {
                 sub="Industry avg ~10% first attempt pass rate" />
               <Param label="Probability of Reaching Payout" value={payoutRate} onChange={setPayoutRate}
                 min={10} max={80} fmt={v => `${v}%`}
-                sub="Of those who pass eval, % that reach a payout" />
+                sub={mcOut ? "Of those who pass eval, % that reach a payout: worked out by the simulation from your settings" : "Of those who pass eval, % that reach a payout"} />
             </>
           ) : (
             <>
