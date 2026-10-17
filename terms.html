@@ -9,6 +9,9 @@
 <link href="assets/favicon.png" rel="icon" type="image/png"/>
 <link href="styles.css" rel="stylesheet"/>
 <style>
+.legal table{border-collapse:collapse;margin:10px 0 4px;width:100%;max-width:560px;}
+.legal td{color:var(--muted);font-size:15px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.legal td.amt{text-align:right;color:var(--text);white-space:nowrap;}
 .legal h1{font-size:32px;margin:0 0 6px;}
 .legal .updated{color:var(--muted);font-size:14px;margin-bottom:28px;}
 .legal h2{font-size:20px;margin:32px 0 10px;color:var(--tb-blue-light);}
@@ -31,13 +34,13 @@
 <section class="section">
 <div class="container legal" style="max-width:860px;">
 <h1>Terms of Service</h1>
-<p class="updated">TradeBlade Technologies LLC · Effective October 3, 2026</p>
+<p class="updated">TradeBlade Technologies LLC · Effective October 17, 2026</p>
 
 <p>These terms govern your use of the TradeBlade software, operated by TradeBlade Technologies LLC ("TradeBlade", "we", "us"). By installing or using the software, you agree to them. If you don't agree, don't install or use the software.</p>
 
 <h2>1. The software</h2>
 <ul>
-<li>TradeBlade is licensed software. What your licence includes depends on your plan.</li>
+<li>TradeBlade is licensed software. What your licence includes depends on your plan. Use of the software is paid for by the per-event fees in section 7.</li>
 <li>It is provided <strong>as is</strong>: features may change, break, or be removed; sessions may be interrupted; updates may be required before you can continue using it.</li>
 <li>We may modify, suspend, or end the software or service — or any individual's access to it — at any time, for any reason.</li>
 
@@ -66,30 +69,53 @@
 <p>Futures and forex trading contains substantial risk and is not for every investor. An investor could potentially lose all or more than the initial investment. Only risk capital — money that can be lost without jeopardizing one's financial security or lifestyle — should be used for trading. Past performance is not necessarily indicative of future results. Any examples, calculators, or statistics on our site are illustrations, not promises.</p>
 
 <h2>6. Telemetry and diagnostics</h2>
-<p>The software reports how it is running and how it is being used — including your TradeBlade trades and their results — and, for support, diagnostic log files, as described in our <a href="privacy.html">Privacy Policy</a>. Before TradeBlade opens for the first time it shows you exactly what is sent and what is never sent, and nothing is sent until you accept. This reporting is part of the product and has no off switch; if you do not agree to it, press Exit on that screen and do not use the software. Log files are sent only when you press Allow for a specific request.</p>
+<p>The software reports how it is running and how it is being used — including your TradeBlade trades and their results — and, for support, diagnostic log files, as described in our <a href="privacy.html">Privacy Policy</a>. Before TradeBlade opens for the first time it shows you exactly what is sent and what is never sent, and nothing is sent until you accept. This reporting is part of the product and has no off switch; if you do not agree to it, press Exit on that screen and do not use the software. Log files are sent only when you press Allow for a specific request. The fees in section 7 are worked out from this reporting, which is one more reason it cannot be switched off.</p>
 
-<h2>7. Intellectual property</h2>
+<h2>7. Fees and billing</h2>
+<p>TradeBlade charges a <strong>fixed fee for each finished event</strong> on the prop-firm accounts it trades. The fee is a charge for the use of the software on that event. It is <strong>not a share of your trading profits</strong>, and it does not depend on what any account made or lost.</p>
+<table>
+<tr><td>An evaluation failed</td><td class="amt">$5</td></tr>
+<tr><td>An evaluation passed</td><td class="amt">$0</td></tr>
+<tr><td>A funded account blown before its first payout, on its 1st / 2nd / 3rd trade</td><td class="amt">$12 / $20 / $21</td></tr>
+<tr><td>A funded account's first payout</td><td class="amt">$0</td></tr>
+<tr><td>A funded account blown after a payout, on the 1st / 2nd / 3rd trade of that round</td><td class="amt">$19 / $17 / $15</td></tr>
+<tr><td>A funded account's 2nd, 3rd and 4th payouts</td><td class="amt">$93 each</td></tr>
+<tr><td>A funded account's 5th payout</td><td class="amt">$16</td></tr>
+</table>
+<ul>
+<li><strong>Weekly billing.</strong> Events are added up each week, from Friday 5:00 PM to Friday 5:00 PM US Central time. After the week closes you receive an email listing that week's events and fees, and the total is charged automatically to the card on file. An event reported after its week closed is billed in the following week. No event is billed twice.</li>
+<li><strong>Card on file.</strong> Your licence works only once a card is saved for automatic payment. The card is saved on our payment processor's secure page (Stripe); TradeBlade never sees or stores your full card number. By saving a card you authorize TradeBlade Technologies LLC to charge it each week for the fees described here.</li>
+<li><strong>When charging starts.</strong> Nothing is charged until billing is switched on for your licence, and in any case not for at least 30 days after your first live trade with TradeBlade. Events in those first 30 days are not charged. Before billing is switched on you may receive weekly statements marked "not charged" that show what you would have paid.</li>
+<li><strong>Only properly hedged failures are billed.</strong> A failed evaluation or a blown funded account is billed only if, on the trade that ended it, the hedge position exited together with the prop-firm position, as recorded by the software. If the software has no record of the hedge for that trade, the event is not billed.</li>
+<li><strong>How events are counted.</strong> Events and their order (which trade of a run, which payout) are taken from the reporting described in section 6. Each weekly email shows the events it bills, so you can check them.</li>
+<li><strong>Declined payments.</strong> If a charge fails, our payment processor retries it. We may suspend your licence while a weekly invoice stays unpaid.</li>
+<li><strong>Questions and corrections.</strong> If you believe an event was billed in error, email <a href="mailto:support@tradebladehq.com">support@tradebladehq.com</a> within 30 days of the charge. Fees billed in error are refunded; other fees are not refundable.</li>
+<li><strong>Fee changes.</strong> We may change the fees. New fees are posted here and emailed to you at least 14 days before they apply, and apply only to events after that date.</li>
+<li><strong>Stopping.</strong> You can stop using TradeBlade at any time. Events that finished before you stopped are billed with the week they fall in.</li>
+</ul>
+
+<h2>8. Intellectual property</h2>
 <p>The software, site, documentation, and branding are owned by TradeBlade Technologies LLC and protected by law. These terms transfer no ownership to you.</p>
 
-<h2>8. Feedback</h2>
+<h2>9. Feedback</h2>
 <p>If you send us feedback, ideas, or suggestions, you grant us the right to use them without restriction or compensation.</p>
 
-<h2>9. Termination</h2>
-<p>You may stop using the software at any time. We may suspend or terminate your licence at any time, including for breach of these terms. Sections 5, 7, 10, 11, and 12 survive termination.</p>
+<h2>10. Termination</h2>
+<p>You may stop using the software at any time. We may suspend or terminate your licence at any time, including for breach of these terms. Fees for events that finished before termination remain payable. Sections 5, 7, 8, 11, 12, and 13 survive termination.</p>
 
-<h2>10. Disclaimer of warranties</h2>
+<h2>11. Disclaimer of warranties</h2>
 <p>THE SOFTWARE AND SITE ARE PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE DO NOT WARRANT THAT THE SOFTWARE WILL BE UNINTERRUPTED, ERROR-FREE, OR PROFITABLE.</p>
 
-<h2>11. Limitation of liability</h2>
+<h2>12. Limitation of liability</h2>
 <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, TRADEBLADE TECHNOLOGIES LLC WILL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR FOR ANY TRADING LOSSES, LOST PROFITS, LOST DATA, OR ACCOUNT FAILURES (INCLUDING FAILED EVALUATIONS), ARISING FROM OR RELATED TO THE SOFTWARE OR THESE TERMS. OUR TOTAL AGGREGATE LIABILITY WILL NOT EXCEED THE GREATER OF ONE HUNDRED US DOLLARS ($100) OR THE AMOUNTS YOU PAID US IN THE TWELVE MONTHS BEFORE THE CLAIM.</p>
 
-<h2>12. Indemnification</h2>
+<h2>13. Indemnification</h2>
 <p>You will indemnify and hold TradeBlade Technologies LLC harmless from claims arising out of your use of the software, your trading, your violation of these terms, or your violation of any broker or prop-firm rules.</p>
 
-<h2>13. Governing law</h2>
+<h2>14. Governing law</h2>
 <p>These terms are governed by the laws of the United States and the state of organization of TradeBlade Technologies LLC, without regard to conflict-of-law rules. Exclusive venue lies in the courts of that state.</p>
 
-<h2>14. Changes</h2>
+<h2>15. Changes</h2>
 <p>We may update these terms; material changes will be posted here with a new effective date, and continued use after that date constitutes acceptance.</p>
 
 <h2>Contact</h2>
